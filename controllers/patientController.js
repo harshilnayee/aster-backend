@@ -251,10 +251,75 @@ async function createPatientsBulk(req, res, next) {
   }
 }
 
+/**
+ * Bulk create patients and return count and IDs
+ * POST /api/patients/bulk (new implementation)
+ */
+async function bulkCreatePatients(req, res, next) {
+  try {
+    const { patients } = req.body;
+
+    if (!patients || !Array.isArray(patients) || patients.length === 0) {
+      return res.status(400).json({ message: "An array of patients is required in the 'patients' property." });
+    }
+
+    const createdPatients = [];
+    const patientIds = [];
+
+    for (const p of patients) {
+      const { name, age, gender, mobile, company, address, fatherName, occupation } = p;
+      if (!name || !age || !gender) {
+        continue; // Skip invalid records
+      }
+
+      const patientId = await generatePatientId();
+      patientIds.push(patientId);
+
+      createdPatients.push({
+        patientId,
+        name,
+        age: Number(age),
+        gender,
+        mobile,
+        company: company || "Aster Medcare",
+        address,
+        fatherName,
+        occupation,
+        createdBy: req.user._id,
+        forms: {}
+      });
+    }
+
+    if (createdPatients.length === 0) {
+      return res.status(400).json({ message: "No valid patient records to insert." });
+    }
+
+    const saved = await Patient.insertMany(createdPatients);
+
+    // Create Audit Log
+    await AuditLog.create({
+      userId: req.user._id,
+      userName: req.user.name,
+      userRole: req.user.role,
+      action: "patient_created",
+      details: `Bulk imported ${saved.length} patients via new endpoint`
+    });
+
+    return res.status(201).json({
+      count: saved.length,
+      patientIds
+    });
+  } catch (error) {
+    console.error("BulkCreatePatients error:", error);
+    next(error);
+  }
+}
+
 module.exports = {
   getPatients,
   createPatient,
   getPatient,
   updatePatient,
-  createPatientsBulk
+  createPatientsBulk,
+  bulkCreatePatients
 };

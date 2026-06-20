@@ -92,29 +92,10 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
-    // Storage for 24 forms. Initial 5 explicitly declared.
+    // Storage for 24 forms. Dynamic Mixed storage.
     forms: {
-      postMedical: {
-        type: FormSchema,
-        default: () => ({})
-      },
-      eyeExam: {
-        type: FormSchema,
-        default: () => ({})
-      },
-      form33: {
-        type: FormSchema,
-        default: () => ({})
-      },
-      healthRegister: {
-        type: FormSchema,
-        default: () => ({})
-      },
-      xrayReport: {
-        type: FormSchema,
-        default: () => ({})
-      }
-      // Future 19 forms will be dynamically saved here as well
+      type: mongoose.Schema.Types.Mixed,
+      default: {}
     },
     files: [PatientFileSchema],
     createdBy: {

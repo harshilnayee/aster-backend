@@ -13,7 +13,7 @@ router.get("/", verifyToken, patientController.getPatients);
 router.post("/", verifyToken, patientController.createPatient);
 
 // POST /api/patients/bulk - Bulk create patients from Excel (Admin, Employee)
-router.post("/bulk", verifyToken, requireRole("admin", "employee"), patientController.createPatientsBulk);
+router.post("/bulk", verifyToken, patientController.bulkCreatePatients);
 
 // GET /api/patients/:id - Get patient details by ID (Admin, Doctor, Employee)
 router.get("/:id", verifyToken, patientController.getPatient);
