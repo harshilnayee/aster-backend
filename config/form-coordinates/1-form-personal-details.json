@@ -1,0 +1,380 @@
+{
+  "collectedBy": {
+    "page": 1,
+    "x": 297,
+    "y": 737,
+    "width": 79,
+    "height": 16
+  },
+  "formNo": {
+    "page": 1,
+    "x": 81,
+    "y": 678,
+    "width": 33,
+    "height": 33
+  },
+  "date": {
+    "page": 1,
+    "x": 384,
+    "y": 675,
+    "width": 63,
+    "height": 14,
+    "centerText": true,
+    "whiteBg": true
+  },
+  "time": {
+    "page": 1,
+    "x": 460,
+    "y": 675,
+    "width": 98,
+    "height": 14,
+    "centerText": true,
+    "whiteBg": true
+  },
+  "name": {
+    "page": 1,
+    "x": 156,
+    "y": 690,
+    "width": 0,
+    "height": 0
+  },
+  "address": {
+    "page": 1,
+    "x": 86,
+    "y": 657,
+    "width": 464,
+    "height": 20
+  },
+  "city": {
+    "page": 1,
+    "x": 58,
+    "y": 622,
+    "width": 163,
+    "height": 16
+  },
+  "state": {
+    "page": 1,
+    "x": 259,
+    "y": 622,
+    "width": 111,
+    "height": 14
+  },
+  "pinNo": {
+    "page": 1,
+    "x": 412,
+    "y": 622,
+    "width": 146,
+    "height": 16
+  },
+  "emailId": {
+    "page": 1,
+    "x": 69,
+    "y": 604,
+    "width": 172,
+    "height": 15
+  },
+  "phoneNo": {
+    "page": 1,
+    "x": 320,
+    "y": 604,
+    "width": 164,
+    "height": 19
+  },
+  "gender": {
+    "page": 1,
+    "x": 71,
+    "y": 579,
+    "width": 42,
+    "height": 18
+  },
+  "dob": {
+    "page": 1,
+    "x": 145,
+    "y": 579,
+    "width": 62,
+    "height": 18,
+    "whiteBg": true
+  },
+  "age": {
+    "page": 1,
+    "x": 216,
+    "y": 579,
+    "width": 29,
+    "height": 16
+  },
+  "govtIdProof": {
+    "page": 1,
+    "x": 328,
+    "y": 583,
+    "width": 59,
+    "height": 10
+  },
+  "govtIdProofNo": {
+    "page": 1,
+    "x": 464,
+    "y": 583,
+    "width": 96,
+    "height": 10
+  },
+  "occupation": {
+    "page": 1,
+    "x": 135,
+    "y": 553,
+    "width": 58,
+    "height": 9
+  },
+  "occupationName": {
+    "page": 1,
+    "x": 234,
+    "y": 530,
+    "width": 69,
+    "height": 16
+  },
+  "occupationId": {
+    "page": 1,
+    "x": 353,
+    "y": 530,
+    "width": 56,
+    "height": 18
+  },
+  "bloodGroup": {
+    "page": 1,
+    "x": 495,
+    "y": 531,
+    "width": 62,
+    "height": 22
+  },
+  "post": {
+    "page": 1,
+    "x": 74,
+    "y": 527,
+    "width": 131,
+    "height": 14
+  },
+  "asthma": {
+    "page": 1,
+    "yes": {
+      "x": 187,
+      "y": 485,
+      "width": 13,
+      "height": 14,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 238,
+      "y": 484,
+      "width": 12,
+      "height": 12,
+      "drawCircle": true
+    }
+  },
+  "tb": {
+    "page": 1,
+    "yes": {
+      "x": 187,
+      "y": 467,
+      "width": 13,
+      "height": 14,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 236,
+      "y": 467,
+      "width": 14,
+      "height": 12,
+      "drawCircle": true
+    }
+  },
+  "fits": {
+    "page": 1,
+    "yes": {
+      "x": 187,
+      "y": 450,
+      "width": 12,
+      "height": 11,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 236,
+      "y": 450,
+      "width": 12,
+      "height": 11,
+      "drawCircle": true
+    }
+  },
+  "mental": {
+    "page": 1,
+    "yes": {
+      "x": 187,
+      "y": 431,
+      "width": 12,
+      "height": 12,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 236,
+      "y": 431,
+      "width": 12,
+      "height": 12,
+      "drawCircle": true
+    }
+  },
+  "eyeDisease": {
+    "page": 1,
+    "yes": {
+      "x": 188,
+      "y": 413,
+      "width": 11,
+      "height": 11,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 238,
+      "y": 412,
+      "width": 12,
+      "height": 11,
+      "drawCircle": true
+    }
+  },
+  "heartDisease": {
+    "page": 1,
+    "yes": {
+      "x": 415,
+      "y": 486,
+      "width": 11,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 509,
+      "y": 486,
+      "width": 10,
+      "height": 10,
+      "drawCircle": true
+    }
+  },
+  "skinDisease": {
+    "page": 1,
+    "yes": {
+      "x": 414,
+      "y": 467,
+      "width": 12,
+      "height": 11,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 508,
+      "y": 468,
+      "width": 12,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "injuryFracture": {
+    "page": 1,
+    "yes": {
+      "x": 415,
+      "y": 449,
+      "width": 10,
+      "height": 12,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 509,
+      "y": 448,
+      "width": 10,
+      "height": 11,
+      "drawCircle": true
+    }
+  },
+  "surgery": {
+    "page": 1,
+    "yes": {
+      "x": 415,
+      "y": 429,
+      "width": 10,
+      "height": 12,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 508,
+      "y": 430,
+      "width": 12,
+      "height": 12,
+      "drawCircle": true
+    }
+  },
+  "infectiousDisease": {
+    "page": 1,
+    "yes": {
+      "x": 414,
+      "y": 412,
+      "width": 11,
+      "height": 11,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 508,
+      "y": 413,
+      "width": 12,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "diet": {
+    "page": 1,
+    "x": 66,
+    "y": 371,
+    "width": 113,
+    "height": 12
+  },
+  "allergy": {
+    "page": 1,
+    "x": 415,
+    "y": 371,
+    "width": 114,
+    "height": 12
+  },
+  "addiction": {
+    "page": 1,
+    "x": 90,
+    "y": 343,
+    "width": 75,
+    "height": 10
+  },
+  "addictionQty": {
+    "page": 1,
+    "x": 262,
+    "y": 343,
+    "width": 72,
+    "height": 10
+  },
+  "otherIllness": {
+    "page": 1,
+    "x": 450,
+    "y": 343,
+    "width": 67,
+    "height": 12
+  },
+  "identificationMark": {
+    "page": 1,
+    "x": 114,
+    "y": 299,
+    "width": 233,
+    "height": 11
+  },
+  "otherDetails": {
+    "page": 1,
+    "x": 86,
+    "y": 272,
+    "width": 474,
+    "height": 9
+  },
+  "signature": {
+    "page": 1,
+    "x": 223,
+    "y": 142,
+    "width": 119,
+    "height": 47
+  }
+}

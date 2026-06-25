@@ -84,6 +84,9 @@ const PatientSchema = new mongoose.Schema(
     photo: {
       type: String // R2 public URL
     },
+    signature: {
+      type: String // Base64 data URL
+    },
     fatherName: {
       type: String,
       trim: true

@@ -1,0 +1,82 @@
+{
+  "10-form-ophthal-form-6": {
+    "displayName": "10 FORM Ophthal Form 6",
+    "pdfFile": "10_FORM_Ophthal_Form_6.pdf",
+    "coordinatesFile": "10-form-ophthal-form-6.json"
+  },
+  "11-form-audiometry-front": {
+    "displayName": "11 FORM Audiometry Front",
+    "pdfFile": "11_FORM_Audiometry_Front.pdf",
+    "coordinatesFile": "11-form-audiometry-front.json"
+  },
+  "13-form-pft-front": {
+    "displayName": "13 FORM PFT Front",
+    "pdfFile": "13_FORM_PFT_Front.pdf",
+    "coordinatesFile": "13-form-pft-front.json"
+  },
+  "15-form-vaccination-front": {
+    "displayName": "15 FORM Vaccination Front",
+    "pdfFile": "15_FORM_Vaccination_Front.pdf",
+    "coordinatesFile": "15-form-vaccination-front.json"
+  },
+  "16-form-vaccination-back": {
+    "displayName": "16 FORM Vaccination Back",
+    "pdfFile": "16_FORM_Vaccination_Back.pdf",
+    "coordinatesFile": "16-form-vaccination-back.json"
+  },
+  "17-form-food-handler-certificate": {
+    "displayName": "17 FORM Food Handler Certificate",
+    "pdfFile": "17_FORM_Food_Handler_Certificate.pdf",
+    "coordinatesFile": "17-form-food-handler-certificate.json"
+  },
+  "18-form-vaccine-ircs-forms-2": {
+    "displayName": "18 FORM Vaccine ircs forms-2",
+    "pdfFile": "18_FORM_Vaccine ircs_forms-2.pdf",
+    "coordinatesFile": "18-form-vaccine-ircs-forms-2.json"
+  },
+  "1-form-personal-details": {
+    "displayName": "1 FORM Personal Details",
+    "pdfFile": "1_FORM_Personal_Details.pdf",
+    "coordinatesFile": "1-form-personal-details.json"
+  },
+  "22-form-post-medical": {
+    "displayName": "22 FORM Post Medical",
+    "pdfFile": "22_FORM_Post_Medical.pdf",
+    "coordinatesFile": "22-form-post-medical.json"
+  },
+  "25-form-for-medical-fitness-certificate-format": {
+    "displayName": "25 FORM for Medical Fitness Certificate Format",
+    "pdfFile": "25_FORM_for_Medical_Fitness_Certificate_Format.pdf",
+    "coordinatesFile": "25-form-for-medical-fitness-certificate-format.json"
+  },
+  "26-form-death-certificate": {
+    "displayName": "26 FORM Death certificate",
+    "pdfFile": "26_FORM_Death_certificate.pdf",
+    "coordinatesFile": "26-form-death-certificate.json"
+  },
+  "35-form-airport-bohw-ht-front": {
+    "displayName": "35 FORM Airport BOHW-HT Front",
+    "pdfFile": "35_FORM_Airport_BOHW-HT_Front.pdf",
+    "coordinatesFile": "35-form-airport-bohw-ht-front.json"
+  },
+  "36-form-airport-bohw-ht-back": {
+    "displayName": "36 FORM Airport BOHW-HT Back",
+    "pdfFile": "36_FORM_Airport_BOHW-HT_Back.pdf",
+    "coordinatesFile": "36-form-airport-bohw-ht-back.json"
+  },
+  "4-form-airport-bohw": {
+    "displayName": "4 FORM Airport BOHW",
+    "pdfFile": "4_FORM_Airport_BOHW.pdf",
+    "coordinatesFile": "4-form-airport-bohw.json"
+  },
+  "5-form-height-pass": {
+    "displayName": "5 FORM Height Pass",
+    "pdfFile": "5_FORM_Height_Pass.pdf",
+    "coordinatesFile": "5-form-height-pass.json"
+  },
+  "9-form-ophthal-back": {
+    "displayName": "9 FORM Ophthal BACK",
+    "pdfFile": "9_FORM_Ophthal_BACK.pdf",
+    "coordinatesFile": "9-form-ophthal-back.json"
+  }
+}

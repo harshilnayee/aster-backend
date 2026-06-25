@@ -69,7 +69,7 @@ async function getPatients(req, res, next) {
  */
 async function createPatient(req, res, next) {
   try {
-    const { name, age, gender, mobile, company, address, photo, fatherName, occupation } = req.body;
+    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation } = req.body;
 
     if (!name || !age || !gender) {
       return res.status(400).json({ message: "Name, age, and gender are required fields" });
@@ -87,6 +87,7 @@ async function createPatient(req, res, next) {
       company: company || "Aster Medcare",
       address,
       photo,
+      signature,
       fatherName,
       occupation,
       createdBy: req.user._id
@@ -151,7 +152,7 @@ async function getPatient(req, res, next) {
 async function updatePatient(req, res, next) {
   try {
     const { id } = req.params;
-    const { name, age, gender, mobile, company, address, photo, fatherName, occupation } = req.body;
+    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation } = req.body;
 
     const query = mongoose.Types.ObjectId.isValid(id)
       ? { _id: id }
@@ -170,6 +171,7 @@ async function updatePatient(req, res, next) {
     if (company !== undefined) patient.company = company;
     if (address !== undefined) patient.address = address;
     if (photo !== undefined) patient.photo = photo;
+    if (signature !== undefined) patient.signature = signature;
     if (fatherName !== undefined) patient.fatherName = fatherName;
     if (occupation !== undefined) patient.occupation = occupation;
 
