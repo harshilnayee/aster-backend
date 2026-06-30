@@ -60,6 +60,11 @@
     "pdfFile": "35_FORM_Airport_BOHW-HT_Front.pdf",
     "coordinatesFile": "35-form-airport-bohw-ht-front.json"
   },
+  "healthRegister": {
+    "displayName": "Form No. 32 (Health Register)",
+    "pdfFile": "7 FORM 32.pdf",
+    "coordinatesFile": "health-register.json"
+  },
   "36-form-airport-bohw-ht-back": {
     "displayName": "36 FORM Airport BOHW-HT Back",
     "pdfFile": "36_FORM_Airport_BOHW-HT_Back.pdf",

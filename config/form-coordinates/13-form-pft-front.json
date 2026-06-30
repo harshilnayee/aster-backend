@@ -1,1 +1,631 @@
-{}
+{
+  "dataCollectedBy": {
+    "page": 1,
+    "x": 485,
+    "y": 715,
+    "width": 51,
+    "height": 7,
+    "whiteBg": true
+  },
+  "formNo": {
+    "page": 1,
+    "x": 123,
+    "y": 688,
+    "width": 20,
+    "height": 18,
+    "whiteBg": true
+  },
+  "date": {
+    "page": 1,
+    "x": 386,
+    "y": 690,
+    "width": 58,
+    "height": 10,
+    "whiteBg": true
+  },
+  "patientName": {
+    "page": 1,
+    "x": 100,
+    "y": 671,
+    "width": 163,
+    "height": 10,
+    "whiteBg": true
+  },
+  "age": {
+    "page": 1,
+    "x": 334,
+    "y": 671,
+    "width": 38,
+    "height": 10,
+    "whiteBg": true
+  },
+  "gender": {
+    "page": 1,
+    "x": 467,
+    "y": 672,
+    "width": 46,
+    "height": 9,
+    "whiteBg": true
+  },
+  "address": {
+    "page": 1,
+    "x": 112,
+    "y": 659,
+    "width": 426,
+    "height": 9,
+    "whiteBg": true
+  },
+  "city": {
+    "page": 1,
+    "x": 92,
+    "y": 628,
+    "width": 48,
+    "height": 12,
+    "whiteBg": true
+  },
+  "state": {
+    "page": 1,
+    "x": 225,
+    "y": 629,
+    "width": 37,
+    "height": 10,
+    "whiteBg": true
+  },
+  "pinCode": {
+    "page": 1,
+    "x": 404,
+    "y": 628,
+    "width": 50,
+    "height": 12,
+    "whiteBg": true
+  },
+  "mobileNo": {
+    "page": 1,
+    "x": 122,
+    "y": 614,
+    "width": 59,
+    "height": 10,
+    "whiteBg": true
+  },
+  "company": {
+    "page": 1,
+    "x": 358,
+    "y": 614,
+    "width": 99,
+    "height": 10,
+    "whiteBg": true
+  },
+  "occupationPost": {
+    "page": 1,
+    "x": 387,
+    "y": 602,
+    "width": 65,
+    "height": 9,
+    "whiteBg": true
+  },
+  "allergicHistory": {
+    "page": 1,
+    "x": 143,
+    "y": 601,
+    "width": 21,
+    "height": 10,
+    "whiteBg": true
+  },
+  "testPre": {
+    "page": 1,
+    "x": 198,
+    "y": 581,
+    "width": 10,
+    "height": 14
+  },
+  "testPost": {
+    "page": 1,
+    "x": 291,
+    "y": 581,
+    "width": 10,
+    "height": 16
+  },
+  "testLungVolume": {
+    "page": 1,
+    "x": 199,
+    "y": 560,
+    "width": 13,
+    "height": 12
+  },
+  "testCardio": {
+    "page": 1,
+    "x": 289,
+    "y": 559,
+    "width": 13,
+    "height": 12
+  },
+  "testBronchial": {
+    "page": 1,
+    "x": 425,
+    "y": 559,
+    "width": 13,
+    "height": 13
+  },
+  "diagnosisDetails": {
+    "page": 1,
+    "x": 156,
+    "y": 529,
+    "width": 385,
+    "height": 10,
+    "whiteBg": true
+  },
+  "dailyCoughYes": {
+    "page": 1,
+    "x": 198,
+    "y": 513,
+    "width": 14,
+    "height": 12
+  },
+  "dailyCoughNo": {
+    "page": 1,
+    "x": 250,
+    "y": 511,
+    "width": 17,
+    "height": 14,
+    "whiteBg": true
+  },
+  "histAsthma": {
+    "page": 1,
+    "x": 225,
+    "y": 493,
+    "width": 10,
+    "height": 13,
+    "whiteBg": true
+  },
+  "histEmphysema": {
+    "page": 1,
+    "x": 336,
+    "y": 492,
+    "width": 10,
+    "height": 14,
+    "whiteBg": true
+  },
+  "histPneumonia": {
+    "page": 1,
+    "x": 445,
+    "y": 494,
+    "width": 9,
+    "height": 12,
+    "whiteBg": true
+  },
+  "histAngina": {
+    "page": 1,
+    "x": 227,
+    "y": 474,
+    "width": 8,
+    "height": 13,
+    "whiteBg": true
+  },
+  "histHeartDisease": {
+    "page": 1,
+    "x": 336,
+    "y": 475,
+    "width": 9,
+    "height": 12,
+    "whiteBg": true
+  },
+  "histWheezing": {
+    "page": 1,
+    "x": 445,
+    "y": 475,
+    "width": 9,
+    "height": 12,
+    "whiteBg": true
+  },
+  "histTuberculosis": {
+    "page": 1,
+    "x": 227,
+    "y": 457,
+    "width": 8,
+    "height": 12,
+    "whiteBg": true
+  },
+  "histBronchiectasis": {
+    "page": 1,
+    "x": 338,
+    "y": 457,
+    "width": 8,
+    "height": 10,
+    "whiteBg": true
+  },
+  "histBronchitis": {
+    "page": 1,
+    "x": 446,
+    "y": 457,
+    "width": 7,
+    "height": 12,
+    "whiteBg": true
+  },
+  "sobYes": {
+    "page": 1,
+    "x": 210,
+    "y": 437,
+    "width": 12,
+    "height": 14
+  },
+  "sobNo": {
+    "page": 1,
+    "x": 247,
+    "y": 437,
+    "width": 16,
+    "height": 13,
+    "whiteBg": true
+  },
+  "sobSitting": {
+    "page": 1,
+    "x": 355,
+    "y": 437,
+    "width": 14,
+    "height": 14
+  },
+  "sobWalking": {
+    "page": 1,
+    "x": 403,
+    "y": 436,
+    "width": 12,
+    "height": 16
+  },
+  "sobClimbing": {
+    "page": 1,
+    "x": 455,
+    "y": 436,
+    "width": 13,
+    "height": 14
+  },
+  "xrayFindings": {
+    "page": 1,
+    "x": 169,
+    "y": 415,
+    "width": 43,
+    "height": 12,
+    "whiteBg": true
+  },
+  "sleepApneaYes": {
+    "page": 1,
+    "x": 434,
+    "y": 412,
+    "width": 13,
+    "height": 13
+  },
+  "sleepApneaNo": {
+    "page": 1,
+    "x": 476,
+    "y": 412,
+    "width": 16,
+    "height": 13,
+    "whiteBg": true
+  },
+  "reasonForTest": {
+    "page": 1,
+    "x": 146,
+    "y": 397,
+    "width": 128,
+    "height": 12,
+    "whiteBg": true
+  },
+  "surgeryYes": {
+    "page": 1,
+    "x": 369,
+    "y": 380,
+    "width": 24,
+    "height": 14
+  },
+  "surgeryNo": {
+    "page": 1,
+    "x": 416,
+    "y": 380,
+    "width": 17,
+    "height": 16
+  },
+  "surgeryAreaCover": {
+    "page": 1,
+    "x": 396,
+    "y": 378,
+    "width": 18,
+    "height": 20,
+    "whiteBg": true
+  },
+  "radYes": {
+    "page": 1,
+    "x": 62,
+    "y": 350,
+    "width": 13,
+    "height": 12
+  },
+  "radNo": {
+    "page": 1,
+    "x": 104,
+    "y": 349,
+    "width": 14,
+    "height": 13
+  },
+  "radMedicationArea": {
+    "page": 1,
+    "x": 71,
+    "y": 324,
+    "width": 202,
+    "height": 10,
+    "whiteBg": true
+  },
+  "exposureYes": {
+    "page": 1,
+    "x": 317,
+    "y": 339,
+    "width": 12,
+    "height": 12
+  },
+  "exposureNo": {
+    "page": 1,
+    "x": 365,
+    "y": 339,
+    "width": 17,
+    "height": 12,
+    "whiteBg": true
+  },
+  "exposureAreaCover": {
+    "page": 1,
+    "x": 313,
+    "y": 312,
+    "width": 210,
+    "height": 7,
+    "whiteBg": true
+  },
+  "exposureDetails": {
+    "page": 1,
+    "x": 373,
+    "y": 294,
+    "width": 155,
+    "height": 9,
+    "whiteBg": true
+  },
+  "prevTestText": {
+    "page": 1,
+    "x": 148,
+    "y": 288,
+    "width": 67,
+    "height": 17,
+    "whiteBg": true
+  },
+  "prevTestDetails": {
+    "page": 1,
+    "x": 374,
+    "y": 294,
+    "width": 148,
+    "height": 9,
+    "whiteBg": true
+  },
+  "clinDyspnea": {
+    "page": 1,
+    "x": 220,
+    "y": 272,
+    "width": 8,
+    "height": 12,
+    "whiteBg": true
+  },
+  "clinHeartFailure": {
+    "page": 1,
+    "x": 341,
+    "y": 273,
+    "width": 8,
+    "height": 10,
+    "whiteBg": true
+  },
+  "clinCyanosis": {
+    "page": 1,
+    "x": 220,
+    "y": 254,
+    "width": 8,
+    "height": 10,
+    "whiteBg": true
+  },
+  "clinAngina": {
+    "page": 1,
+    "x": 340,
+    "y": 252,
+    "width": 9,
+    "height": 13,
+    "whiteBg": true
+  },
+  "clinOther": {
+    "page": 1,
+    "x": 518,
+    "y": 275,
+    "width": 18,
+    "height": 10,
+    "whiteBg": true
+  },
+  "clinOtherDetails": {
+    "page": 1,
+    "x": 485,
+    "y": 256,
+    "width": 59,
+    "height": 9,
+    "whiteBg": true
+  },
+  "treatBronchodilators": {
+    "page": 1,
+    "x": 220,
+    "y": 235,
+    "width": 8,
+    "height": 10,
+    "whiteBg": true
+  },
+  "treatSteroids": {
+    "page": 1,
+    "x": 340,
+    "y": 235,
+    "width": 9,
+    "height": 10,
+    "whiteBg": true
+  },
+  "treatBetaBlockers": {
+    "page": 1,
+    "x": 220,
+    "y": 216,
+    "width": 8,
+    "height": 12,
+    "whiteBg": true
+  },
+  "treatAntihypertensive": {
+    "page": 1,
+    "x": 340,
+    "y": 216,
+    "width": 9,
+    "height": 10,
+    "whiteBg": true
+  },
+  "treatOther": {
+    "page": 1,
+    "x": 516,
+    "y": 238,
+    "width": 20,
+    "height": 9,
+    "whiteBg": true
+  },
+  "treatOtherDetails": {
+    "page": 1,
+    "x": 485,
+    "y": 217,
+    "width": 56,
+    "height": 9,
+    "whiteBg": true
+  },
+  "smokeYes": {
+    "page": 1,
+    "x": 194,
+    "y": 195,
+    "width": 13,
+    "height": 14
+  },
+  "smokeNo": {
+    "page": 1,
+    "x": 234,
+    "y": 197,
+    "width": 14,
+    "height": 13
+  },
+  "smokeType": {
+    "page": 1,
+    "x": 241,
+    "y": 184,
+    "width": 24,
+    "height": 9,
+    "whiteBg": true
+  },
+  "smokePacksPerDay": {
+    "page": 1,
+    "x": 467,
+    "y": 184,
+    "width": 20,
+    "height": 9,
+    "whiteBg": true
+  },
+  "smokeQuitDate": {
+    "page": 1,
+    "x": 215,
+    "y": 172,
+    "width": 26,
+    "height": 8,
+    "whiteBg": true
+  },
+  "contraYes": {
+    "page": 1,
+    "x": 300,
+    "y": 154,
+    "width": 9,
+    "height": 12
+  },
+  "contraNo": {
+    "page": 1,
+    "x": 353,
+    "y": 154,
+    "width": 14,
+    "height": 12
+  },
+  "ecgNormal": {
+    "page": 1,
+    "x": 173,
+    "y": 134,
+    "width": 12,
+    "height": 13
+  },
+  "ecgAbnormal": {
+    "page": 1,
+    "x": 225,
+    "y": 135,
+    "width": 8,
+    "height": 10
+  },
+  "ecgNotDone": {
+    "page": 1,
+    "x": 296,
+    "y": 135,
+    "width": 13,
+    "height": 12
+  },
+  "ecgDate": {
+    "page": 1,
+    "x": 399,
+    "y": 134,
+    "width": 38,
+    "height": 10,
+    "whiteBg": true
+  },
+  "familyYes": {
+    "page": 1,
+    "x": 196,
+    "y": 117,
+    "width": 9,
+    "height": 9
+  },
+  "familyNo": {
+    "page": 1,
+    "x": 232,
+    "y": 116,
+    "width": 13,
+    "height": 12
+  },
+  "familyName": {
+    "page": 1,
+    "x": 356,
+    "y": 117,
+    "width": 71,
+    "height": 9,
+    "whiteBg": true
+  },
+  "familySince": {
+    "page": 1,
+    "x": 460,
+    "y": 115,
+    "width": 51,
+    "height": 10,
+    "whiteBg": true
+  },
+  "doctorDate": {
+    "page": 1,
+    "x": 383,
+    "y": 52,
+    "width": 60,
+    "height": 9,
+    "whiteBg": true
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 360,
+    "y": 72,
+    "width": 86,
+    "height": 26
+  },
+  "doctorStamp": {
+    "page": 1,
+    "x": 477,
+    "y": 45,
+    "width": 72,
+    "height": 51
+  }
+}
