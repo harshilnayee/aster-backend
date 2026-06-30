@@ -1,1 +1,110 @@
-{}
+{
+  "dateTop": {
+    "page": 1,
+    "x": 430,
+    "y": 686,
+    "width": 46,
+    "height": 7,
+    "whiteBg": true
+  },
+  "department": {
+    "page": 1,
+    "x": 388,
+    "y": 632,
+    "width": 64,
+    "height": 11,
+    "whiteBg": true
+  },
+  "name": {
+    "page": 1,
+    "x": 319,
+    "y": 611,
+    "width": 164,
+    "height": 11,
+    "whiteBg": true
+  },
+  "sex": {
+    "page": 1,
+    "x": 317,
+    "y": 588,
+    "width": 49,
+    "height": 12,
+    "whiteBg": true
+  },
+  "dob": {
+    "page": 1,
+    "x": 343,
+    "y": 568,
+    "width": 54,
+    "height": 9,
+    "whiteBg": true
+  },
+  "age": {
+    "page": 1,
+    "x": 435,
+    "y": 568,
+    "width": 42,
+    "height": 10,
+    "whiteBg": true
+  },
+  "occupation": {
+    "page": 1,
+    "x": 363,
+    "y": 545,
+    "width": 50,
+    "height": 10
+  },
+  "dateOfEmployment": {
+    "page": 1,
+    "x": 348,
+    "y": 526,
+    "width": 65,
+    "height": 8
+  },
+  "examinationDate": {
+    "page": 1,
+    "x": 318,
+    "y": 504,
+    "width": 74,
+    "height": 9,
+    "whiteBg": true
+  },
+  "examinationResult": {
+    "page": 1,
+    "x": 316,
+    "y": 484,
+    "width": 73,
+    "height": 9,
+    "whiteBg": true
+  },
+  "remarks": {
+    "page": 1,
+    "x": 316,
+    "y": 379,
+    "width": 162,
+    "height": 9,
+    "whiteBg": true
+  },
+  "doctorSignatureRow": {
+    "page": 1,
+    "x": 327,
+    "y": 409,
+    "width": 188,
+    "height": 47
+  },
+  "dateBottom": {
+    "page": 1,
+    "x": 418,
+    "y": 279,
+    "width": 52,
+    "height": 11,
+    "whiteBg": true
+  },
+  "doctorStamp": {
+    "page": 1,
+    "x": 324,
+    "y": 138,
+    "width": 231,
+    "height": 107
+  }
+}

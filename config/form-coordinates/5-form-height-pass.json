@@ -1,1 +1,765 @@
-{}
+{
+  "date": {
+    "page": 1,
+    "x": 427,
+    "y": 734,
+    "width": 93,
+    "height": 9,
+    "whiteBg": true
+  },
+  "name": {
+    "page": 1,
+    "x": 146,
+    "y": 730,
+    "width": 161,
+    "height": 9
+  },
+  "age": {
+    "page": 1,
+    "x": 332,
+    "y": 730,
+    "width": 27,
+    "height": 7
+  },
+  "sex": {
+    "page": 1,
+    "x": 360,
+    "y": 728,
+    "width": 28,
+    "height": 7,
+    "whiteBg": true,
+    "fontSize": 9
+  },
+  "mobileNo": {
+    "page": 1,
+    "x": 157,
+    "y": 704,
+    "width": 63,
+    "height": 7
+  },
+  "companyName": {
+    "page": 1,
+    "x": 303,
+    "y": 708,
+    "width": 75,
+    "height": 6
+  },
+  "idNo": {
+    "page": 1,
+    "x": 439,
+    "y": 704,
+    "width": 82,
+    "height": 10
+  },
+  "previousHistory": {
+    "page": 1,
+    "x": 240,
+    "y": 680,
+    "width": 280,
+    "height": 12
+  },
+  "beforePulseRate": {
+    "page": 1,
+    "x": 170,
+    "y": 653,
+    "width": 66,
+    "height": 8
+  },
+  "beforeBp": {
+    "page": 1,
+    "x": 411,
+    "y": 653,
+    "width": 87,
+    "height": 9,
+    "whiteBg": true
+  },
+  "afterPulseRate": {
+    "page": 1,
+    "x": 173,
+    "y": 621,
+    "width": 76,
+    "height": 10,
+    "whiteBg": true
+  },
+  "afterBp": {
+    "page": 1,
+    "x": 422,
+    "y": 621,
+    "width": 79,
+    "height": 9,
+    "whiteBg": true
+  },
+  "uncontrolledThoughts": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 593,
+      "width": 14,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 592,
+      "width": 12,
+      "height": 10,
+      "drawCircle": true
+    }
+  },
+  "uncontrolledThoughtsRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 592,
+    "width": 43,
+    "height": 7
+  },
+  "fearLosingControl": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 580,
+      "width": 13,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 580,
+      "width": 11,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "fearLosingControlRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 580,
+    "width": 43,
+    "height": 7
+  },
+  "fearFainting": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 567,
+      "width": 14,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 568,
+      "width": 12,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "fearFaintingRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 569,
+    "width": 43,
+    "height": 6
+  },
+  "intenseFeelingComeDown": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 544,
+      "width": 15,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 543,
+      "width": 11,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "intenseFeelingComeDownRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 543,
+    "width": 42,
+    "height": 8
+  },
+  "worryUpcomingEvents": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 531,
+      "width": 15,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 531,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "worryUpcomingEventsRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 532,
+    "width": 42,
+    "height": 7
+  },
+  "palpitation": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 507,
+      "width": 15,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 506,
+      "width": 13,
+      "height": 10,
+      "drawCircle": true
+    }
+  },
+  "palpitationRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 506,
+    "width": 43,
+    "height": 8
+  },
+  "dizziness": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 494,
+      "width": 15,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 494,
+      "width": 12,
+      "height": 10,
+      "drawCircle": true
+    }
+  },
+  "dizzinessRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 495,
+    "width": 42,
+    "height": 6
+  },
+  "chestPain": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 482,
+      "width": 15,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 483,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "chestPainRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 483,
+    "width": 43,
+    "height": 8
+  },
+  "shivering": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 470,
+      "width": 14,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 470,
+      "width": 11,
+      "height": 7,
+      "drawCircle": true
+    }
+  },
+  "shiveringRemark": {
+    "page": 1,
+    "x": 486,
+    "y": 471,
+    "width": 41,
+    "height": 6
+  },
+  "feelingChoking": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 458,
+      "width": 13,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 458,
+      "width": 12,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "feelingChokingRemark": {
+    "page": 1,
+    "x": 486,
+    "y": 458,
+    "width": 41,
+    "height": 6
+  },
+  "sweating": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 445,
+      "width": 14,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 445,
+      "width": 12,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "sweatingRemark": {
+    "page": 1,
+    "x": 486,
+    "y": 446,
+    "width": 40,
+    "height": 6
+  },
+  "nausea": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 433,
+      "width": 15,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 434,
+      "width": 10,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "nauseaRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 433,
+    "width": 42,
+    "height": 6
+  },
+  "numbnessTugging": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 421,
+      "width": 14,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 421,
+      "width": 12,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "numbnessTuggingRemark": {
+    "page": 1,
+    "x": 484,
+    "y": 421,
+    "width": 43,
+    "height": 8
+  },
+  "flushes": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 408,
+      "width": 15,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 409,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "flushesRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 409,
+    "width": 40,
+    "height": 7
+  },
+  "flatFoot": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 397,
+      "width": 14,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 397,
+      "width": 11,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "flatFootRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 398,
+    "width": 43,
+    "height": 6
+  },
+  "fitStatus": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 383,
+      "width": 13,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 384,
+      "width": 13,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "remark": {
+    "page": 1,
+    "x": 143,
+    "y": 368,
+    "width": 377,
+    "height": 7
+  },
+  "criteriaMajorIllness": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 335,
+      "width": 15,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 336,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaMajorIllnessRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 336,
+    "width": 41,
+    "height": 8
+  },
+  "criteriaEpilepsy": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 323,
+      "width": 13,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 323,
+      "width": 11,
+      "height": 9,
+      "drawCircle": true
+    }
+  },
+  "criteriaEpilepsyRemark": {
+    "page": 1,
+    "x": 486,
+    "y": 323,
+    "width": 40,
+    "height": 7
+  },
+  "criteriaVision": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 311,
+      "width": 14,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 311,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaVisionRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 311,
+    "width": 40,
+    "height": 7
+  },
+  "criteriaAuditory": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 297,
+      "width": 13,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 297,
+      "width": 10,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaAuditoryRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 299,
+    "width": 42,
+    "height": 5
+  },
+  "criteriaLocomotor": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 284,
+      "width": 13,
+      "height": 9,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 431,
+      "y": 285,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaLocomotorRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 286,
+    "width": 40,
+    "height": 6
+  },
+  "criteriaBreathing": {
+    "page": 1,
+    "yes": {
+      "x": 392,
+      "y": 272,
+      "width": 13,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 272,
+      "width": 10,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaBreathingRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 272,
+    "width": 40,
+    "height": 6
+  },
+  "criteriaUpperLimbs": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 260,
+      "width": 15,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 260,
+      "width": 10,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaUpperLimbsRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 260,
+    "width": 40,
+    "height": 6
+  },
+  "criteriaLowerLimbs": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 246,
+      "width": 16,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 246,
+      "width": 11,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaLowerLimbsRemark": {
+    "page": 1,
+    "x": 489,
+    "y": 247,
+    "width": 37,
+    "height": 7
+  },
+  "criteriaStability": {
+    "page": 1,
+    "yes": {
+      "x": 390,
+      "y": 227,
+      "width": 15,
+      "height": 10,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 225,
+      "width": 11,
+      "height": 13,
+      "drawCircle": true
+    }
+  },
+  "criteriaStabilityRemark": {
+    "page": 1,
+    "x": 489,
+    "y": 227,
+    "width": 35,
+    "height": 8
+  },
+  "criteriaAnyOtherText": {
+    "page": 1,
+    "x": 215,
+    "y": 211,
+    "width": 110,
+    "height": 7
+  },
+  "criteriaAnyOther": {
+    "page": 1,
+    "yes": {
+      "x": 391,
+      "y": 211,
+      "width": 13,
+      "height": 8,
+      "drawCircle": true
+    },
+    "no": {
+      "x": 432,
+      "y": 211,
+      "width": 10,
+      "height": 8,
+      "drawCircle": true
+    }
+  },
+  "criteriaAnyOtherRemark": {
+    "page": 1,
+    "x": 485,
+    "y": 211,
+    "width": 40,
+    "height": 6
+  },
+  "certifiedName": {
+    "page": 1,
+    "x": 248,
+    "y": 188,
+    "width": 225,
+    "height": 8
+  },
+  "fitWorkAt": {
+    "page": 1,
+    "x": 318,
+    "y": 156,
+    "width": 186,
+    "height": 6
+  },
+  "patientSignature": {
+    "page": 1,
+    "x": 104,
+    "y": 69,
+    "width": 130,
+    "height": 45
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 388,
+    "y": 98,
+    "width": 118,
+    "height": 20
+  },
+  "doctorName": {
+    "page": 1,
+    "x": 376,
+    "y": 86,
+    "width": 104,
+    "height": 10
+  },
+  "doctorRegistration": {
+    "page": 1,
+    "x": 414,
+    "y": 51,
+    "width": 99,
+    "height": 29
+  }
+}

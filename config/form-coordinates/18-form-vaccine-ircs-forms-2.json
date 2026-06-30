@@ -1,1 +1,114 @@
-{}
+{
+  "hz_day1": {
+    "page": 1,
+    "x": 455,
+    "y": 699,
+    "width": 86,
+    "height": 10,
+    "whiteBg": true
+  },
+  "hz_day28": {
+    "page": 1,
+    "x": 456,
+    "y": 668,
+    "width": 85,
+    "height": 12,
+    "whiteBg": true
+  },
+  "ty_day1": {
+    "page": 1,
+    "x": 456,
+    "y": 633,
+    "width": 86,
+    "height": 11,
+    "whiteBg": true
+  },
+  "ty_day730": {
+    "page": 1,
+    "x": 456,
+    "y": 608,
+    "width": 83,
+    "height": 10,
+    "whiteBg": true
+  },
+  "hep_day1": {
+    "page": 1,
+    "x": 456,
+    "y": 591,
+    "width": 86,
+    "height": 12,
+    "whiteBg": true
+  },
+  "hep_day30": {
+    "page": 1,
+    "x": 456,
+    "y": 575,
+    "width": 85,
+    "height": 9,
+    "whiteBg": true
+  },
+  "hep_day180": {
+    "page": 1,
+    "x": 457,
+    "y": 557,
+    "width": 83,
+    "height": 10,
+    "whiteBg": true
+  },
+  "flu_day1": {
+    "page": 1,
+    "x": 456,
+    "y": 519,
+    "width": 85,
+    "height": 12,
+    "whiteBg": true
+  },
+  "pneu_day1": {
+    "page": 1,
+    "x": 458,
+    "y": 466,
+    "width": 83,
+    "height": 13,
+    "whiteBg": true
+  },
+  "men_day1": {
+    "page": 1,
+    "x": 456,
+    "y": 424,
+    "width": 85,
+    "height": 14,
+    "whiteBg": true
+  },
+  "tet_day1": {
+    "page": 1,
+    "x": 457,
+    "y": 386,
+    "width": 82,
+    "height": 12,
+    "whiteBg": true
+  },
+  "cov_day1": {
+    "page": 1,
+    "x": 457,
+    "y": 355,
+    "width": 84,
+    "height": 12,
+    "whiteBg": true
+  },
+  "cov_day30": {
+    "page": 1,
+    "x": 456,
+    "y": 338,
+    "width": 87,
+    "height": 11,
+    "whiteBg": true
+  },
+  "cov_day90": {
+    "page": 1,
+    "x": 457,
+    "y": 322,
+    "width": 84,
+    "height": 10,
+    "whiteBg": true
+  }
+}

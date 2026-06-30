@@ -1,1 +1,146 @@
-{}
+{
+  "dateTop": {
+    "page": 1,
+    "x": 467,
+    "y": 757,
+    "width": 74,
+    "height": 12,
+    "whiteBg": true
+  },
+  "name": {
+    "page": 1,
+    "x": 154,
+    "y": 693,
+    "width": 223,
+    "height": 7,
+    "whiteBg": true
+  },
+  "age": {
+    "page": 1,
+    "x": 392,
+    "y": 693,
+    "width": 26,
+    "height": 9,
+    "whiteBg": true
+  },
+  "genderMale": {
+    "page": 1,
+    "x": 69,
+    "y": 660,
+    "width": 26,
+    "height": 14,
+    "whiteBg": true
+  },
+  "genderFemale": {
+    "page": 1,
+    "x": 102,
+    "y": 660,
+    "width": 32,
+    "height": 15,
+    "whiteBg": true
+  },
+  "sonOf": {
+    "page": 1,
+    "x": 173,
+    "y": 662,
+    "width": 265,
+    "height": 9,
+    "whiteBg": true
+  },
+  "residingAtLine1": {
+    "page": 1,
+    "x": 129,
+    "y": 632,
+    "width": 317,
+    "height": 8,
+    "whiteBg": true
+  },
+  "residingAtLine2": {
+    "page": 1,
+    "x": 72,
+    "y": 602,
+    "width": 267,
+    "height": 7,
+    "whiteBg": true
+  },
+  "pinCode": {
+    "page": 1,
+    "x": 386,
+    "y": 602,
+    "width": 53,
+    "height": 7,
+    "whiteBg": true
+  },
+  "aadharNo": {
+    "page": 1,
+    "x": 130,
+    "y": 570,
+    "width": 205,
+    "height": 9,
+    "whiteBg": true
+  },
+  "visitedHomeDate": {
+    "page": 1,
+    "x": 183,
+    "y": 537,
+    "width": 75,
+    "height": 12,
+    "whiteBg": true
+  },
+  "visitedHomeTime": {
+    "page": 1,
+    "x": 270,
+    "y": 537,
+    "width": 86,
+    "height": 10,
+    "whiteBg": true
+  },
+  "declaredDeathTime": {
+    "page": 1,
+    "x": 148,
+    "y": 443,
+    "width": 111,
+    "height": 12,
+    "whiteBg": true
+  },
+  "declaredDeathDate": {
+    "page": 1,
+    "x": 277,
+    "y": 443,
+    "width": 75,
+    "height": 12,
+    "whiteBg": true
+  },
+  "primaryCause": {
+    "page": 1,
+    "x": 190,
+    "y": 416,
+    "width": 176,
+    "height": 7,
+    "whiteBg": true
+  },
+  "secondaryCause": {
+    "page": 1,
+    "x": 197,
+    "y": 385,
+    "width": 172,
+    "height": 7,
+    "whiteBg": true
+  },
+  "certificateTakenBy": {
+    "page": 1,
+    "x": 193,
+    "y": 173,
+    "width": 172,
+    "height": 9,
+    "whiteBg": true
+  },
+  "relation": {
+    "page": 1,
+    "x": 131,
+    "y": 137,
+    "width": 231,
+    "height": 11,
+    "whiteBg": true
+  }
+}

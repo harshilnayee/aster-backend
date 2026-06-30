@@ -1,1 +1,52 @@
-{}
+{
+  "name": {
+    "page": 1,
+    "x": 241,
+    "y": 598,
+    "width": 256,
+    "height": 10
+  },
+  "companyName": {
+    "page": 1,
+    "x": 173,
+    "y": 572,
+    "width": 334,
+    "height": 10
+  },
+  "date": {
+    "page": 1,
+    "x": 97,
+    "y": 515,
+    "width": 94,
+    "height": 14,
+    "whiteBg": true
+  },
+  "specificNotes": {
+    "page": 1,
+    "x": 187,
+    "y": 404,
+    "width": 94,
+    "height": 17
+  },
+  "patientSignature": {
+    "page": 1,
+    "x": 243,
+    "y": 659,
+    "width": 246,
+    "height": 32
+  },
+  "doctorName": {
+    "page": 1,
+    "x": 326,
+    "y": 348,
+    "width": 157,
+    "height": 47
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 326,
+    "y": 348,
+    "width": 157,
+    "height": 47
+  }
+}

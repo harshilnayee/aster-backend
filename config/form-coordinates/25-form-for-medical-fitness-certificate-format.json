@@ -1,1 +1,114 @@
-{}
+{
+  "name": {
+    "page": 1,
+    "x": 275,
+    "y": 696,
+    "width": 218,
+    "height": 8,
+    "whiteBg": true
+  },
+  "parentName": {
+    "page": 1,
+    "x": 198,
+    "y": 675,
+    "width": 305,
+    "height": 7,
+    "whiteBg": true
+  },
+  "age": {
+    "page": 1,
+    "x": 102,
+    "y": 647,
+    "width": 59,
+    "height": 9,
+    "whiteBg": true
+  },
+  "residentOfLine1": {
+    "page": 1,
+    "x": 266,
+    "y": 649,
+    "width": 256,
+    "height": 6,
+    "whiteBg": true
+  },
+  "residentOfLine2": {
+    "page": 1,
+    "x": 73,
+    "y": 624,
+    "width": 453,
+    "height": 8,
+    "whiteBg": true
+  },
+  "residentOfLine3": {
+    "page": 1,
+    "x": 73,
+    "y": 600,
+    "width": 445,
+    "height": 7,
+    "whiteBg": true
+  },
+  "marksOfIdentification": {
+    "page": 1,
+    "x": 202,
+    "y": 487,
+    "width": 320,
+    "height": 9,
+    "whiteBg": true
+  },
+  "signatureCandidate": {
+    "page": 1,
+    "x": 75,
+    "y": 441,
+    "width": 122,
+    "height": 23,
+    "whiteBg": true
+  },
+  "leftThumb": {
+    "page": 1,
+    "x": 297,
+    "y": 442,
+    "width": 205,
+    "height": 20,
+    "whiteBg": true
+  },
+  "signatureMedicalOfficer": {
+    "page": 1,
+    "x": 232,
+    "y": 353,
+    "width": 168,
+    "height": 11,
+    "whiteBg": true
+  },
+  "nameMedicalOfficer": {
+    "page": 1,
+    "x": 232,
+    "y": 329,
+    "width": 175,
+    "height": 7,
+    "whiteBg": true
+  },
+  "registrationNo": {
+    "page": 1,
+    "x": 164,
+    "y": 304,
+    "width": 237,
+    "height": 8,
+    "whiteBg": true
+  },
+  "date": {
+    "page": 1,
+    "x": 105,
+    "y": 280,
+    "width": 147,
+    "height": 7,
+    "whiteBg": true
+  },
+  "seal": {
+    "page": 1,
+    "x": 498,
+    "y": 241,
+    "width": 91,
+    "height": 61,
+    "whiteBg": true
+  }
+}

@@ -2,11 +2,12 @@ const User = require("../models/User");
 
 // All 24 form keys placeholder list
 const ALL_24_FORMS = [
-  "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
-  "form06", "form07", "form08", "form09", "form10",
-  "form11", "form12", "form13", "form14", "form15",
-  "form16", "form17", "form18", "form19", "form20",
-  "form21", "form22", "form23", "form24"
+  "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
+  "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
+  "form09", "form10",
+  "11-form-audiometry-front", "form12", "form13", "form14", "15-form-vaccination-front",
+  "16-form-vaccination-back", "17-form-food-handler-certificate", "18-form-vaccine-ircs-forms-2", "25-form-for-medical-fitness-certificate-format", "26-form-death-certificate",
+  "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back", "form23"
 ];
 
 /**

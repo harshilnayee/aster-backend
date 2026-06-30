@@ -1,1 +1,465 @@
-{}
+{
+  "dataCollectedBy": {
+    "page": 1,
+    "x": 454,
+    "y": 720,
+    "width": 80,
+    "height": 7
+  },
+  "date": {
+    "page": 1,
+    "x": 388,
+    "y": 45,
+    "width": 46,
+    "height": 11,
+    "whiteBg": true
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 361,
+    "y": 63,
+    "width": 77,
+    "height": 28
+  },
+  "formNo": {
+    "page": 1,
+    "x": 99,
+    "y": 683,
+    "width": 21,
+    "height": 16
+  },
+  "name": {
+    "page": 1,
+    "x": 200,
+    "y": 695,
+    "width": 127,
+    "height": 12
+  },
+  "regDate": {
+    "page": 1,
+    "x": 397,
+    "y": 667,
+    "width": 90,
+    "height": 14,
+    "whiteBg": true
+  },
+  "regTime": {
+    "page": 1,
+    "x": 497,
+    "y": 668,
+    "width": 60,
+    "height": 12,
+    "whiteBg": true
+  },
+  "email": {
+    "page": 1,
+    "x": 99,
+    "y": 637,
+    "width": 201,
+    "height": 11
+  },
+  "phone": {
+    "page": 1,
+    "x": 388,
+    "y": 637,
+    "width": 142,
+    "height": 9
+  },
+  "gender": {
+    "page": 1,
+    "x": 97,
+    "y": 595,
+    "width": 33,
+    "height": 9
+  },
+  "dob": {
+    "page": 1,
+    "x": 175,
+    "y": 595,
+    "width": 75,
+    "height": 12,
+    "whiteBg": true
+  },
+  "age": {
+    "page": 1,
+    "x": 267,
+    "y": 597,
+    "width": 25,
+    "height": 9
+  },
+  "govtIdProof": {
+    "page": 1,
+    "x": 327,
+    "y": 588,
+    "width": 75,
+    "height": 8
+  },
+  "govtIdProofNo": {
+    "page": 1,
+    "x": 422,
+    "y": 589,
+    "width": 133,
+    "height": 7
+  },
+  "occEmployee": {
+    "page": 1,
+    "x": 116,
+    "y": 549,
+    "width": 14,
+    "height": 9
+  },
+  "occBusinessman": {
+    "page": 1,
+    "x": 165,
+    "y": 548,
+    "width": 14,
+    "height": 8
+  },
+  "occStudent": {
+    "page": 1,
+    "x": 211,
+    "y": 550,
+    "width": 14,
+    "height": 7
+  },
+  "occupationName": {
+    "page": 1,
+    "x": 244,
+    "y": 540,
+    "width": 96,
+    "height": 12
+  },
+  "occupationId": {
+    "page": 1,
+    "x": 350,
+    "y": 540,
+    "width": 52,
+    "height": 12
+  },
+  "bloodGroup": {
+    "page": 1,
+    "x": 497,
+    "y": 553,
+    "width": 20,
+    "height": 12
+  },
+  "address": {
+    "page": 1,
+    "x": 96,
+    "y": 520,
+    "width": 287,
+    "height": 9
+  },
+  "city": {
+    "page": 1,
+    "x": 70,
+    "y": 491,
+    "width": 75,
+    "height": 8
+  },
+  "state": {
+    "page": 1,
+    "x": 181,
+    "y": 491,
+    "width": 60,
+    "height": 8
+  },
+  "pin": {
+    "page": 1,
+    "x": 293,
+    "y": 491,
+    "width": 98,
+    "height": 8
+  },
+  "height": {
+    "page": 1,
+    "x": 456,
+    "y": 513,
+    "width": 42,
+    "height": 11
+  },
+  "weight": {
+    "page": 1,
+    "x": 460,
+    "y": 487,
+    "width": 33,
+    "height": 9
+  },
+  "protectFlu": {
+    "page": 1,
+    "x": 45,
+    "y": 443,
+    "width": 9,
+    "height": 9
+  },
+  "protectHepA": {
+    "page": 1,
+    "x": 148,
+    "y": 443,
+    "width": 12,
+    "height": 10
+  },
+  "protectHpv": {
+    "page": 1,
+    "x": 261,
+    "y": 443,
+    "width": 9,
+    "height": 9
+  },
+  "protectTyphoid": {
+    "page": 1,
+    "x": 376,
+    "y": 442,
+    "width": 10,
+    "height": 9
+  },
+  "protectCovid19": {
+    "page": 1,
+    "x": 486,
+    "y": 442,
+    "width": 12,
+    "height": 12
+  },
+  "protectPneumonia": {
+    "page": 1,
+    "x": 44,
+    "y": 427,
+    "width": 12,
+    "height": 10
+  },
+  "protectHepB": {
+    "page": 1,
+    "x": 148,
+    "y": 427,
+    "width": 10,
+    "height": 10
+  },
+  "protectMeningitis": {
+    "page": 1,
+    "x": 259,
+    "y": 427,
+    "width": 10,
+    "height": 9
+  },
+  "protectVaricella": {
+    "page": 1,
+    "x": 375,
+    "y": 427,
+    "width": 12,
+    "height": 10
+  },
+  "protectOther": {
+    "page": 1,
+    "x": 484,
+    "y": 426,
+    "width": 13,
+    "height": 12
+  },
+  "otherSpecify": {
+    "page": 1,
+    "x": 142,
+    "y": 414,
+    "width": 401,
+    "height": 7
+  },
+  "q1_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 364,
+    "width": 12,
+    "height": 14
+  },
+  "q1_no": {
+    "page": 1,
+    "x": 525,
+    "y": 362,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q2_yes": {
+    "page": 1,
+    "x": 479,
+    "y": 344,
+    "width": 13,
+    "height": 14
+  },
+  "q2_no": {
+    "page": 1,
+    "x": 525,
+    "y": 344,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q3_yes": {
+    "page": 1,
+    "x": 479,
+    "y": 325,
+    "width": 14,
+    "height": 14
+  },
+  "q3_no": {
+    "page": 1,
+    "x": 524,
+    "y": 325,
+    "width": 15,
+    "height": 18,
+    "whiteBg": true
+  },
+  "q3_allergicTo": {
+    "page": 1,
+    "x": 227,
+    "y": 311,
+    "width": 219,
+    "height": 6
+  },
+  "q4_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 293,
+    "width": 12,
+    "height": 14
+  },
+  "q4_no": {
+    "page": 1,
+    "x": 525,
+    "y": 293,
+    "width": 14,
+    "height": 15,
+    "whiteBg": true
+  },
+  "q5_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 272,
+    "width": 12,
+    "height": 14
+  },
+  "q5_no": {
+    "page": 1,
+    "x": 525,
+    "y": 273,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q6_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 251,
+    "width": 12,
+    "height": 14
+  },
+  "q6_no": {
+    "page": 1,
+    "x": 525,
+    "y": 251,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q6_vaccineList": {
+    "page": 1,
+    "x": 89,
+    "y": 248,
+    "width": 98,
+    "height": 7
+  },
+  "q7_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 228,
+    "width": 12,
+    "height": 14
+  },
+  "q7_no": {
+    "page": 1,
+    "x": 525,
+    "y": 228,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q8_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 209,
+    "width": 13,
+    "height": 14
+  },
+  "q8_no": {
+    "page": 1,
+    "x": 524,
+    "y": 210,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q8_na": {
+    "page": 1,
+    "x": 502,
+    "y": 197,
+    "width": 12,
+    "height": 9
+  },
+  "q9_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 177,
+    "width": 12,
+    "height": 14
+  },
+  "q9_no": {
+    "page": 1,
+    "x": 524,
+    "y": 176,
+    "width": 14,
+    "height": 18,
+    "whiteBg": true
+  },
+  "q10_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 143,
+    "width": 12,
+    "height": 14
+  },
+  "q10_no": {
+    "page": 1,
+    "x": 524,
+    "y": 143,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q10_medicationList": {
+    "page": 1,
+    "x": 96,
+    "y": 130,
+    "width": 279,
+    "height": 6
+  },
+  "q11_yes": {
+    "page": 1,
+    "x": 480,
+    "y": 110,
+    "width": 12,
+    "height": 14
+  },
+  "q11_no": {
+    "page": 1,
+    "x": 524,
+    "y": 110,
+    "width": 14,
+    "height": 16,
+    "whiteBg": true
+  },
+  "q11_transfusionList": {
+    "page": 1,
+    "x": 95,
+    "y": 97,
+    "width": 311,
+    "height": 5
+  }
+}

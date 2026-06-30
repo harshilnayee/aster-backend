@@ -1,1 +1,281 @@
-{}
+{
+  "certificateSerialNo": {
+    "page": 1,
+    "x": 173,
+    "y": 698,
+    "width": 43,
+    "height": 13
+  },
+  "dateTop": {
+    "page": 1,
+    "x": 430,
+    "y": 695,
+    "width": 82,
+    "height": 14,
+    "whiteBg": true
+  },
+  "name": {
+    "page": 1,
+    "x": 124,
+    "y": 675,
+    "width": 180,
+    "height": 12
+  },
+  "identificationMarks": {
+    "page": 1,
+    "x": 186,
+    "y": 654,
+    "width": 120,
+    "height": 11
+  },
+  "fatherName": {
+    "page": 1,
+    "x": 150,
+    "y": 630,
+    "width": 195,
+    "height": 9
+  },
+  "sex": {
+    "page": 1,
+    "x": 145,
+    "y": 606,
+    "width": 81,
+    "height": 16,
+    "whiteBg": true
+  },
+  "mobileNo": {
+    "page": 1,
+    "x": 355,
+    "y": 607,
+    "width": 84,
+    "height": 11
+  },
+  "residence": {
+    "page": 1,
+    "x": 131,
+    "y": 583,
+    "width": 392,
+    "height": 11
+  },
+  "dob": {
+    "page": 1,
+    "x": 187,
+    "y": 560,
+    "width": 96,
+    "height": 7,
+    "whiteBg": true
+  },
+  "aadharNo": {
+    "page": 1,
+    "x": 346,
+    "y": 559,
+    "width": 168,
+    "height": 12
+  },
+  "height": {
+    "page": 1,
+    "x": 198,
+    "y": 516,
+    "width": 75,
+    "height": 15,
+    "whiteBg": true
+  },
+  "weight": {
+    "page": 1,
+    "x": 198,
+    "y": 499,
+    "width": 75,
+    "height": 12
+  },
+  "bloodPressure": {
+    "page": 1,
+    "x": 198,
+    "y": 478,
+    "width": 75,
+    "height": 14,
+    "whiteBg": true
+  },
+  "pulse": {
+    "page": 1,
+    "x": 198,
+    "y": 454,
+    "width": 75,
+    "height": 12,
+    "whiteBg": true
+  },
+  "hearing": {
+    "page": 1,
+    "x": 198,
+    "y": 431,
+    "width": 75,
+    "height": 12
+  },
+  "refractiveError": {
+    "page": 1,
+    "x": 198,
+    "y": 407,
+    "width": 75,
+    "height": 12
+  },
+  "colourVision": {
+    "page": 1,
+    "x": 198,
+    "y": 383,
+    "width": 75,
+    "height": 10
+  },
+  "anyDisability": {
+    "page": 1,
+    "x": 198,
+    "y": 360,
+    "width": 75,
+    "height": 14
+  },
+  "armFunctionGrip": {
+    "page": 1,
+    "x": 198,
+    "y": 338,
+    "width": 75,
+    "height": 9
+  },
+  "legFootFunction": {
+    "page": 1,
+    "x": 198,
+    "y": 312,
+    "width": 75,
+    "height": 12
+  },
+  "varicose": {
+    "page": 1,
+    "x": 435,
+    "y": 516,
+    "width": 80,
+    "height": 11
+  },
+  "seizure": {
+    "page": 1,
+    "x": 435,
+    "y": 499,
+    "width": 80,
+    "height": 8
+  },
+  "vertigo": {
+    "page": 1,
+    "x": 435,
+    "y": 478,
+    "width": 80,
+    "height": 12
+  },
+  "acrophobia": {
+    "page": 1,
+    "x": 435,
+    "y": 454,
+    "width": 80,
+    "height": 9
+  },
+  "diabetes": {
+    "page": 1,
+    "x": 435,
+    "y": 431,
+    "width": 80,
+    "height": 9
+  },
+  "stroke": {
+    "page": 1,
+    "x": 435,
+    "y": 407,
+    "width": 80,
+    "height": 11
+  },
+  "heartDiseases": {
+    "page": 1,
+    "x": 435,
+    "y": 383,
+    "width": 80,
+    "height": 7
+  },
+  "majorIllnessOrSurgery": {
+    "page": 1,
+    "x": 435,
+    "y": 360,
+    "width": 80,
+    "height": 10
+  },
+  "symptomsVisible": {
+    "page": 1,
+    "x": 435,
+    "y": 338,
+    "width": 80,
+    "height": 8
+  },
+  "othersIfAny": {
+    "page": 1,
+    "x": 435,
+    "y": 312,
+    "width": 80,
+    "height": 9
+  },
+  "residingAt": {
+    "page": 1,
+    "x": 367,
+    "y": 279,
+    "width": 145,
+    "height": 13
+  },
+  "fitForEmploymentIn": {
+    "page": 1,
+    "x": 171,
+    "y": 267,
+    "width": 81,
+    "height": 6
+  },
+  "ascertainedAge": {
+    "page": 1,
+    "x": 473,
+    "y": 254,
+    "width": 26,
+    "height": 7
+  },
+  "fitStatus": {
+    "page": 1,
+    "x": 218,
+    "y": 244,
+    "width": 22,
+    "height": 7
+  },
+  "reasonRefusal": {
+    "page": 1,
+    "x": 171,
+    "y": 205,
+    "width": 42,
+    "height": 9
+  },
+  "reasonRevoked": {
+    "page": 1,
+    "x": 334,
+    "y": 204,
+    "width": 42,
+    "height": 11
+  },
+  "patientSignature": {
+    "page": 1,
+    "x": 93,
+    "y": 141,
+    "width": 153,
+    "height": 49
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 390,
+    "y": 138,
+    "width": 129,
+    "height": 53
+  },
+  "companyName": {
+    "page": 1,
+    "x": 156,
+    "y": 56,
+    "width": 168,
+    "height": 14
+  }
+}

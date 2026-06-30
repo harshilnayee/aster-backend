@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { PDFDocument, rgb, StandardFonts } = require("pdf-lib");
+const { PDFDocument, rgb, StandardFonts, PDFName } = require("pdf-lib");
 
 // Helper to get registry path
 const getRegistryPath = () => path.join(__dirname, "../config/formRegistry.json");
@@ -97,6 +97,27 @@ async function fillPdfForm(req, res, next) {
       return res.status(500).json({ message: `Coordinates file not found: ${formConfig.coordinatesFile}` });
     }
     const coords = JSON.parse(fs.readFileSync(coordsPath, "utf8"));
+    
+    // Read doctor signature base64 if it exists on disk
+    let doctorSignatureBase64 = null;
+    const docSignPath = "C:\\Projects\\sajanbhai\\doctor_sign_drsajan.png";
+    if (fs.existsSync(docSignPath)) {
+      const docSignBytes = fs.readFileSync(docSignPath);
+      doctorSignatureBase64 = `data:image/png;base64,${docSignBytes.toString("base64")}`;
+    }
+
+    // Auto-inject doctor signature base64 if defined in coordinates
+    const doctorKeys = ["doctorSignature", "doctorSignatureRow", "doctorStamp", "signatureMedicalOfficer"];
+    for (const key of doctorKeys) {
+      if (coords[key] && doctorSignatureBase64) {
+        values[key] = doctorSignatureBase64;
+      }
+    }
+
+    // For food handler certificate, also draw doctor's signature in the candidate's signature box
+    if (formId === "17-form-food-handler-certificate" && doctorSignatureBase64) {
+      values["patientSignature"] = doctorSignatureBase64;
+    }
 
     // 3. Load original PDF
     const pdfPath = path.join(__dirname, "../../all forms", formConfig.pdfFile);
@@ -108,6 +129,26 @@ async function fillPdfForm(req, res, next) {
     // 4. Load PDFDocument and draw text
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const zapfFont = await pdfDoc.embedFont(StandardFonts.ZapfDingbats);
+    
+    // Remove annotations (including the white filled square box covering signature) specifically for Form 5 and Form 36
+    if (formId === "5-form-height-pass" || formId === "36-form-airport-bohw-ht-back") {
+      const allPages = pdfDoc.getPages();
+      if (allPages.length > 0) {
+        const page = allPages[0];
+        page.node.delete(PDFName.of('Annots'));
+        // Manually draw signature box outline at the exact same location
+        page.drawRectangle({
+          x: 99.43,
+          y: 65.48,
+          width: 141.95,
+          height: 54.24,
+          borderColor: rgb(0, 0, 0),
+          borderWidth: 1.2
+        });
+      }
+    }
     
     // Draw each provided field value
     for (const [fieldName, val] of Object.entries(values)) {
@@ -126,9 +167,19 @@ async function fillPdfForm(req, res, next) {
 
           // Check if it's a binary choice field with yes/no sub-coordinates
           if (coord.yes && coord.no) {
+            // If the "no" option has a whiteBg specified, clear it first (e.g. to cover pre-printed checkmarks)
+            if (coord.no.whiteBg && coord.no.width && coord.no.height) {
+              page.drawRectangle({
+                x: Number(coord.no.x),
+                y: Number(coord.no.y),
+                width: Number(coord.no.width),
+                height: Number(coord.no.height),
+                color: rgb(1, 1, 1),
+              });
+            }
             const isYes = String(val).toUpperCase() === "YES" || val === true;
             finalCoord = isYes ? coord.yes : coord.no;
-            drawVal = "X";
+            drawVal = "√";
             textX = Number(finalCoord.x);
             textY = Number(finalCoord.y);
           }
@@ -186,10 +237,18 @@ async function fillPdfForm(req, res, next) {
             }
           } else {
             // Draw standard text at calculated/centered coordinates
+            let currentFontSize = Number(finalCoord.fontSize || formConfig.defaultFontSize || 11);
+            let currentFont = finalCoord.bold ? helveticaBoldFont : helveticaFont;
+
+            if (drawVal === "√" || drawVal === "\u2713" || drawVal === "\u2714") {
+              currentFont = zapfFont;
+              drawVal = "\u2714";
+            }
+
             if ((finalCoord.centerText || (coord.yes && coord.no)) && finalCoord.width && finalCoord.height) {
               try {
-                const textWidth = helveticaFont.widthOfTextAtSize(String(drawVal), 11);
-                const textHeight = 7.7; // ~0.7 * 11 cap height
+                const textWidth = currentFont.widthOfTextAtSize(String(drawVal), currentFontSize);
+                const textHeight = 0.7 * currentFontSize; // ~0.7 * size cap height
                 textX = Number(finalCoord.x) + (Number(finalCoord.width) - textWidth) / 2;
                 textY = Number(finalCoord.y) + (Number(finalCoord.height) - textHeight) / 2;
               } catch (err) {
@@ -200,8 +259,8 @@ async function fillPdfForm(req, res, next) {
             page.drawText(String(drawVal), {
               x: textX,
               y: textY,
-              size: 11,
-              font: helveticaFont,
+              size: currentFontSize,
+              font: currentFont,
             });
           }
         }
@@ -220,8 +279,23 @@ async function fillPdfForm(req, res, next) {
   }
 }
 
+async function getDoctorSignature(req, res, next) {
+  try {
+    const docSignPath = "C:\\Projects\\sajanbhai\\doctor_sign_drsajan.png";
+    if (fs.existsSync(docSignPath)) {
+      return res.sendFile(docSignPath);
+    } else {
+      return res.status(404).json({ message: "Doctor signature not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching doctor signature:", error);
+    next(error);
+  }
+}
+
 module.exports = {
   getForms,
   getFormCoordinates,
-  fillPdfForm
+  fillPdfForm,
+  getDoctorSignature
 };

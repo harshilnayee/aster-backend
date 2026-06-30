@@ -1,1 +1,162 @@
-{}
+{
+  "dataCollectedBy": {
+    "page": 1,
+    "x": 486,
+    "y": 707,
+    "width": 50,
+    "height": 9
+  },
+  "vaccineBrandName": {
+    "page": 1,
+    "x": 166,
+    "y": 480,
+    "width": 125,
+    "height": 9
+  },
+  "site": {
+    "page": 1,
+    "x": 84,
+    "y": 453,
+    "width": 41,
+    "height": 7
+  },
+  "route": {
+    "page": 1,
+    "x": 95,
+    "y": 422,
+    "width": 196,
+    "height": 12
+  },
+  "dose": {
+    "page": 1,
+    "x": 93,
+    "y": 396,
+    "width": 196,
+    "height": 9
+  },
+  "batchNumber": {
+    "page": 1,
+    "x": 112,
+    "y": 367,
+    "width": 159,
+    "height": 9
+  },
+  "givenOn": {
+    "page": 1,
+    "x": 112,
+    "y": 336,
+    "width": 102,
+    "height": 13,
+    "whiteBg": true
+  },
+  "manufacturer": {
+    "page": 1,
+    "x": 395,
+    "y": 479,
+    "width": 144,
+    "height": 10
+  },
+  "expiryDate": {
+    "page": 1,
+    "x": 419,
+    "y": 450,
+    "width": 101,
+    "height": 13,
+    "whiteBg": true
+  },
+  "dueOn": {
+    "page": 1,
+    "x": 369,
+    "y": 421,
+    "width": 101,
+    "height": 13,
+    "whiteBg": true
+  },
+  "nextDoseDate": {
+    "page": 1,
+    "x": 412,
+    "y": 393,
+    "width": 106,
+    "height": 12,
+    "whiteBg": true
+  },
+  "diluentBatchNumber": {
+    "page": 1,
+    "x": 419,
+    "y": 366,
+    "width": 114,
+    "height": 9
+  },
+  "diluentExpiryDate": {
+    "page": 1,
+    "x": 424,
+    "y": 335,
+    "width": 99,
+    "height": 14,
+    "whiteBg": true
+  },
+  "vaccineSticker": {
+    "page": 1,
+    "x": 245,
+    "y": 266,
+    "width": 310,
+    "height": 55
+  },
+  "certPatientName": {
+    "page": 1,
+    "x": 212,
+    "y": 181,
+    "width": 234,
+    "height": 12
+  },
+  "certVaccineName": {
+    "page": 1,
+    "x": 68,
+    "y": 160,
+    "width": 154,
+    "height": 9
+  },
+  "certVaccinationDate": {
+    "page": 1,
+    "x": 349,
+    "y": 160,
+    "width": 145,
+    "height": 9
+  },
+  "certDateTime": {
+    "page": 1,
+    "x": 312,
+    "y": 79,
+    "width": 147,
+    "height": 10,
+    "whiteBg": true
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 338,
+    "y": 33,
+    "width": 91,
+    "height": 37
+  },
+  "patientSignature": {
+    "page": 1,
+    "x": 114,
+    "y": 527,
+    "width": 196,
+    "height": 50
+  },
+  "guardianSignature": {
+    "page": 1,
+    "x": 114,
+    "y": 527,
+    "width": 196,
+    "height": 50
+  },
+  "vaccineImage": {
+    "page": 1,
+    "x": 345,
+    "y": 530,
+    "width": 202,
+    "height": 48
+  }
+}

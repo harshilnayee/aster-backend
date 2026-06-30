@@ -2,7 +2,8 @@
   "10-form-ophthal-form-6": {
     "displayName": "10 FORM Ophthal Form 6",
     "pdfFile": "10_FORM_Ophthal_Form_6.pdf",
-    "coordinatesFile": "10-form-ophthal-form-6.json"
+    "coordinatesFile": "10-form-ophthal-form-6.json",
+    "defaultFontSize": 9
   },
   "11-form-audiometry-front": {
     "displayName": "11 FORM Audiometry Front",
@@ -72,7 +73,8 @@
   "5-form-height-pass": {
     "displayName": "5 FORM Height Pass",
     "pdfFile": "5_FORM_Height_Pass.pdf",
-    "coordinatesFile": "5-form-height-pass.json"
+    "coordinatesFile": "5-form-height-pass.json",
+    "defaultFontSize": 9
   },
   "9-form-ophthal-back": {
     "displayName": "9 FORM Ophthal BACK",
