@@ -236,10 +236,10 @@
   },
   "bottomSignatureDate": {
     "page": 1,
-    "x": 484,
-    "y": 104,
-    "width": 56,
-    "height": 10,
+    "x": 481,
+    "y": 105,
+    "width": 68,
+    "height": 9,
     "whiteBg": true
   }
 }
