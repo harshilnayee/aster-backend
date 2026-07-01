@@ -32,123 +32,131 @@
   },
   "department": {
     "page": 1,
-    "x": 362,
+    "x": 340,
     "y": 633,
-    "width": 145,
+    "width": 205,
     "height": 10,
     "whiteBg": true
   },
   "hazardousProcess": {
     "page": 1,
-    "x": 362,
+    "x": 340,
     "y": 618,
-    "width": 145,
+    "width": 205,
     "height": 10,
     "whiteBg": true
   },
   "dangerousProcess": {
     "page": 1,
-    "x": 425,
+    "x": 340,
     "y": 604,
-    "width": 35,
+    "width": 205,
     "height": 9,
     "whiteBg": true
   },
   "natureOfJob": {
     "page": 1,
-    "x": 362,
+    "x": 340,
     "y": 588,
-    "width": 158,
+    "width": 205,
     "height": 9,
     "whiteBg": true
   },
   "materialsExposed": {
     "page": 1,
-    "x": 408,
+    "x": 340,
     "y": 565,
-    "width": 76,
+    "width": 205,
     "height": 12,
     "whiteBg": true
   },
   "dateOfPosting": {
     "page": 1,
-    "x": 369,
+    "x": 340,
     "y": 545,
-    "width": 137,
-    "height": 8
+    "width": 205,
+    "height": 8,
+    "whiteBg": true
   },
   "dateOfLeaving": {
     "page": 1,
-    "x": 369,
+    "x": 340,
     "y": 531,
-    "width": 137,
-    "height": 7
+    "width": 205,
+    "height": 7,
+    "whiteBg": true
   },
   "reasonForLeaving": {
     "page": 1,
-    "x": 369,
+    "x": 340,
     "y": 507,
-    "width": 137,
-    "height": 9
+    "width": 205,
+    "height": 9,
+    "whiteBg": true
   },
   "examDate": {
     "page": 1,
-    "x": 409,
+    "x": 340,
     "y": 483,
-    "width": 81,
+    "width": 205,
     "height": 12,
     "whiteBg": true
   },
   "signsSymptoms": {
     "page": 1,
-    "x": 385,
+    "x": 340,
     "y": 449,
-    "width": 116,
-    "height": 20
+    "width": 205,
+    "height": 20,
+    "whiteBg": true
   },
   "natureOfTests": {
     "page": 1,
-    "x": 328,
+    "x": 340,
     "y": 427,
-    "width": 223,
+    "width": 205,
     "height": 9,
     "whiteBg": true
   },
   "result": {
     "page": 1,
-    "x": 416,
+    "x": 340,
     "y": 410,
-    "width": 48,
+    "width": 205,
     "height": 12,
     "whiteBg": true
   },
   "temporaryWithdrawal": {
     "page": 1,
-    "x": 381,
+    "x": 340,
     "y": 380,
-    "width": 121,
-    "height": 9
+    "width": 205,
+    "height": 9,
+    "whiteBg": true
   },
   "reasonForWithdrawal": {
     "page": 1,
-    "x": 374,
+    "x": 340,
     "y": 341,
-    "width": 141,
-    "height": 10
+    "width": 205,
+    "height": 10,
+    "whiteBg": true
   },
   "dateDeclaredUnfit": {
     "page": 1,
-    "x": 370,
+    "x": 340,
     "y": 315,
-    "width": 141,
-    "height": 13
+    "width": 205,
+    "height": 13,
+    "whiteBg": true
   },
   "dateOfFitnessCertificate": {
     "page": 1,
-    "x": 375,
+    "x": 340,
     "y": 285,
-    "width": 137,
-    "height": 12
+    "width": 205,
+    "height": 12,
+    "whiteBg": true
   },
   "doctorSignature": {
     "page": 1,
