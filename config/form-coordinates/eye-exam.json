@@ -413,7 +413,7 @@
     "page": 1,
     "x": 409,
     "y": 189,
-    "width": 170,
+    "width": 130,
     "height": 9,
     "whiteBg": true
   },
@@ -429,7 +429,7 @@
     "page": 1,
     "x": 409,
     "y": 177,
-    "width": 170,
+    "width": 130,
     "height": 9,
     "whiteBg": true
   },
@@ -445,7 +445,7 @@
     "page": 1,
     "x": 409,
     "y": 166,
-    "width": 170,
+    "width": 130,
     "height": 7,
     "whiteBg": true
   },
@@ -461,7 +461,7 @@
     "page": 1,
     "x": 410,
     "y": 154,
-    "width": 170,
+    "width": 130,
     "height": 7,
     "whiteBg": true
   },
@@ -477,7 +477,7 @@
     "page": 1,
     "x": 409,
     "y": 141,
-    "width": 170,
+    "width": 130,
     "height": 8,
     "whiteBg": true
   },
