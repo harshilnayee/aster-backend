@@ -172,7 +172,9 @@
     "y": 375,
     "width": 29,
     "height": 9,
-    "whiteBg": true
+    "whiteBg": true,
+    "fontSize": 8.5,
+    "centerText": true
   },
   "pronounHeShe1": {
     "page": 1,
@@ -180,7 +182,9 @@
     "y": 347,
     "width": 31,
     "height": 10,
-    "whiteBg": true
+    "whiteBg": true,
+    "fontSize": 8.5,
+    "centerText": true
   },
   "certificateDateTime": {
     "page": 1,

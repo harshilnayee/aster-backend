@@ -131,6 +131,8 @@ async function fillPdfForm(req, res, next) {
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const zapfFont = await pdfDoc.embedFont(StandardFonts.ZapfDingbats);
+    const timesFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+    const timesBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
     
     // Remove annotations (including the white filled square box covering signature) specifically for Form 5 and Form 36
     if (formId === "5-form-height-pass" || formId === "36-form-airport-bohw-ht-back") {
@@ -236,6 +238,11 @@ async function fillPdfForm(req, res, next) {
             // Draw standard text at calculated/centered coordinates
             let currentFontSize = Number(finalCoord.fontSize || formConfig.defaultFontSize || 11);
             let currentFont = finalCoord.bold ? helveticaBoldFont : helveticaFont;
+
+            const preferredFont = finalCoord.font || formConfig.defaultFont;
+            if (preferredFont === "TimesRoman") {
+              currentFont = finalCoord.bold ? timesBoldFont : timesFont;
+            }
 
             if (drawVal === "√" || drawVal === "\u2713" || drawVal === "\u2714") {
               currentFont = zapfFont;

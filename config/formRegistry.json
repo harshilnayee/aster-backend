@@ -68,7 +68,9 @@
   "form33": {
     "displayName": "Form No. 33 (Fitness Certificate)",
     "pdfFile": "6 FORM 33.pdf",
-    "coordinatesFile": "form-33.json"
+    "coordinatesFile": "form-33.json",
+    "defaultFont": "TimesRoman",
+    "defaultFontSize": 9.5
   },
   "36-form-airport-bohw-ht-back": {
     "displayName": "36 FORM Airport BOHW-HT Back",
