@@ -57,7 +57,8 @@
     "x": 362,
     "y": 588,
     "width": 158,
-    "height": 9
+    "height": 9,
+    "whiteBg": true
   },
   "materialsExposed": {
     "page": 1,
