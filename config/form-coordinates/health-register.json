@@ -106,7 +106,8 @@
     "x": 328,
     "y": 427,
     "width": 223,
-    "height": 9
+    "height": 9,
+    "whiteBg": true
   },
   "result": {
     "page": 1,
