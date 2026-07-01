@@ -27,7 +27,8 @@
     "x": 332,
     "y": 669,
     "width": 64,
-    "height": 12
+    "height": 12,
+    "whiteBg": true
   },
   "department": {
     "page": 1,
