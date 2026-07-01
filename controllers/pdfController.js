@@ -150,58 +150,55 @@ async function fillPdfForm(req, res, next) {
       }
     }
     
-    // Draw each provided field value
-    for (const [fieldName, val] of Object.entries(values)) {
-      const coord = coords[fieldName];
-      if (coord && val) {
-        const pageIndex = (coord.page || 1) - 1;
-        const totalPages = pdfDoc.getPageCount();
+    // Draw each provided field value or coordinate (so we can clear empty inputs with whiteBg)
+    for (const [fieldName, coord] of Object.entries(coords)) {
+      const val = values[fieldName];
+      const pageIndex = (coord.page || 1) - 1;
+      const totalPages = pdfDoc.getPageCount();
+      
+      if (pageIndex >= 0 && pageIndex < totalPages) {
+        const page = pdfDoc.getPage(pageIndex);
         
-        if (pageIndex >= 0 && pageIndex < totalPages) {
-          const page = pdfDoc.getPage(pageIndex);
-          
-          let textX = Number(coord.x);
-          let textY = Number(coord.y);
-          let drawVal = String(val);
-          let finalCoord = coord;
+        let textX = Number(coord.x);
+        let textY = Number(coord.y);
+        let drawVal = val !== undefined && val !== null ? String(val) : "";
+        let finalCoord = coord;
 
-          // Check if it's a binary choice field with yes/no sub-coordinates
-          if (coord.yes && coord.no) {
-            // If the "no" option has a whiteBg specified, clear it first (e.g. to cover pre-printed checkmarks)
-            if (coord.no.whiteBg && coord.no.width && coord.no.height) {
-              page.drawRectangle({
-                x: Number(coord.no.x),
-                y: Number(coord.no.y),
-                width: Number(coord.no.width),
-                height: Number(coord.no.height),
-                color: rgb(1, 1, 1),
-              });
-            }
-            const isYes = String(val).toUpperCase() === "YES" || val === true;
-            finalCoord = isYes ? coord.yes : coord.no;
-            drawVal = "√";
-            textX = Number(finalCoord.x);
-            textY = Number(finalCoord.y);
-          }
-
-          // Draw white background if requested and dimensions are present
-          if (finalCoord.whiteBg && finalCoord.width && finalCoord.height) {
+        // Check if it's a binary choice field with yes/no sub-coordinates
+        if (coord.yes && coord.no) {
+          // If the "no" option has a whiteBg specified, clear it first (e.g. to cover pre-printed checkmarks)
+          if (coord.no.whiteBg && coord.no.width && coord.no.height) {
             page.drawRectangle({
-              x: Number(finalCoord.x),
-              y: Number(finalCoord.y),
-              width: Number(finalCoord.width),
-              height: Number(finalCoord.height),
+              x: Number(coord.no.x),
+              y: Number(coord.no.y),
+              width: Number(coord.no.width),
+              height: Number(coord.no.height),
               color: rgb(1, 1, 1),
             });
           }
+          const isYes = String(val).toUpperCase() === "YES" || val === true;
+          finalCoord = isYes ? coord.yes : coord.no;
+          drawVal = "√";
+        }
 
+        // Draw white background if requested and dimensions are present (regardless of whether val is empty)
+        if (finalCoord.whiteBg && finalCoord.width && finalCoord.height) {
+          page.drawRectangle({
+            x: Number(finalCoord.x),
+            y: Number(finalCoord.y),
+            width: Number(finalCoord.width),
+            height: Number(finalCoord.height),
+            color: rgb(1, 1, 1),
+          });
+        }
+
+        // Draw standard content only if a valid value exists
+        if (val !== undefined && val !== null && val !== "") {
           if (finalCoord.drawCircle && finalCoord.width && finalCoord.height) {
             try {
               const centerX = Number(finalCoord.x) + Number(finalCoord.width) / 2;
               const centerY = Number(finalCoord.y) + Number(finalCoord.height) / 2;
-              // Circle radius is half the min dimension, slightly enlarged by 1.5 units to circle "over" the box cleanly
               const radius = (Math.min(Number(finalCoord.width), Number(finalCoord.height)) / 2) + 1.5;
-              
               page.drawCircle({
                 x: centerX,
                 y: centerY,
@@ -248,7 +245,7 @@ async function fillPdfForm(req, res, next) {
             if ((finalCoord.centerText || (coord.yes && coord.no)) && finalCoord.width && finalCoord.height) {
               try {
                 const textWidth = currentFont.widthOfTextAtSize(String(drawVal), currentFontSize);
-                const textHeight = 0.7 * currentFontSize; // ~0.7 * size cap height
+                const textHeight = 0.7 * currentFontSize;
                 textX = Number(finalCoord.x) + (Number(finalCoord.width) - textWidth) / 2;
                 textY = Number(finalCoord.y) + (Number(finalCoord.height) - textHeight) / 2;
               } catch (err) {
@@ -261,6 +258,7 @@ async function fillPdfForm(req, res, next) {
               y: textY,
               size: currentFontSize,
               font: currentFont,
+              color: rgb(0, 0, 0),
             });
           }
         }
