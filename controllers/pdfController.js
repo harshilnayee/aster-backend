@@ -107,7 +107,7 @@ async function fillPdfForm(req, res, next) {
     }
 
     // Auto-inject doctor signature base64 if defined in coordinates
-    const doctorKeys = ["doctorSignature", "doctorSignatureRow", "doctorStamp", "signatureMedicalOfficer"];
+    const doctorKeys = ["doctorSignature", "doctorSignatureRow", "signatureMedicalOfficer"];
     for (const key of doctorKeys) {
       if (coords[key] && doctorSignatureBase64) {
         values[key] = doctorSignatureBase64;
