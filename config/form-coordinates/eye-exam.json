@@ -181,7 +181,10 @@
     "y": 415,
     "width": 64,
     "height": 22,
-    "whiteBg": true
+    "whiteBg": true,
+    "multiline": true,
+    "maxChars": 20,
+    "centerText": true
   },
   "pupilLeft": {
     "page": 1,
@@ -189,7 +192,10 @@
     "y": 414,
     "width": 66,
     "height": 22,
-    "whiteBg": true
+    "whiteBg": true,
+    "multiline": true,
+    "maxChars": 20,
+    "centerText": true
   },
   "retinaRight": {
     "page": 1,

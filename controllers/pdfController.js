@@ -261,24 +261,56 @@ async function fillPdfForm(req, res, next) {
               drawVal = "\u2714";
             }
 
-            if ((finalCoord.centerText || (coord.yes && coord.no)) && finalCoord.width && finalCoord.height) {
-              try {
-                const textWidth = currentFont.widthOfTextAtSize(String(drawVal), currentFontSize);
-                const textHeight = 0.7 * currentFontSize;
-                textX = Number(finalCoord.x) + (Number(finalCoord.width) - textWidth) / 2;
-                textY = Number(finalCoord.y) + (Number(finalCoord.height) - textHeight) / 2;
-              } catch (err) {
-                console.error("Error centering text:", err);
+            const wrapText = (text, maxChars) => {
+              const words = text.split(" ");
+              const lines = [];
+              let currentLine = "";
+              for (const word of words) {
+                if ((currentLine + " " + word).trim().length <= maxChars) {
+                  currentLine = (currentLine + " " + word).trim();
+                } else {
+                  if (currentLine) lines.push(currentLine);
+                  currentLine = word;
+                }
               }
+              if (currentLine) lines.push(currentLine);
+              return lines;
+            };
+
+            let lines = [String(drawVal)];
+            if (finalCoord.multiline && finalCoord.maxChars) {
+              lines = wrapText(String(drawVal), finalCoord.maxChars);
+            } else if (String(drawVal).includes("\n")) {
+              lines = String(drawVal).split("\n");
             }
 
-            page.drawText(String(drawVal), {
-              x: textX,
-              y: textY,
-              size: currentFontSize,
-              font: currentFont,
-              color: rgb(0, 0, 0),
-            });
+            const lineHeight = currentFontSize * 1.2;
+            const totalTextHeight = lines.length * lineHeight;
+
+            let initialY = textY;
+            if (finalCoord.centerText && finalCoord.height) {
+              initialY = Number(finalCoord.y) + (Number(finalCoord.height) - totalTextHeight) / 2 + (lines.length - 1) * lineHeight;
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i];
+              let lineX = textX;
+              if (finalCoord.centerText && finalCoord.width) {
+                try {
+                  const lineWidth = currentFont.widthOfTextAtSize(line, currentFontSize);
+                  lineX = Number(finalCoord.x) + (Number(finalCoord.width) - lineWidth) / 2;
+                } catch (err) {
+                  console.error("Error centering line:", err);
+                }
+              }
+              page.drawText(line, {
+                x: lineX,
+                y: initialY - i * lineHeight,
+                size: currentFontSize,
+                font: currentFont,
+                color: rgb(0, 0, 0),
+              });
+            }
           }
         }
       }
