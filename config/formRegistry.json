@@ -65,6 +65,11 @@
     "pdfFile": "7 FORM 32.pdf",
     "coordinatesFile": "health-register.json"
   },
+  "form33": {
+    "displayName": "Form No. 33 (Fitness Certificate)",
+    "pdfFile": "6 FORM 33.pdf",
+    "coordinatesFile": "form-33.json"
+  },
   "36-form-airport-bohw-ht-back": {
     "displayName": "36 FORM Airport BOHW-HT Back",
     "pdfFile": "36_FORM_Airport_BOHW-HT_Back.pdf",

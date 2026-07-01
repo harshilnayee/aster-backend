@@ -1,0 +1,241 @@
+{
+  "serialNumber": {
+    "page": 1,
+    "x": 334,
+    "y": 727,
+    "width": 192,
+    "height": 7
+  },
+  "workerName": {
+    "page": 1,
+    "x": 332,
+    "y": 700,
+    "width": 98,
+    "height": 10,
+    "whiteBg": true
+  },
+  "fatherHusbandName": {
+    "page": 1,
+    "x": 332,
+    "y": 675,
+    "width": 119,
+    "height": 10,
+    "whiteBg": true
+  },
+  "gender": {
+    "page": 1,
+    "x": 332,
+    "y": 650,
+    "width": 27,
+    "height": 10,
+    "whiteBg": true
+  },
+  "residenceLine1": {
+    "page": 1,
+    "x": 332,
+    "y": 624,
+    "width": 205,
+    "height": 10,
+    "whiteBg": true
+  },
+  "residenceLine2": {
+    "page": 1,
+    "x": 326,
+    "y": 602,
+    "width": 108,
+    "height": 9,
+    "whiteBg": true
+  },
+  "pinCode": {
+    "page": 1,
+    "x": 483,
+    "y": 599,
+    "width": 31,
+    "height": 10,
+    "whiteBg": true
+  },
+  "city": {
+    "page": 1,
+    "x": 351,
+    "y": 574,
+    "width": 59,
+    "height": 10,
+    "whiteBg": true
+  },
+  "state": {
+    "page": 1,
+    "x": 454,
+    "y": 573,
+    "width": 44,
+    "height": 10,
+    "whiteBg": true
+  },
+  "dob": {
+    "page": 1,
+    "x": 334,
+    "y": 549,
+    "width": 48,
+    "height": 8,
+    "whiteBg": true
+  },
+  "factoryName": {
+    "page": 1,
+    "x": 334,
+    "y": 521,
+    "width": 189,
+    "height": 10,
+    "whiteBg": true
+  },
+  "hazardousYes": {
+    "page": 1,
+    "x": 335,
+    "y": 473,
+    "width": 17,
+    "height": 8,
+    "whiteBg": true
+  },
+  "hazardousNo": {
+    "page": 1,
+    "x": 357,
+    "y": 471,
+    "width": 14,
+    "height": 9,
+    "whiteBg": true
+  },
+  "hazardousArea": {
+    "page": 1,
+    "x": 430,
+    "y": 473,
+    "width": 60,
+    "height": 8,
+    "whiteBg": true
+  },
+  "dangerousYes": {
+    "page": 1,
+    "x": 335,
+    "y": 447,
+    "width": 16,
+    "height": 10,
+    "whiteBg": true
+  },
+  "dangerousNo": {
+    "page": 1,
+    "x": 357,
+    "y": 447,
+    "width": 14,
+    "height": 9,
+    "whiteBg": true
+  },
+  "dangerousArea": {
+    "page": 1,
+    "x": 432,
+    "y": 447,
+    "width": 56,
+    "height": 9,
+    "whiteBg": true
+  },
+  "identificationMarks": {
+    "page": 1,
+    "x": 63,
+    "y": 393,
+    "width": 256,
+    "height": 10,
+    "whiteBg": true
+  },
+  "examinedAge": {
+    "page": 1,
+    "x": 515,
+    "y": 374,
+    "width": 22,
+    "height": 10,
+    "whiteBg": true
+  },
+  "unfitReason": {
+    "page": 1,
+    "x": 119,
+    "y": 310,
+    "width": 86,
+    "height": 8,
+    "whiteBg": true
+  },
+  "previousCertificate": {
+    "page": 1,
+    "x": 293,
+    "y": 287,
+    "width": 86,
+    "height": 10,
+    "whiteBg": true
+  },
+  "pronounHisHer1": {
+    "page": 1,
+    "x": 251,
+    "y": 375,
+    "width": 29,
+    "height": 9,
+    "whiteBg": true
+  },
+  "pronounHeShe1": {
+    "page": 1,
+    "x": 159,
+    "y": 347,
+    "width": 31,
+    "height": 10,
+    "whiteBg": true
+  },
+  "certificateDateTime": {
+    "page": 1,
+    "x": 312,
+    "y": 220,
+    "width": 147,
+    "height": 10,
+    "whiteBg": true
+  },
+  "patientSignature": {
+    "page": 1,
+    "x": 87,
+    "y": 221,
+    "width": 172,
+    "height": 33,
+    "whiteBg": true
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 400,
+    "y": 187,
+    "width": 118,
+    "height": 27,
+    "whiteBg": true
+  },
+  "bottomExamDate": {
+    "page": 1,
+    "x": 78,
+    "y": 105,
+    "width": 51,
+    "height": 9,
+    "whiteBg": true
+  },
+  "bottomUnfitPeriod": {
+    "page": 1,
+    "x": 177,
+    "y": 105,
+    "width": 150,
+    "height": 9,
+    "whiteBg": true
+  },
+  "bottomSymptoms": {
+    "page": 1,
+    "x": 344,
+    "y": 104,
+    "width": 91,
+    "height": 12,
+    "whiteBg": true
+  },
+  "bottomSignatureDate": {
+    "page": 1,
+    "x": 484,
+    "y": 104,
+    "width": 56,
+    "height": 10,
+    "whiteBg": true
+  }
+}
