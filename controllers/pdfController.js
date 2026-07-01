@@ -173,8 +173,6 @@ async function fillPdfForm(req, res, next) {
       if (pageIndex >= 0 && pageIndex < totalPages) {
         const page = pdfDoc.getPage(pageIndex);
         
-        let textX = Number(coord.x);
-        let textY = Number(coord.y);
         let drawVal = val !== undefined && val !== null ? String(val) : "";
         let finalCoord = coord;
 
@@ -194,6 +192,9 @@ async function fillPdfForm(req, res, next) {
           finalCoord = isYes ? coord.yes : coord.no;
           drawVal = "√";
         }
+
+        let textX = Number(finalCoord.x);
+        let textY = Number(finalCoord.y);
 
         // Draw white background if requested and dimensions are present (regardless of whether val is empty)
         if (finalCoord.whiteBg && finalCoord.width && finalCoord.height) {
