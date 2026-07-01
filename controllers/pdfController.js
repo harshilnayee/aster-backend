@@ -140,7 +140,6 @@ async function fillPdfForm(req, res, next) {
       if (allPages.length > 0) {
         const page = allPages[0];
         page.node.delete(PDFName.of('Annots'));
-        // Manually draw signature box outline at the exact same location
         page.drawRectangle({
           x: 99.43,
           y: 65.48,
@@ -152,6 +151,19 @@ async function fillPdfForm(req, res, next) {
       }
     }
     
+    // Auto-load doctor stamp image if configured in coords but not provided in values
+    if (coords.doctorStamp && !values.doctorStamp) {
+      try {
+        const stampPath = path.join(__dirname, "../../stm.png");
+        if (fs.existsSync(stampPath)) {
+          const stampBytes = fs.readFileSync(stampPath);
+          values.doctorStamp = `data:image/png;base64,${stampBytes.toString("base64")}`;
+        }
+      } catch (err) {
+        console.error("Failed to load doctorStamp from disk:", err);
+      }
+    }
+
     // Draw each provided field value or coordinate (so we can clear empty inputs with whiteBg)
     for (const [fieldName, coord] of Object.entries(coords)) {
       const val = values[fieldName];

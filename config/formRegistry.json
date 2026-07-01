@@ -72,6 +72,13 @@
     "defaultFont": "TimesRoman",
     "defaultFontSize": 9.5
   },
+  "eyeExam": {
+    "displayName": "Ophthalmological Examination Report (Front)",
+    "pdfFile": "8_FORM_Ophthal_FRONT.pdf",
+    "coordinatesFile": "eye-exam.json",
+    "defaultFont": "TimesRoman",
+    "defaultFontSize": 9.5
+  },
   "36-form-airport-bohw-ht-back": {
     "displayName": "36 FORM Airport BOHW-HT Back",
     "pdfFile": "36_FORM_Airport_BOHW-HT_Back.pdf",
