@@ -12,9 +12,9 @@
   },
   "age": {
     "page": 1,
-    "x": 298,
+    "x": 295,
     "y": 684,
-    "width": 34,
+    "width": 50,
     "height": 10,
     "whiteBg": true,
     "centerText": true,
