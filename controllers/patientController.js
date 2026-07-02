@@ -194,64 +194,6 @@ async function updatePatient(req, res, next) {
   }
 }
 
-/**
- * Bulk create patient records from parsed Excel data
- * POST /api/patients/bulk
- */
-async function createPatientsBulk(req, res, next) {
-  try {
-    const patientsData = req.body;
-
-    if (!Array.isArray(patientsData) || patientsData.length === 0) {
-      return res.status(400).json({ message: "Request body must be a non-empty array of patient objects" });
-    }
-
-    const createdPatients = [];
-
-    // Process sequentially to prevent counter race conditions and generate clean IDs
-    for (const patientObj of patientsData) {
-      const { name, age, gender, mobile, company, address, fatherName, occupation } = patientObj;
-      if (!name || !age || !gender) {
-        continue; // Skip row if name, age, or gender is missing
-      }
-
-      const patientId = await generatePatientId();
-
-      const patient = new Patient({
-        patientId,
-        name,
-        age: Number(age),
-        gender,
-        mobile,
-        company: company || "Aster Medcare",
-        address,
-        fatherName,
-        occupation,
-        createdBy: req.user._id
-      });
-
-      await patient.save();
-      createdPatients.push(patient);
-    }
-
-    // Write audit log
-    await AuditLog.create({
-      userId: req.user._id,
-      userName: req.user.name,
-      userRole: req.user.role,
-      action: "patient_created",
-      details: `Imported ${createdPatients.length} patients via bulk Excel upload`
-    });
-
-    return res.status(201).json({
-      message: `Successfully imported ${createdPatients.length} patient records.`,
-      count: createdPatients.length
-    });
-  } catch (error) {
-    console.error("CreatePatientsBulk error:", error);
-    next(error);
-  }
-}
 
 /**
  * Bulk create patients and return count and IDs
@@ -322,6 +264,5 @@ module.exports = {
   createPatient,
   getPatient,
   updatePatient,
-  createPatientsBulk,
   bulkCreatePatients
 };

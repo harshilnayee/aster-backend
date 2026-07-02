@@ -100,7 +100,7 @@ async function fillPdfForm(req, res, next) {
     
     // Read doctor signature base64 if it exists on disk
     let doctorSignatureBase64 = null;
-    const docSignPath = "C:\\Projects\\sajanbhai\\doctor_sign_drsajan.png";
+    const docSignPath = path.join(__dirname, "../assets/doctor_sign_drsajan.png");
     if (fs.existsSync(docSignPath)) {
       const docSignBytes = fs.readFileSync(docSignPath);
       doctorSignatureBase64 = `data:image/png;base64,${docSignBytes.toString("base64")}`;
@@ -331,7 +331,7 @@ async function fillPdfForm(req, res, next) {
 
 async function getDoctorSignature(req, res, next) {
   try {
-    const docSignPath = "C:\\Projects\\sajanbhai\\doctor_sign_drsajan.png";
+    const docSignPath = path.join(__dirname, "../assets/doctor_sign_drsajan.png");
     if (fs.existsSync(docSignPath)) {
       return res.sendFile(docSignPath);
     } else {

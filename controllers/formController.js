@@ -2,14 +2,7 @@ const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
 
-// List of currently supported form types in the schema
-const ALLOWED_FORMS = [
-  "postMedical",
-  "eyeExam",
-  "form33",
-  "healthRegister",
-  "xrayReport"
-];
+
 
 /**
  * Save form data under patient.forms[formType]
