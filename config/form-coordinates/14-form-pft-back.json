@@ -1,0 +1,113 @@
+{
+  "name": {
+    "page": 1,
+    "x": 98,
+    "y": 682,
+    "width": 162,
+    "height": 10,
+    "whiteBg": true,
+    "centerText": false,
+    "fontSize": 9,
+    "bold": true
+  },
+  "age": {
+    "page": 1,
+    "x": 302,
+    "y": 683,
+    "width": 37,
+    "height": 9,
+    "whiteBg": true,
+    "centerText": true,
+    "fontSize": 9,
+    "bold": true
+  },
+  "phoneNo": {
+    "page": 1,
+    "x": 431,
+    "y": 683,
+    "width": 56,
+    "height": 10,
+    "whiteBg": true,
+    "centerText": false,
+    "fontSize": 9,
+    "bold": true
+  },
+  "peakFlowReading": {
+    "page": 1,
+    "x": 42,
+    "y": 588,
+    "width": 103,
+    "height": 13,
+    "whiteBg": true,
+    "centerText": true,
+    "fontSize": 10,
+    "bold": true
+  },
+  "zoneIndication": {
+    "page": 1,
+    "x": 168,
+    "y": 586,
+    "width": 183,
+    "height": 18,
+    "whiteBg": true,
+    "centerText": false,
+    "fontSize": 10,
+    "bold": true
+  },
+  "recommendation": {
+    "page": 1,
+    "x": 168,
+    "y": 544,
+    "width": 387,
+    "height": 9,
+    "whiteBg": true,
+    "centerText": false,
+    "fontSize": 9,
+    "bold": true
+  },
+  "pftChart": {
+    "page": 1,
+    "x": 42,
+    "y": 290,
+    "width": 512,
+    "height": 234
+  },
+  "conclusionComment": {
+    "page": 1,
+    "x": 45,
+    "y": 96,
+    "width": 247,
+    "height": 144,
+    "whiteBg": true,
+    "centerText": false,
+    "multiline": true,
+    "maxChars": 36,
+    "fontSize": 9,
+    "bold": true
+  },
+  "date": {
+    "page": 1,
+    "x": 461,
+    "y": 68,
+    "width": 60,
+    "height": 8,
+    "whiteBg": true,
+    "centerText": true,
+    "fontSize": 8,
+    "bold": true
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 369,
+    "y": 74,
+    "width": 60,
+    "height": 47
+  },
+  "doctorStamp": {
+    "page": 1,
+    "x": 447,
+    "y": 79,
+    "width": 53,
+    "height": 45
+  }
+}

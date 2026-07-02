@@ -20,6 +20,11 @@
     "pdfFile": "13_FORM_PFT_Front.pdf",
     "coordinatesFile": "13-form-pft-front.json"
   },
+  "14-form-pft-back": {
+    "displayName": "14 FORM PFT Back",
+    "pdfFile": "14_FORM_PFT_Back.pdf",
+    "coordinatesFile": "14-form-pft-back.json"
+  },
   "15-form-vaccination-front": {
     "displayName": "15 FORM Vaccination Front",
     "pdfFile": "15_FORM_Vaccination_Front.pdf",
