@@ -45,6 +45,11 @@
     "pdfFile": "18_FORM_Vaccine ircs_forms-2.pdf",
     "coordinatesFile": "18-form-vaccine-ircs-forms-2.json"
   },
+  "19-form-ecg": {
+    "displayName": "19 FORM ECG",
+    "pdfFile": "19_FORM_ECG.pdf",
+    "coordinatesFile": "19-form-ecg.json"
+  },
   "1-form-personal-details": {
     "displayName": "1 FORM Personal Details",
     "pdfFile": "1_FORM_Personal_Details.pdf",
