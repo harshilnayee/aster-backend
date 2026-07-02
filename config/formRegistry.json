@@ -114,5 +114,10 @@
     "displayName": "9 FORM Ophthal BACK",
     "pdfFile": "9_FORM_Ophthal_BACK.pdf",
     "coordinatesFile": "9-form-ophthal-back.json"
+  },
+  "xrayReport": {
+    "displayName": "X-Ray Report - 1",
+    "pdfFile": "20_FORM_Xray_Image.pdf",
+    "coordinatesFile": "xray-report.json"
   }
 }
