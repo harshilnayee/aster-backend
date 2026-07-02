@@ -1,0 +1,113 @@
+{
+  "height": {
+    "page": 1,
+    "x": 107,
+    "y": 664,
+    "width": 45,
+    "height": 9,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "weight": {
+    "page": 1,
+    "x": 242,
+    "y": 670,
+    "width": 66,
+    "height": 11,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "vision": {
+    "page": 1,
+    "x": 365,
+    "y": 664,
+    "width": 37,
+    "height": 11,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "audiometryChart": {
+    "page": 1,
+    "x": 62,
+    "y": 347,
+    "width": 239,
+    "height": 288
+  },
+  "reliability": {
+    "page": 1,
+    "x": 390,
+    "y": 366,
+    "width": 142,
+    "height": 15,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "responseConsistency": {
+    "page": 1,
+    "x": 175,
+    "y": 326,
+    "width": 110,
+    "height": 10,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "comments": {
+    "page": 1,
+    "x": 142,
+    "y": 303,
+    "width": 98,
+    "height": 9,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "diagnosis": {
+    "page": 1,
+    "x": 121,
+    "y": 277,
+    "width": 147,
+    "height": 8,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "recommendation": {
+    "page": 1,
+    "x": 157,
+    "y": 252,
+    "width": 56,
+    "height": 8,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "date": {
+    "page": 1,
+    "x": 418,
+    "y": 112,
+    "width": 52,
+    "height": 9,
+    "whiteBg": true,
+    "centerText": true,
+    "bold": true
+  },
+  "doctorSignature": {
+    "page": 1,
+    "x": 351,
+    "y": 32,
+    "width": 62,
+    "height": 52
+  },
+  "doctorStamp": {
+    "page": 1,
+    "x": 427,
+    "y": 29,
+    "width": 118,
+    "height": 53
+  }
+}

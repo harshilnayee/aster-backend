@@ -10,6 +10,11 @@
     "pdfFile": "11_FORM_Audiometry_Front.pdf",
     "coordinatesFile": "11-form-audiometry-front.json"
   },
+  "12-form-audiometry-back": {
+    "displayName": "12 FORM Audiometry Back",
+    "pdfFile": "12_FORM_Audiometry_Back.pdf",
+    "coordinatesFile": "12-form-audiometry-back.json"
+  },
   "13-form-pft-front": {
     "displayName": "13 FORM PFT Front",
     "pdfFile": "13_FORM_PFT_Front.pdf",
