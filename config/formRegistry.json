@@ -73,7 +73,9 @@
   "35-form-airport-bohw-ht-front": {
     "displayName": "35 FORM Airport BOHW-HT Front",
     "pdfFile": "35_FORM_Airport_BOHW-HT_Front.pdf",
-    "coordinatesFile": "35-form-airport-bohw-ht-front.json"
+    "coordinatesFile": "35-form-airport-bohw-ht-front.json",
+    "defaultFont": "TimesRoman",
+    "defaultFontSize": 9
   },
   "healthRegister": {
     "displayName": "Form No. 32 (Health Register)",
