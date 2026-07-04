@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
 const { generatePatientId } = require("../utils/patientId");
+const { encrypt, decrypt } = require("../utils/encryption");
+
+function escapeRegex(str) {
+  if (!str) return "";
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 /**
  * Get all patients with search/filter queries
@@ -13,7 +19,7 @@ async function getPatients(req, res, next) {
     const filter = {};
 
     if (search) {
-      const searchRegex = { $regex: search, $options: "i" };
+      const searchRegex = { $regex: escapeRegex(search), $options: "i" };
       filter.$or = [
         { name: searchRegex },
         { company: searchRegex },
@@ -21,10 +27,10 @@ async function getPatients(req, res, next) {
         { mobile: searchRegex }
       ];
     } else {
-      if (name) filter.name = { $regex: name, $options: "i" };
-      if (company && company !== "All") filter.company = { $regex: company, $options: "i" };
-      if (mobile) filter.mobile = { $regex: mobile, $options: "i" };
-      if (patientId) filter.patientId = { $regex: patientId, $options: "i" };
+      if (name) filter.name = { $regex: escapeRegex(name), $options: "i" };
+      if (company && company !== "All") filter.company = { $regex: escapeRegex(company), $options: "i" };
+      if (mobile) filter.mobile = { $regex: escapeRegex(mobile), $options: "i" };
+      if (patientId) filter.patientId = { $regex: escapeRegex(patientId), $options: "i" };
     }
 
     // Additional exact company filter if not using search regex
@@ -53,6 +59,7 @@ async function getPatients(req, res, next) {
     }
 
     const patients = await Patient.find(filter)
+      .select("-govIdNumber")
       .populate("createdBy", "name email role")
       .sort({ createdAt: -1 });
 
@@ -99,7 +106,7 @@ async function createPatient(req, res, next) {
       state,
       pincode,
       govIdType,
-      govIdNumber,
+      govIdNumber: encrypt(govIdNumber),
       bloodGroup,
       email,
       department,
@@ -155,7 +162,9 @@ async function getPatient(req, res, next) {
       return res.status(404).json({ message: "Patient record not found" });
     }
 
-    return res.status(200).json(patient);
+    const patientObj = patient.toObject();
+    patientObj.govIdNumber = decrypt(patientObj.govIdNumber);
+    return res.status(200).json(patientObj);
   } catch (error) {
     console.error("GetPatient error:", error);
     next(error);
@@ -200,7 +209,7 @@ async function updatePatient(req, res, next) {
     if (state !== undefined) patient.state = state;
     if (pincode !== undefined) patient.pincode = pincode;
     if (govIdType !== undefined) patient.govIdType = govIdType;
-    if (govIdNumber !== undefined) patient.govIdNumber = govIdNumber;
+    if (govIdNumber !== undefined) patient.govIdNumber = encrypt(govIdNumber);
     if (bloodGroup !== undefined) patient.bloodGroup = bloodGroup;
     if (email !== undefined) patient.email = email;
     if (department !== undefined) patient.department = department;
@@ -245,7 +254,7 @@ async function bulkCreatePatients(req, res, next) {
     const patientIds = [];
 
     for (const p of patients) {
-      const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation } = p;
+      const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation, govIdType, govIdNumber } = p;
       if (!name || !age) {
         continue; // Skip invalid records
       }
@@ -264,6 +273,8 @@ async function bulkCreatePatients(req, res, next) {
         address,
         fatherName,
         occupation,
+        govIdType,
+        govIdNumber: govIdNumber ? encrypt(employeeCode ? undefined : govIdNumber) : undefined,
         createdBy: req.user._id,
         forms: {}
       });
