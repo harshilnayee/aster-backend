@@ -21,6 +21,9 @@ router.get("/:id", verifyToken, patientController.getPatient);
 // PUT /api/patients/:id - Update patient details (Admin, Doctor, Employee)
 router.put("/:id", verifyToken, patientController.updatePatient);
 
+// DELETE /api/patients/bulk - Bulk delete patients (Admin only)
+router.delete("/bulk", verifyToken, requireRole("admin"), patientController.bulkDeletePatients);
+
 // DELETE /api/patients/:id - Delete patient record (Admin only)
 router.delete("/:id", verifyToken, requireRole("admin"), async (req, res, next) => {
   try {

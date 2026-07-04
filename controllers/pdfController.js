@@ -224,6 +224,21 @@ async function fillPdfForm(req, res, next) {
             } catch (err) {
               console.error("Error drawing circle:", err);
             }
+          } else if (finalCoord.drawLine) {
+            try {
+              const startX = Number(finalCoord.x);
+              const startY = Number(finalCoord.y) + Number(finalCoord.height || 0) / 2;
+              const endX = startX + Number(finalCoord.width || 0);
+              const endY = startY;
+              page.drawLine({
+                start: { x: startX, y: startY },
+                end: { x: endX, y: endY },
+                thickness: 1.5,
+                color: rgb(0, 0, 0)
+              });
+            } catch (err) {
+              console.error("Error drawing line strike-out:", err);
+            }
           } else if (typeof drawVal === "string" && drawVal.startsWith("data:image/")) {
             try {
               let imageBuffer;

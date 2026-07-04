@@ -50,18 +50,7 @@ async function getSummary(req, res, next) {
         unfitCount++;
         completedReports++;
       } else {
-        // If not certified fit/unfit, check if they have any filled forms
-        const hasFilledForms = [
-          forms.healthRegister?.savedAt,
-          forms.eyeExam?.savedAt,
-          forms.form33?.savedAt,
-          forms.postMedical?.savedAt,
-          forms.xrayReport?.savedAt
-        ].some(Boolean);
-
-        if (hasFilledForms) {
-          pendingReports++;
-        }
+        pendingReports++;
       }
     });
 
@@ -178,17 +167,7 @@ async function getCompanyAnalytics(req, res, next) {
         unfitCount++;
         completedReports++;
       } else {
-        const hasFilledForms = [
-          forms.healthRegister?.savedAt,
-          forms.eyeExam?.savedAt,
-          forms.form33?.savedAt,
-          forms.postMedical?.savedAt,
-          forms.xrayReport?.savedAt
-        ].some(Boolean);
-
-        if (hasFilledForms) {
-          pendingReports++;
-        }
+        pendingReports++;
       }
     });
 

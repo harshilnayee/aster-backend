@@ -69,7 +69,7 @@ async function getPatients(req, res, next) {
  */
 async function createPatient(req, res, next) {
   try {
-    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation,
+    const { name, age, gender, mobile, employeeCode, company, address, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
@@ -86,6 +86,7 @@ async function createPatient(req, res, next) {
       age,
       gender,
       mobile,
+      employeeCode,
       company: company || "Aster Medcare",
       address,
       photo,
@@ -168,7 +169,7 @@ async function getPatient(req, res, next) {
 async function updatePatient(req, res, next) {
   try {
     const { id } = req.params;
-    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation,
+    const { name, age, gender, mobile, employeeCode, company, address, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
@@ -186,6 +187,7 @@ async function updatePatient(req, res, next) {
     if (age !== undefined) patient.age = age;
     if (gender !== undefined) patient.gender = gender;
     if (mobile !== undefined) patient.mobile = mobile;
+    if (employeeCode !== undefined) patient.employeeCode = employeeCode;
     if (company !== undefined) patient.company = company;
     if (address !== undefined) patient.address = address;
     if (photo !== undefined) patient.photo = photo;
@@ -243,7 +245,7 @@ async function bulkCreatePatients(req, res, next) {
     const patientIds = [];
 
     for (const p of patients) {
-      const { name, age, gender, mobile, company, address, fatherName, occupation } = p;
+      const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation } = p;
       if (!name || !age) {
         continue; // Skip invalid records
       }
@@ -257,6 +259,7 @@ async function bulkCreatePatients(req, res, next) {
         age: Number(age),
         gender: gender || "Not Specified",
         mobile,
+        employeeCode,
         company: company || "Aster Medcare",
         address,
         fatherName,
@@ -291,10 +294,40 @@ async function bulkCreatePatients(req, res, next) {
   }
 }
 
+async function bulkDeletePatients(req, res, next) {
+  try {
+    const { patientIds } = req.body;
+
+    if (!patientIds || !Array.isArray(patientIds) || patientIds.length === 0) {
+      return res.status(400).json({ message: "An array of patientIds is required." });
+    }
+
+    const result = await Patient.deleteMany({ patientId: { $in: patientIds } });
+
+    // Log the action
+    await AuditLog.create({
+      userId: req.user._id,
+      userName: req.user.name,
+      userRole: req.user.role,
+      action: "patient_updated",
+      details: `Bulk deleted ${result.deletedCount} patients from database`
+    });
+
+    return res.status(200).json({
+      message: `Successfully deleted ${result.deletedCount} patients.`,
+      count: result.deletedCount
+    });
+  } catch (error) {
+    console.error("BulkDeletePatients error:", error);
+    next(error);
+  }
+}
+
 module.exports = {
   getPatients,
   createPatient,
   getPatient,
   updatePatient,
-  bulkCreatePatients
+  bulkCreatePatients,
+  bulkDeletePatients
 };

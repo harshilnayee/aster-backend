@@ -64,11 +64,15 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       required: [true, "Patient gender is required"],
       enum: {
-        values: ["Male", "Female", "Other"],
-        message: "Gender must be Male, Female, or Other"
+        values: ["Male", "Female", "Other", "Not Specified"],
+        message: "Gender must be Male, Female, Other, or Not Specified"
       }
     },
     mobile: {
+      type: String,
+      trim: true
+    },
+    employeeCode: {
       type: String,
       trim: true
     },
