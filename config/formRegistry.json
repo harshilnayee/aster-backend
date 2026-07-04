@@ -97,7 +97,9 @@
   "36-form-airport-bohw-ht-back": {
     "displayName": "36 FORM Airport BOHW-HT Back",
     "pdfFile": "36_FORM_Airport_BOHW-HT_Back.pdf",
-    "coordinatesFile": "36-form-airport-bohw-ht-back.json"
+    "coordinatesFile": "36-form-airport-bohw-ht-back.json",
+    "defaultFont": "TimesRoman",
+    "defaultFontSize": 9
   },
   "4-form-airport-bohw": {
     "displayName": "4 FORM Airport BOHW",
@@ -108,6 +110,7 @@
     "displayName": "5 FORM Height Pass",
     "pdfFile": "5_FORM_Height_Pass.pdf",
     "coordinatesFile": "5-form-height-pass.json",
+    "defaultFont": "TimesRoman",
     "defaultFontSize": 9
   },
   "9-form-ophthal-back": {
