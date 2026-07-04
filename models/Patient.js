@@ -95,6 +95,20 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    dob: { type: Date },
+    surname: { type: String, trim: true },
+    city: { type: String, trim: true },
+    state: { type: String, trim: true },
+    pincode: { type: String, trim: true },
+    govIdType: { type: String, trim: true },
+    govIdNumber: { type: String, trim: true },
+    bloodGroup: { type: String, trim: true },
+    email: { type: String, trim: true },
+    department: { type: String, trim: true },
+    employmentType: { type: String, trim: true },
+    contractingAgency: { type: String, trim: true },
+    diet: { type: String, trim: true },
+    knownHabit: { type: String, trim: true },
     // Storage for 24 forms. Dynamic Mixed storage.
     forms: {
       type: mongoose.Schema.Types.Mixed,

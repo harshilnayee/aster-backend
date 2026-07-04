@@ -12,4 +12,7 @@ router.get("/summary", analyticsController.getSummary);
 // GET /api/analytics/companies
 router.get("/companies", analyticsController.getCompanies);
 
+// GET /api/analytics/company/:companyName
+router.get("/company/:companyName", analyticsController.getCompanyAnalytics);
+
 module.exports = router;

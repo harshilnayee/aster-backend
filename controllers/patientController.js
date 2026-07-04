@@ -69,7 +69,9 @@ async function getPatients(req, res, next) {
  */
 async function createPatient(req, res, next) {
   try {
-    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation } = req.body;
+    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation,
+      dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
+      department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
     if (!name || !age || !gender) {
       return res.status(400).json({ message: "Name, age, and gender are required fields" });
@@ -90,6 +92,20 @@ async function createPatient(req, res, next) {
       signature,
       fatherName,
       occupation,
+      dob,
+      surname,
+      city,
+      state,
+      pincode,
+      govIdType,
+      govIdNumber,
+      bloodGroup,
+      email,
+      department,
+      employmentType,
+      contractingAgency,
+      diet,
+      knownHabit,
       createdBy: req.user._id
     });
 
@@ -152,7 +168,9 @@ async function getPatient(req, res, next) {
 async function updatePatient(req, res, next) {
   try {
     const { id } = req.params;
-    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation } = req.body;
+    const { name, age, gender, mobile, company, address, photo, signature, fatherName, occupation,
+      dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
+      department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
     const query = mongoose.Types.ObjectId.isValid(id)
       ? { _id: id }
@@ -174,6 +192,20 @@ async function updatePatient(req, res, next) {
     if (signature !== undefined) patient.signature = signature;
     if (fatherName !== undefined) patient.fatherName = fatherName;
     if (occupation !== undefined) patient.occupation = occupation;
+    if (dob !== undefined) patient.dob = dob;
+    if (surname !== undefined) patient.surname = surname;
+    if (city !== undefined) patient.city = city;
+    if (state !== undefined) patient.state = state;
+    if (pincode !== undefined) patient.pincode = pincode;
+    if (govIdType !== undefined) patient.govIdType = govIdType;
+    if (govIdNumber !== undefined) patient.govIdNumber = govIdNumber;
+    if (bloodGroup !== undefined) patient.bloodGroup = bloodGroup;
+    if (email !== undefined) patient.email = email;
+    if (department !== undefined) patient.department = department;
+    if (employmentType !== undefined) patient.employmentType = employmentType;
+    if (contractingAgency !== undefined) patient.contractingAgency = contractingAgency;
+    if (diet !== undefined) patient.diet = diet;
+    if (knownHabit !== undefined) patient.knownHabit = knownHabit;
 
     const updatedPatient = await patient.save();
 
@@ -212,7 +244,7 @@ async function bulkCreatePatients(req, res, next) {
 
     for (const p of patients) {
       const { name, age, gender, mobile, company, address, fatherName, occupation } = p;
-      if (!name || !age || !gender) {
+      if (!name || !age) {
         continue; // Skip invalid records
       }
 
@@ -223,7 +255,7 @@ async function bulkCreatePatients(req, res, next) {
         patientId,
         name,
         age: Number(age),
-        gender,
+        gender: gender || "Not Specified",
         mobile,
         company: company || "Aster Medcare",
         address,

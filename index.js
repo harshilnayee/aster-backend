@@ -59,6 +59,7 @@ const fileRoutes = require("./routes/files");
 const userRoutes = require("./routes/users");
 const analyticsRoutes = require("./routes/analytics");
 const pdfRoutes = require("./routes/pdf");
+const settingRoutes = require("./routes/settings");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/patients", patientRoutes);
@@ -67,6 +68,7 @@ app.use("/api/patients", fileRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/forms", pdfRoutes);
+app.use("/api/settings", settingRoutes);
 
 // 7. 404 Route Handler
 app.use((req, res, next) => {
