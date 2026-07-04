@@ -3,6 +3,7 @@ const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
 const { generatePatientId } = require("../utils/patientId");
 const { encrypt, decrypt } = require("../utils/encryption");
+const { deleteFromR2 } = require("../utils/r2");
 
 function escapeRegex(str) {
   if (!str) return "";
@@ -313,6 +314,33 @@ async function bulkDeletePatients(req, res, next) {
       return res.status(400).json({ message: "An array of patientIds is required." });
     }
 
+    // Fetch the full patient documents first to clean up their files in Cloudflare R2
+    const patients = await Patient.find({ patientId: { $in: patientIds } });
+
+    for (const patient of patients) {
+      const urlsToDelete = [];
+      if (patient.photo) urlsToDelete.push(patient.photo);
+      if (patient.signature) urlsToDelete.push(patient.signature);
+      if (patient.files && Array.isArray(patient.files)) {
+        for (const file of patient.files) {
+          if (file.fileUrl) urlsToDelete.push(file.fileUrl);
+        }
+      }
+
+      for (const fileUrl of urlsToDelete) {
+        if (typeof fileUrl !== "string" || fileUrl.startsWith("data:")) continue;
+        try {
+          const urlObj = new URL(fileUrl);
+          const key = decodeURIComponent(urlObj.pathname.substring(1));
+          if (key) {
+            await deleteFromR2(key);
+          }
+        } catch (err) {
+          console.error(`Failed to delete R2 file ${fileUrl}:`, err);
+        }
+      }
+    }
+
     const result = await Patient.deleteMany({ patientId: { $in: patientIds } });
 
     // Log the action
@@ -320,8 +348,8 @@ async function bulkDeletePatients(req, res, next) {
       userId: req.user._id,
       userName: req.user.name,
       userRole: req.user.role,
-      action: "patient_updated",
-      details: `Bulk deleted ${result.deletedCount} patients from database`
+      action: "patient_deleted",
+      details: `Bulk deleted ${result.deletedCount} patients from database and cleared their associated R2 files`
     });
 
     return res.status(200).json({

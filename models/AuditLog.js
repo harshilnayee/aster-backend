@@ -20,6 +20,7 @@ const AuditLogSchema = new mongoose.Schema({
     enum: [
       "patient_created",
       "patient_updated",
+      "patient_deleted",
       "form_saved",
       "file_uploaded",
       "report_generated",
