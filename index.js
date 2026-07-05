@@ -4,6 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 require("dotenv").config();
+const User = require("./models/User");
 
 const app = express();
 
@@ -119,11 +120,71 @@ async function connectDB() {
   }
 }
 
+const ALL_FORMS = [
+  "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
+  "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
+  "form9", "form10",
+  "11-form-audiometry-front", "12-form-audiometry-back", "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
+  "16-form-vaccination-back", "17-form-food-handler-certificate", "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format", "26-form-death-certificate",
+  "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back", "form23"
+];
+
+async function autoSeed() {
+  try {
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      console.log("No users found in database. Auto-seeding default users...");
+      const usersToSeed = [
+        {
+          name: "System Admin",
+          email: "admin@astermedcare.com",
+          password: "admin123",
+          role: "admin",
+          formAccess: ALL_FORMS,
+          isActive: true
+        },
+        {
+          name: "Doctor Patel",
+          email: "doctor@astermedcare.com",
+          password: "doctor123",
+          role: "doctor",
+          formAccess: ALL_FORMS,
+          isActive: true
+        },
+        {
+          name: "Staff Member One",
+          email: "staff1@astermedcare.com",
+          password: "staff123",
+          role: "employee",
+          formAccess: ["eyeExam", "postMedical"],
+          isActive: true
+        },
+        {
+          name: "Staff Member Two",
+          email: "staff2@astermedcare.com",
+          password: "staff123",
+          role: "employee",
+          formAccess: [],
+          isActive: true
+        }
+      ];
+      for (const u of usersToSeed) {
+        const newUser = new User(u);
+        await newUser.save();
+      }
+      console.log("Auto-seeding default users completed successfully.");
+    }
+  } catch (err) {
+    console.error("Auto-seeding default users failed:", err);
+  }
+}
+
 // 10. Start Server
 const PORT = process.env.PORT || 5000;
 let server;
 
-connectDB().then(() => {
+connectDB().then(async () => {
+  await autoSeed();
   server = app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || "production"} mode on port ${PORT}`);
   });
