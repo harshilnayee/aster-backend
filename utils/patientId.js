@@ -39,6 +39,27 @@ async function generatePatientId() {
   return `PT-${year}-${formattedSequence}`;
 }
 
+async function generatePatientIdsBatch(count) {
+  const year = new Date().getFullYear();
+  
+  // Atomically increment the sequence by count for the current year
+  const counter = await Counter.findOneAndUpdate(
+    { year },
+    { $inc: { seq: count } },
+    { new: true, upsert: true }
+  );
+
+  const startSeq = counter.seq - count + 1;
+  const ids = [];
+  for (let i = 0; i < count; i++) {
+    const seqNum = startSeq + i;
+    const formattedSequence = String(seqNum).padStart(4, "0");
+    ids.push(`PT-${year}-${formattedSequence}`);
+  }
+  return ids;
+}
+
 module.exports = {
-  generatePatientId
+  generatePatientId,
+  generatePatientIdsBatch
 };

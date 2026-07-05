@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
-const { generatePatientId } = require("../utils/patientId");
+const { generatePatientId, generatePatientIdsBatch } = require("../utils/patientId");
 const { encrypt, decrypt } = require("../utils/encryption");
 const { deleteFromR2 } = require("../utils/r2");
 
@@ -251,18 +251,19 @@ async function bulkCreatePatients(req, res, next) {
       return res.status(400).json({ message: "An array of patients is required in the 'patients' property." });
     }
 
-    const createdPatients = [];
-    const patientIds = [];
+    const validRecords = patients.filter(p => p.name && p.age);
+    if (validRecords.length === 0) {
+      return res.status(400).json({ message: "No valid patient records to insert." });
+    }
 
-    for (const p of patients) {
+    // Atomically generate all required patient IDs in a single batch query
+    const patientIds = await generatePatientIdsBatch(validRecords.length);
+    const createdPatients = [];
+
+    validRecords.forEach((p, idx) => {
       const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation, govIdType, govIdNumber,
         dob, city, state, pincode, department } = p;
-      if (!name || !age) {
-        continue; // Skip invalid records
-      }
-
-      const patientId = await generatePatientId();
-      patientIds.push(patientId);
+      const patientId = patientIds[idx];
 
       createdPatients.push({
         patientId,
@@ -285,7 +286,7 @@ async function bulkCreatePatients(req, res, next) {
         createdBy: req.user._id,
         forms: {}
       });
-    }
+    });
 
     if (createdPatients.length === 0) {
       return res.status(400).json({ message: "No valid patient records to insert." });
