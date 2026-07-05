@@ -75,7 +75,7 @@
     "pdfFile": "35_FORM_Airport_BOHW-HT_Front.pdf",
     "coordinatesFile": "35-form-airport-bohw-ht-front.json",
     "defaultFont": "TimesRoman",
-    "defaultFontSize": 9
+    "defaultFontSize": 10.5
   },
   "healthRegister": {
     "displayName": "Form No. 32 (Health Register)",
@@ -101,7 +101,7 @@
     "pdfFile": "36_FORM_Airport_BOHW-HT_Back.pdf",
     "coordinatesFile": "36-form-airport-bohw-ht-back.json",
     "defaultFont": "TimesRoman",
-    "defaultFontSize": 9
+    "defaultFontSize": 10.5
   },
   "4-form-airport-bohw": {
     "displayName": "4 FORM Airport BOHW",
@@ -113,7 +113,7 @@
     "pdfFile": "5_FORM_Height_Pass.pdf",
     "coordinatesFile": "5-form-height-pass.json",
     "defaultFont": "TimesRoman",
-    "defaultFontSize": 9
+    "defaultFontSize": 10.5
   },
   "9-form-ophthal-back": {
     "displayName": "9 FORM Ophthal BACK",

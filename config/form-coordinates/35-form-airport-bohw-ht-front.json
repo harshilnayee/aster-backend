@@ -2,22 +2,22 @@
   "certificateSerialNo": {
     "page": 1,
     "x": 118,
-    "y": 742,
+    "y": 745,
     "width": 48,
     "height": 8
   },
   "dateTop": {
     "page": 1,
     "x": 379,
-    "y": 740,
-    "width": 82,
+    "y": 741,
+    "width": 120,
     "height": 9,
     "whiteBg": true
   },
   "name": {
     "page": 1,
     "x": 63,
-    "y": 717,
+    "y": 720,
     "width": 308,
     "height": 9
   },
@@ -31,54 +31,55 @@
   "fatherName": {
     "page": 1,
     "x": 92,
-    "y": 671,
+    "y": 674,
     "width": 308,
     "height": 8
   },
   "sex": {
     "page": 1,
-    "x": 100,
+    "x": 98,
     "y": 649,
-    "width": 71,
-    "height": 12,
+    "width": 73,
+    "height": 10,
     "whiteBg": true
   },
   "mobileNo": {
     "page": 1,
     "x": 292,
-    "y": 646,
-    "width": 123,
-    "height": 10,
-    "whiteBg": true
+    "y": 649,
+    "width": 185,
+    "height": 9,
+    "whiteBg": true,
+    "centerText": true
   },
   "residence": {
     "page": 1,
     "x": 78,
-    "y": 626,
+    "y": 629,
     "width": 489,
     "height": 7
   },
   "residence2": {
     "page": 1,
     "x": 93,
-    "y": 610,
+    "y": 613,
     "width": 462,
     "height": 5
   },
   "dob": {
     "page": 1,
-    "x": 138,
+    "x": 142,
     "y": 592,
-    "width": 94,
-    "height": 9,
+    "width": 91,
+    "height": 7,
     "whiteBg": true
   },
   "aadharNo": {
     "page": 1,
-    "x": 304,
-    "y": 590,
-    "width": 188,
-    "height": 8
+    "x": 332,
+    "y": 594,
+    "width": 85,
+    "height": 7
   },
   "height": {
     "page": 1,
@@ -90,18 +91,20 @@
   },
   "weight": {
     "page": 1,
-    "x": 162,
-    "y": 523,
-    "width": 25,
-    "height": 9
+    "x": 172,
+    "y": 524,
+    "width": 16,
+    "height": 13,
+    "centerText": true
   },
   "bloodPressure": {
     "page": 1,
-    "x": 144,
+    "x": 160,
     "y": 504,
-    "width": 54,
+    "width": 36,
     "height": 10,
-    "whiteBg": true
+    "whiteBg": true,
+    "centerText": true
   },
   "pulse": {
     "page": 1,
@@ -115,112 +118,128 @@
     "x": 152,
     "y": 453,
     "width": 65,
-    "height": 10
+    "height": 10,
+    "centerText": true
   },
   "refractiveError": {
     "page": 1,
     "x": 155,
     "y": 430,
     "width": 60,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "colourVision": {
     "page": 1,
     "x": 151,
     "y": 407,
     "width": 63,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "anyDisability": {
     "page": 1,
     "x": 149,
     "y": 385,
     "width": 69,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "armFunctionGrip": {
     "page": 1,
     "x": 149,
     "y": 361,
     "width": 76,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "legFootFunction": {
     "page": 1,
     "x": 152,
     "y": 336,
     "width": 78,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "varicose": {
     "page": 1,
     "x": 377,
     "y": 540,
     "width": 77,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "seizure": {
     "page": 1,
     "x": 375,
     "y": 521,
     "width": 82,
-    "height": 10
+    "height": 10,
+    "centerText": true
   },
   "vertigo": {
     "page": 1,
     "x": 377,
     "y": 500,
     "width": 81,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "acrophobia": {
     "page": 1,
     "x": 378,
     "y": 476,
     "width": 77,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "diabetes": {
     "page": 1,
     "x": 379,
     "y": 453,
     "width": 78,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "stroke": {
     "page": 1,
     "x": 381,
     "y": 430,
     "width": 76,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "heartDiseases": {
     "page": 1,
     "x": 383,
     "y": 407,
     "width": 76,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "majorIllnessOrSurgery": {
     "page": 1,
     "x": 385,
     "y": 382,
     "width": 74,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "symptomsVisible": {
     "page": 1,
     "x": 387,
     "y": 360,
     "width": 71,
-    "height": 9
+    "height": 9,
+    "centerText": true
   },
   "othersIfAny": {
     "page": 1,
     "x": 390,
     "y": 336,
     "width": 76,
-    "height": 8
+    "height": 8,
+    "centerText": true
   },
   "examinedPersonName": {
     "page": 1,
@@ -246,7 +265,7 @@
   "ascertainedAge": {
     "page": 1,
     "x": 437,
-    "y": 286,
+    "y": 288,
     "width": 37,
     "height": 8
   },
@@ -254,22 +273,22 @@
     "page": 1,
     "x": 170,
     "y": 276,
-    "width": 13,
-    "height": 8
+    "width": 14,
+    "height": 5
   },
   "reasonRefusal": {
     "page": 1,
-    "x": 126,
-    "y": 236,
-    "width": 24,
-    "height": 10
+    "x": 129,
+    "y": 237,
+    "width": 21,
+    "height": 9
   },
   "reasonRevoked": {
     "page": 1,
-    "x": 285,
-    "y": 236,
+    "x": 288,
+    "y": 237,
     "width": 27,
-    "height": 9
+    "height": 8
   },
   "patientSignature": {
     "page": 1,
@@ -309,14 +328,14 @@
   "department": {
     "page": 1,
     "x": 131,
-    "y": 48,
+    "y": 51,
     "width": 148,
     "height": 9
   },
   "designation": {
     "page": 1,
     "x": 131,
-    "y": 28,
+    "y": 31,
     "width": 136,
     "height": 9
   },
@@ -379,9 +398,9 @@
   "crossAgeUnder17": {
     "page": 1,
     "x": 240,
-    "y": 278,
-    "width": 43,
-    "height": 1,
+    "y": 277,
+    "width": 42,
+    "height": 0,
     "drawLine": true
   }
 }

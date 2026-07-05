@@ -255,7 +255,8 @@ async function bulkCreatePatients(req, res, next) {
     const patientIds = [];
 
     for (const p of patients) {
-      const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation, govIdType, govIdNumber } = p;
+      const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation, govIdType, govIdNumber,
+        dob, city, state, pincode, department } = p;
       if (!name || !age) {
         continue; // Skip invalid records
       }
@@ -276,6 +277,11 @@ async function bulkCreatePatients(req, res, next) {
         occupation,
         govIdType,
         govIdNumber: govIdNumber ? encrypt(employeeCode ? undefined : govIdNumber) : undefined,
+        dob,
+        city,
+        state,
+        pincode,
+        department,
         createdBy: req.user._id,
         forms: {}
       });
