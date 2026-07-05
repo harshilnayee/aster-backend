@@ -15,7 +15,7 @@ const usersToSeed = [
   {
     name: "System Admin",
     email: "admin@astermedcare.com",
-    password: "admin123", // String password will be hashed by UserSchema pre('save') hook
+    password: "Admin@123456", // String password will be hashed by UserSchema pre('save') hook
     role: "admin",
     formAccess: ALL_FORMS,
     isActive: true
@@ -23,7 +23,7 @@ const usersToSeed = [
   {
     name: "Doctor Patel",
     email: "doctor@astermedcare.com",
-    password: "doctor123",
+    password: "Doctor@12345",
     role: "doctor",
     formAccess: ALL_FORMS,
     isActive: true
@@ -31,7 +31,7 @@ const usersToSeed = [
   {
     name: "Staff Member One",
     email: "staff1@astermedcare.com",
-    password: "staff123",
+    password: "Staff1@12345",
     role: "employee",
     formAccess: ["eyeExam", "postMedical"], // default access to two forms for immediate testing
     isActive: true
@@ -39,7 +39,7 @@ const usersToSeed = [
   {
     name: "Staff Member Two",
     email: "staff2@astermedcare.com",
-    password: "staff123",
+    password: "Staff2@12345",
     role: "employee",
     formAccess: [], // default empty formAccess
     isActive: true
@@ -55,6 +55,7 @@ async function seedDatabase() {
 
   try {
     console.log("Connecting to database for seeding...");
+    console.log("Connecting to:", MONGO_URI);
     await mongoose.connect(MONGO_URI);
     console.log("Database connection successful.");
 

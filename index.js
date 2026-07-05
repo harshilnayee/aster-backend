@@ -138,7 +138,7 @@ async function autoSeed() {
         {
           name: "System Admin",
           email: "admin@astermedcare.com",
-          password: "admin123",
+          password: "Admin@123456",
           role: "admin",
           formAccess: ALL_FORMS,
           isActive: true
@@ -146,7 +146,7 @@ async function autoSeed() {
         {
           name: "Doctor Patel",
           email: "doctor@astermedcare.com",
-          password: "doctor123",
+          password: "Doctor@12345",
           role: "doctor",
           formAccess: ALL_FORMS,
           isActive: true
@@ -154,7 +154,7 @@ async function autoSeed() {
         {
           name: "Staff Member One",
           email: "staff1@astermedcare.com",
-          password: "staff123",
+          password: "Staff1@12345",
           role: "employee",
           formAccess: ["eyeExam", "postMedical"],
           isActive: true
@@ -162,7 +162,7 @@ async function autoSeed() {
         {
           name: "Staff Member Two",
           email: "staff2@astermedcare.com",
-          password: "staff123",
+          password: "Staff2@12345",
           role: "employee",
           formAccess: [],
           isActive: true
