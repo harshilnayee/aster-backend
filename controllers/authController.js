@@ -8,12 +8,15 @@ const AuditLog = require("../models/AuditLog");
  */
 async function login(req, res, next) {
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
-    const targetEmail = (email || "admin@astermedcare.com").toLowerCase().trim();
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required." });
+    }
 
-    // Find the user
-    const user = await User.findOne({ email: targetEmail });
+    const targetEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: targetEmail }).select("+password");
+
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -22,14 +25,17 @@ async function login(req, res, next) {
       return res.status(403).json({ message: "Your account is deactivated. Please contact the administrator." });
     }
 
-    // Generate JWT token
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
     );
 
-    // Save login audit log
     await AuditLog.create({
       userId: user._id,
       userName: user.name,
@@ -38,7 +44,6 @@ async function login(req, res, next) {
       details: `User logged in from IP ${req.ip || "unknown"}`
     });
 
-    // Remove password field before returning user information
     const userResponse = user.toObject();
     delete userResponse.password;
 
