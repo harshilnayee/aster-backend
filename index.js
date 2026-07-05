@@ -48,8 +48,19 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // 5. Health Check Route
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "UP", timestamp: new Date() });
+app.get("/health", async (req, res) => {
+  try {
+    const dbName = mongoose.connection.db ? mongoose.connection.db.databaseName : "Not Connected";
+    const userCount = await User.countDocuments();
+    res.status(200).json({ 
+      status: "UP", 
+      dbName,
+      userCount,
+      timestamp: new Date() 
+    });
+  } catch (err) {
+    res.status(500).json({ status: "DOWN", error: err.message });
+  }
 });
 
 // 6. Mount API Routes
