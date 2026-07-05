@@ -30,6 +30,12 @@ async function uploadFile(req, res, next) {
     const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
     const key = `patients/${patient.patientId}/${Date.now()}-${sanitizedFilename}`;
 
+    if (!process.env.R2_ACCOUNT_ID || process.env.R2_ACCOUNT_ID.includes("placeholder")) {
+      return res.status(503).json({
+        message: "File uploads are not available yet. This feature will be enabled soon."
+      });
+    }
+
     // Upload to Cloudflare R2
     const fileUrl = await uploadToR2(file, key);
 
