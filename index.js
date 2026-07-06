@@ -34,15 +34,7 @@ app.use(
   })
 );
 
-// 3. Rate Limiting (100 requests per 15 minutes per IP in production, 10000 in dev)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === "development" ? 10000 : 2000,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: "Too many requests from this IP, please try again after 15 minutes." }
-});
-app.use("/api", limiter);
+// 3. Rate Limiting deactivated
 
 // 4. JSON Body Parser (10mb limit for file upload payloads/form inputs)
 app.use(express.json({ limit: "10mb" }));
