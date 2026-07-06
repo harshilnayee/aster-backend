@@ -1,4 +1,13 @@
 const express = require("express");
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Promise Rejection (server stayed up):", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception (server stayed up):", err);
+});
+
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -84,10 +93,16 @@ app.use((req, res, next) => {
 // 8. Global Error Handler
 app.use((err, req, res, next) => {
   console.error("Unhandled Exception:", err);
-  
+
+  // If the client already disconnected (e.g. aborted upload), there's no one to
+  // respond to — trying to write a response here would throw a second error.
+  if (err.type === "request.aborted" || err.code === "ECONNABORTED" || res.headersSent) {
+    return; // just log it above, nothing more to do
+  }
+
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-  
+
   res.status(statusCode).json({
     status: "error",
     statusCode,
