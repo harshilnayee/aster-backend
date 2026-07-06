@@ -7,6 +7,7 @@ require("dotenv").config();
 const User = require("./models/User");
 
 const app = express();
+app.set("trust proxy", 1);
 
 // 1. Security Headers
 app.use(helmet());
