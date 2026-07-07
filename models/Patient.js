@@ -79,7 +79,7 @@ const PatientSchema = new mongoose.Schema(
     company: {
       type: String,
       trim: true,
-      default: "Aster Medcare"
+      default: ""
     },
     address: {
       type: String,
