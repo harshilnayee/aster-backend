@@ -62,7 +62,7 @@ async function getPatients(req, res, next) {
     const patients = await Patient.find(filter)
       .select("-govIdNumber")
       .populate("createdBy", "name email role")
-      .sort({ createdAt: -1 });
+      .sort({ updatedAt: -1 });
 
     return res.status(200).json(patients);
   } catch (error) {

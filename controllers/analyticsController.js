@@ -181,7 +181,7 @@ async function getCompanyAnalytics(req, res, next) {
       .sort((a, b) => b.count - a.count);
 
     const recentPatients = patients
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
       .slice(0, 5)
       .map((p) => {
         const fitVal = p.forms?.postMedical?.data?.fitStatus;
