@@ -85,7 +85,13 @@ async function fillPdfForm(req, res, next) {
     if (!fs.existsSync(registryPath)) {
       return res.status(500).json({ message: "Form registry not found" });
     }
-    const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+    let registry;
+    try {
+      registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+    } catch (parseErr) {
+      console.error("Registry parse failure:", parseErr);
+      return res.status(500).json({ message: "Error parsing form registry configuration" });
+    }
     const formConfig = registry[formId];
     if (!formConfig) {
       return res.status(404).json({ message: `Form config not found for: ${formId}` });
@@ -96,14 +102,24 @@ async function fillPdfForm(req, res, next) {
     if (!fs.existsSync(coordsPath)) {
       return res.status(500).json({ message: `Coordinates file not found: ${formConfig.coordinatesFile}` });
     }
-    const coords = JSON.parse(fs.readFileSync(coordsPath, "utf8"));
+    let coords;
+    try {
+      coords = JSON.parse(fs.readFileSync(coordsPath, "utf8"));
+    } catch (parseErr) {
+      console.error("Coordinates parse failure:", parseErr);
+      return res.status(500).json({ message: "Error parsing form coordinates configuration" });
+    }
     
     // Read doctor signature base64 if it exists on disk
     let doctorSignatureBase64 = null;
-    const docSignPath = path.join(__dirname, "../assets/doctor_sign_drsajan.png");
-    if (fs.existsSync(docSignPath)) {
-      const docSignBytes = fs.readFileSync(docSignPath);
-      doctorSignatureBase64 = `data:image/png;base64,${docSignBytes.toString("base64")}`;
+    try {
+      const docSignPath = path.join(__dirname, "../assets/doctor_sign_drsajan.png");
+      if (fs.existsSync(docSignPath)) {
+        const docSignBytes = fs.readFileSync(docSignPath);
+        doctorSignatureBase64 = `data:image/png;base64,${docSignBytes.toString("base64")}`;
+      }
+    } catch (err) {
+      console.error("Failed to load doctor signature from disk:", err);
     }
 
     // Auto-inject doctor signature base64 if defined in coordinates

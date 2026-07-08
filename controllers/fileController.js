@@ -122,16 +122,22 @@ async function deleteFile(req, res, next) {
       return res.status(404).json({ message: "File record not found under patient profile" });
     }
 
-    // Extract R2 bucket Key from file URL
-    // Public URL pattern: https://public-url/patients/PT-YYYY-XXXX/timestamp-filename
-    // Or R2 default Endpoint: https://account-id.r2.cloudflarestorage.com/bucket/patients/PT-YYYY-XXXX/timestamp-filename
-    const fileUrlObj = new URL(file.fileUrl);
-    
-    // Key is the pathname without the leading slash
-    const key = decodeURIComponent(fileUrlObj.pathname.substring(1));
+    let key = "";
+    try {
+      const fileUrlObj = new URL(file.fileUrl);
+      key = decodeURIComponent(fileUrlObj.pathname.substring(1));
+    } catch (urlErr) {
+      console.error("Invalid URL format in file delete:", file.fileUrl, urlErr);
+    }
 
-    // Delete from Cloudflare R2
-    await deleteFromR2(key);
+    // Delete from Cloudflare R2 if key parsed successfully
+    if (key) {
+      try {
+        await deleteFromR2(key);
+      } catch (r2Err) {
+        console.error("Failed to delete object from R2 bucket:", key, r2Err);
+      }
+    }
 
     // Remove from patient files subdocument array
     file.deleteOne();

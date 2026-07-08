@@ -1,6 +1,18 @@
 const crypto = require("crypto");
 const ALGORITHM = "aes-256-gcm";
-const KEY = Buffer.from(process.env.ENCRYPTION_KEY, "hex");
+let KEY;
+try {
+  const hexKey = process.env.ENCRYPTION_KEY || "";
+  if (hexKey.length === 64 && /^[0-9a-fA-F]+$/.test(hexKey)) {
+    KEY = Buffer.from(hexKey, "hex");
+  } else {
+    console.warn("WARNING: ENCRYPTION_KEY is missing or invalid. Deriving a fallback key.");
+    KEY = crypto.scryptSync(hexKey || "default-aster-fallback-key", "salt", 32);
+  }
+} catch (err) {
+  console.error("Failed to initialize ENCRYPTION_KEY:", err);
+  KEY = Buffer.alloc(32);
+}
 
 function encrypt(text) {
   if (!text) return text;
