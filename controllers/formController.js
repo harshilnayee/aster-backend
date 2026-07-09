@@ -11,7 +11,7 @@ const AuditLog = require("../models/AuditLog");
 async function saveForm(req, res, next) {
   try {
     const { id, formType } = req.params;
-    const { data } = req.body;
+    const { data, isDraft } = req.body;
 
     if (!data) {
       return res.status(400).json({ message: "Form data object is required" });
@@ -36,7 +36,8 @@ async function saveForm(req, res, next) {
     patient.forms[formType] = {
       data: data,
       savedAt: new Date(),
-      savedBy: req.user._id
+      savedBy: req.user._id,
+      isDraft: isDraft === true
     };
 
     // Mark the forms path as modified so mongoose saves the nested updates
