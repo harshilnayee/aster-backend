@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
-const MONGO_URI = "mongodb+srv://harshilnayee2004_db_user:1Mt0NuynAuRwBQgN@cluster0.h05lmmh.mongodb.net/aster-medcare?appName=Cluster0";
+const MONGO_URI = process.env.MONGO_URI;
 
 const PatientSchema = new mongoose.Schema({}, { strict: false });
 const Patient = mongoose.model("Patient", PatientSchema);
