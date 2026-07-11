@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const AuditLog = require("../models/AuditLog");
 
@@ -8,12 +9,22 @@ const AuditLog = require("../models/AuditLog");
  */
 async function login(req, res, next) {
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
-    const targetEmail = (email || "admin@astermedcare.com").toLowerCase().trim();
-    const user = await User.findOne({ email: targetEmail });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const targetEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: targetEmail }).select("+password");
 
     if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Verify hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
