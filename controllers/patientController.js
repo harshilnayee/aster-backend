@@ -59,8 +59,22 @@ async function getPatients(req, res, next) {
       filter[`forms.${formType}.savedAt`] = { $exists: true, $ne: null };
     }
 
+    const ALL_FORMS = [
+      "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
+      "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
+      "form9", "form10", "11-form-audiometry-front", "12-form-audiometry-back",
+      "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
+      "16-form-vaccination-back", "17-form-food-handler-certificate",
+      "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format",
+      "26-form-death-certificate", "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back",
+      "form23"
+    ];
+
+    const formProjections = ALL_FORMS.map(f => `forms.${f}.savedAt`).join(" ");
+    const projection = `patientId name age gender mobile employeeCode company updatedAt createdAt createdBy forms.postMedical.data.fitStatus ${formProjections}`;
+
     const patients = await Patient.find(filter)
-      .select("-govIdNumber")
+      .select(projection)
       .populate("createdBy", "name email role")
       .sort({ updatedAt: -1 });
 
