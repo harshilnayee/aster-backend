@@ -277,7 +277,7 @@ async function bulkCreatePatients(req, res, next) {
         fatherName,
         occupation,
         govIdType,
-        govIdNumber: govIdNumber ? encrypt(employeeCode ? undefined : govIdNumber) : undefined,
+        govIdNumber: govIdNumber ? encrypt(govIdNumber) : undefined,
         dob,
         city,
         state,

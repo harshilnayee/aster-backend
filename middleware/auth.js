@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 const User = require("../models/User");
 
 // Middleware to verify JWT token
@@ -81,8 +82,17 @@ const checkFormAccess = (formTypeParamName = "formType") => {
   };
 };
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 15, // Limit each IP to 15 login requests per windowMs
+  message: { message: "Too many login attempts from this IP, please try again after 15 minutes." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 module.exports = {
   verifyToken,
   requireRole,
-  checkFormAccess
+  checkFormAccess,
+  loginLimiter
 };
