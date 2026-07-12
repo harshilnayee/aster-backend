@@ -136,7 +136,7 @@ async function fillPdfForm(req, res, next) {
     }
 
     // 3. Load original PDF
-    const pdfPath = path.join(__dirname, "../../all forms", formConfig.pdfFile);
+    const pdfPath = path.join(__dirname, "../all forms", formConfig.pdfFile);
     if (!fs.existsSync(pdfPath)) {
       return res.status(404).json({ message: `PDF template file not found: ${formConfig.pdfFile}` });
     }
