@@ -77,6 +77,7 @@ async function getForm(req, res, next) {
       : { patientId: id };
 
     const patient = await Patient.findOne(query)
+      .select(`forms.${formType} patientId`)
       .populate(`forms.${formType}.savedBy`, "name email role");
 
     if (!patient) {

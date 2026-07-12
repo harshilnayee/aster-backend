@@ -70,8 +70,28 @@ async function getPatients(req, res, next) {
       "form23"
     ];
 
-    const formProjections = ALL_FORMS.map(f => `forms.${f}.savedAt forms.${f}.isDraft`).join(" ");
-    const projection = `patientId name age gender mobile employeeCode company updatedAt createdAt createdBy forms.postMedical.data.fitStatus ${formProjections}`;
+    const projection = {
+      patientId: 1,
+      name: 1,
+      age: 1,
+      gender: 1,
+      mobile: 1,
+      employeeCode: 1,
+      company: 1,
+      updatedAt: 1,
+      createdAt: 1,
+      createdBy: 1,
+      fatherName: 1,
+      department: 1,
+      address: 1,
+      signature: { $cond: [{ $ifNull: ["$signature", false] }, "present", ""] },
+      "forms.postMedical.data.fitStatus": 1
+    };
+
+    ALL_FORMS.forEach(f => {
+      projection[`forms.${f}.savedAt`] = 1;
+      projection[`forms.${f}.isDraft`] = 1;
+    });
 
     const patients = await Patient.find(filter)
       .select(projection)

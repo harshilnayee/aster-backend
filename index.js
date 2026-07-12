@@ -73,18 +73,18 @@ app.get("/health", async (req, res) => {
 const authRoutes = require("./routes/auth");
 const patientRoutes = require("./routes/patients");
 const formRoutes = require("./routes/forms");
-const fileRoutes = require("./routes/files");
+// const fileRoutes = require("./routes/files");
 const userRoutes = require("./routes/users");
-const analyticsRoutes = require("./routes/analytics");
+// const analyticsRoutes = require("./routes/analytics");
 const pdfRoutes = require("./routes/pdf");
 const settingRoutes = require("./routes/settings");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/patients", formRoutes);
-app.use("/api/patients", fileRoutes);
+// app.use("/api/patients", fileRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/analytics", analyticsRoutes);
+// app.use("/api/analytics", analyticsRoutes);
 app.use("/api/forms", pdfRoutes);
 app.use("/api/settings", settingRoutes);
 

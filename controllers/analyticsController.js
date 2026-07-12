@@ -118,7 +118,8 @@ async function getCompanyAnalytics(req, res, next) {
       ]
     };
 
-    const patients = await Patient.find(query);
+    const patients = await Patient.find(query)
+      .select("age gender employmentType department forms.postMedical.data.fitStatus name patientId updatedAt");
 
     const totalWorkers = patients.length;
     let fitCount = 0;

@@ -25,24 +25,24 @@ const upload = multer({
 });
 
 // POST /api/patients/:id/files - Upload file to R2 and link to patient record (Admin, Doctor, Employee)
-router.post(
-  "/:id/files",
-  verifyToken,
-  (req, res, next) => {
-    upload.single("file")(req, res, (err) => {
-      if (err) {
-        return res.status(400).json({ message: err.message });
-      }
-      next();
-    });
-  },
-  fileController.uploadFile
-);
+// router.post(
+//   "/:id/files",
+//   verifyToken,
+//   (req, res, next) => {
+//     upload.single("file")(req, res, (err) => {
+//       if (err) {
+//         return res.status(400).json({ message: err.message });
+//       }
+//       next();
+//     });
+//   },
+//   fileController.uploadFile
+// );
 
 // GET /api/patients/:id/files - Get all files linked to patient record (Admin, Doctor, Employee)
-router.get("/:id/files", verifyToken, fileController.getFiles);
+// router.get("/:id/files", verifyToken, fileController.getFiles);
 
 // DELETE /api/patients/:id/files/:fileId - Delete file from record and R2 (Admin, Doctor, Employee)
-router.delete("/:id/files/:fileId", verifyToken, fileController.deleteFile);
+// router.delete("/:id/files/:fileId", verifyToken, fileController.deleteFile);
 
 module.exports = router;

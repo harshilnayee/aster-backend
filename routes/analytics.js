@@ -4,15 +4,15 @@ const analyticsController = require("../controllers/analyticsController");
 const { verifyToken, requireRole } = require("../middleware/auth");
 
 // All analytics routes require auth and are restricted to Admin and Doctor
-router.use(verifyToken, requireRole("admin", "doctor"));
+// router.use(verifyToken, requireRole("admin", "doctor"));
 
 // GET /api/analytics/summary
-router.get("/summary", analyticsController.getSummary);
+// router.get("/summary", analyticsController.getSummary);
 
 // GET /api/analytics/companies
-router.get("/companies", analyticsController.getCompanies);
+// router.get("/companies", analyticsController.getCompanies);
 
 // GET /api/analytics/company/:companyName
-router.get("/company/:companyName", analyticsController.getCompanyAnalytics);
+// router.get("/company/:companyName", analyticsController.getCompanyAnalytics);
 
 module.exports = router;

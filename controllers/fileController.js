@@ -84,6 +84,7 @@ async function getFiles(req, res, next) {
       : { patientId: id };
 
     const patient = await Patient.findOne(query)
+      .select("files patientId")
       .populate("files.uploadedBy", "name email role");
 
     if (!patient) {
