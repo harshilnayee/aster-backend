@@ -18,6 +18,9 @@ const User = require("./models/User");
 const app = express();
 app.set("trust proxy", 1);
 
+const compression = require("compression");
+app.use(compression());
+
 // 1. Security Headers
 app.use(helmet());
 
