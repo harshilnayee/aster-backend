@@ -78,7 +78,8 @@ async function getForm(req, res, next) {
 
     const patient = await Patient.findOne(query)
       .select(`forms.${formType} patientId`)
-      .populate(`forms.${formType}.savedBy`, "name email role");
+      .populate(`forms.${formType}.savedBy`, "name email role")
+      .lean();
 
     if (!patient) {
       return res.status(404).json({ message: "Patient record not found" });

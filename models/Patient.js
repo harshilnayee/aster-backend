@@ -130,4 +130,12 @@ const PatientSchema = new mongoose.Schema(
   }
 );
 
+// Indexes to resolve read/write query latencies and avoid collection scans
+PatientSchema.index({ patientId: 1 });
+PatientSchema.index({ name: 1 });
+PatientSchema.index({ company: 1 });
+PatientSchema.index({ mobile: 1 });
+PatientSchema.index({ updatedAt: -1 });
+PatientSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Patient", PatientSchema);

@@ -96,7 +96,8 @@ async function getPatients(req, res, next) {
     const patients = await Patient.find(filter)
       .select(projection)
       .populate("createdBy", "name email role")
-      .sort({ updatedAt: -1 });
+      .sort({ updatedAt: -1 })
+      .lean();
 
     return res.status(200).json(patients);
   } catch (error) {
