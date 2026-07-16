@@ -26,7 +26,8 @@ const AuditLogSchema = new mongoose.Schema({
       "report_generated",
       "report_downloaded",
       "login",
-      "logout"
+      "logout",
+      "whatsapp_reminder_sent"
     ]
   },
   patientId: {
