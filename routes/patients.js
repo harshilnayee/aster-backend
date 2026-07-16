@@ -21,6 +21,9 @@ router.get("/:id", verifyToken, patientController.getPatient);
 // PUT /api/patients/:id - Update patient details (Admin, Doctor, Employee)
 router.put("/:id", verifyToken, patientController.updatePatient);
 
+// POST /api/patients/:id/whatsapp-reminder - Record WhatsApp reminder sent (Admin, Doctor, Employee)
+router.post("/:id/whatsapp-reminder", verifyToken, patientController.recordWhatsappReminder);
+
 // DELETE /api/patients/bulk - Bulk delete patients (Admin only)
 router.delete("/bulk", verifyToken, requireRole("admin"), patientController.bulkDeletePatients);
 

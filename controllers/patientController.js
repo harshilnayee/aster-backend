@@ -78,6 +78,7 @@ async function getPatients(req, res, next) {
       mobile: 1,
       employeeCode: 1,
       company: 1,
+      whatsappRemindersSent: 1,
       updatedAt: 1,
       createdAt: 1,
       createdBy: 1,
@@ -404,11 +405,47 @@ async function bulkDeletePatients(req, res, next) {
   }
 }
 
+async function recordWhatsappReminder(req, res, next) {
+  try {
+    const { id } = req.params;
+    const query = mongoose.Types.ObjectId.isValid(id)
+      ? { _id: id }
+      : { patientId: id };
+
+    const patient = await Patient.findOne(query);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient record not found" });
+    }
+
+    patient.whatsappRemindersSent = (patient.whatsappRemindersSent || 0) + 1;
+    await patient.save();
+
+    // Log action
+    await AuditLog.create({
+      userId: req.user._id,
+      userName: req.user.name,
+      userRole: req.user.role,
+      action: "whatsapp_reminder_sent",
+      patientId: patient.patientId,
+      details: `WhatsApp reminder sent to patient ${patient.name} (Total: ${patient.whatsappRemindersSent})`
+    });
+
+    return res.status(200).json({
+      message: "WhatsApp reminder recorded",
+      whatsappRemindersSent: patient.whatsappRemindersSent
+    });
+  } catch (error) {
+    console.error("RecordWhatsappReminder error:", error);
+    next(error);
+  }
+}
+
 module.exports = {
   getPatients,
   createPatient,
   getPatient,
   updatePatient,
   bulkCreatePatients,
-  bulkDeletePatients
+  bulkDeletePatients,
+  recordWhatsappReminder
 };

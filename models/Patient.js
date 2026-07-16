@@ -119,6 +119,10 @@ const PatientSchema = new mongoose.Schema(
       default: {}
     },
     files: [PatientFileSchema],
+    whatsappRemindersSent: {
+      type: Number,
+      default: 0
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
