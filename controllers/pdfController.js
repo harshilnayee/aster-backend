@@ -122,10 +122,10 @@ async function fillPdfForm(req, res, next) {
       console.error("Failed to load doctor signature from disk:", err);
     }
 
-    // Auto-inject doctor signature base64 if defined in coordinates
-    const doctorKeys = ["doctorSignature", "doctorSignatureRow", "signatureMedicalOfficer"];
+    // Auto-inject doctor signature & stamp base64 if defined in coordinates
+    const doctorKeys = ["doctorSignature", "doctorSignatureRow", "signatureMedicalOfficer", "doctorStamp"];
     for (const key of doctorKeys) {
-      if (coords[key] && doctorSignatureBase64) {
+      if (coords[key] && doctorSignatureBase64 && (!values[key] || (typeof values[key] === "string" && !values[key].startsWith("data:image")))) {
         values[key] = doctorSignatureBase64;
       }
     }
