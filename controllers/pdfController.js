@@ -110,24 +110,35 @@ async function fillPdfForm(req, res, next) {
       return res.status(500).json({ message: "Error parsing form coordinates configuration" });
     }
     
-    // Read doctor signature base64 if it exists on disk
+    // Read doctor signature & stamp base64 images if they exist on disk
     let doctorSignatureBase64 = null;
+    let doctorStampBase64 = null;
     try {
       const docSignPath = path.join(__dirname, "../assets/doctor_sign_drsajan.png");
       if (fs.existsSync(docSignPath)) {
         const docSignBytes = fs.readFileSync(docSignPath);
         doctorSignatureBase64 = `data:image/png;base64,${docSignBytes.toString("base64")}`;
       }
+      const docStampPath = path.join(__dirname, "../assets/doctor_stamp.png");
+      if (fs.existsSync(docStampPath)) {
+        const docStampBytes = fs.readFileSync(docStampPath);
+        doctorStampBase64 = `data:image/png;base64,${docStampBytes.toString("base64")}`;
+      }
     } catch (err) {
-      console.error("Failed to load doctor signature from disk:", err);
+      console.error("Failed to load doctor signature/stamp from disk:", err);
     }
 
-    // Auto-inject doctor signature & stamp base64 if defined in coordinates
-    const doctorKeys = ["doctorSignature", "doctorSignatureRow", "signatureMedicalOfficer", "doctorStamp"];
-    for (const key of doctorKeys) {
+    // Auto-inject doctor signature base64 if defined in coordinates
+    const docSignKeys = ["doctorSignature", "doctorSignatureRow", "signatureMedicalOfficer"];
+    for (const key of docSignKeys) {
       if (coords[key] && doctorSignatureBase64 && (!values[key] || (typeof values[key] === "string" && !values[key].startsWith("data:image")))) {
         values[key] = doctorSignatureBase64;
       }
+    }
+
+    // Auto-inject doctor stamp base64 if defined in coordinates
+    if (coords["doctorStamp"] && doctorStampBase64 && (!values["doctorStamp"] || (typeof values["doctorStamp"] === "string" && !values["doctorStamp"].startsWith("data:image")))) {
+      values["doctorStamp"] = doctorStampBase64;
     }
 
     // For food handler certificate, also draw doctor's signature in the candidate's signature box
