@@ -331,12 +331,31 @@ async function fillPdfForm(req, res, next) {
               lines = String(drawVal).split("\n");
             }
 
+            // Auto-scale font size if text exceeds bounding box width (for single-line fields with specified width)
+            if (finalCoord.width && !finalCoord.multiline && lines.length === 1) {
+              try {
+                const textWidth = currentFont.widthOfTextAtSize(lines[0], currentFontSize);
+                const targetWidth = Number(finalCoord.width);
+                if (textWidth > targetWidth && targetWidth > 0) {
+                  const scale = targetWidth / textWidth;
+                  currentFontSize = Math.max(6, Math.floor(currentFontSize * scale * 10) / 10);
+                }
+              } catch (err) {
+                console.error("Error auto-scaling font size:", err);
+              }
+            }
+
             const lineHeight = currentFontSize * 1.2;
             const totalTextHeight = lines.length * lineHeight;
 
             let initialY = textY;
             if (finalCoord.centerText && finalCoord.height) {
-              initialY = Number(finalCoord.y) + (Number(finalCoord.height) - totalTextHeight) / 2 + (lines.length - 1) * lineHeight;
+              const capHeight = currentFontSize * 0.7;
+              if (lines.length === 1) {
+                initialY = Number(finalCoord.y) + Math.max(0, (Number(finalCoord.height) - capHeight) / 2);
+              } else {
+                initialY = Number(finalCoord.y) + (Number(finalCoord.height) - totalTextHeight) / 2 + (lines.length - 1) * lineHeight;
+              }
             }
 
             for (let i = 0; i < lines.length; i++) {

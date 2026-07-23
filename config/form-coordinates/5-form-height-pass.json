@@ -10,54 +10,50 @@
   "name": {
     "page": 1,
     "x": 144,
-    "y": 728,
+    "y": 731,
     "width": 167,
-    "height": 6
+    "height": 6,
+    "fontSize": 8.5
   },
   "age": {
     "page": 1,
-    "x": 332,
-    "y": 728,
-    "width": 26,
-    "height": 6
+    "x": 334,
+    "y": 731,
+    "width": 12,
+    "height": 7,
+    "fontSize": 8.5
   },
   "sex": {
     "page": 1,
-    "yes": {
-      "x": 375,
-      "y": 728,
-      "width": 3,
-      "height": 7,
-      "drawSlash": true
-    },
-    "no": {
-      "x": 360,
-      "y": 728,
-      "width": 8,
-      "height": 7,
-      "drawSlash": true
-    }
+    "x": 360,
+    "y": 731,
+    "width": 45,
+    "height": 7,
+    "fontSize": 8.5
   },
   "mobileNo": {
     "page": 1,
     "x": 158,
-    "y": 705,
-    "width": 49,
-    "height": 6
+    "y": 706,
+    "width": 85,
+    "height": 6,
+    "fontSize": 8.5
   },
   "companyName": {
     "page": 1,
     "x": 300,
     "y": 707,
     "width": 83,
-    "height": 7
+    "height": 7,
+    "fontSize": 8.5
   },
   "idNo": {
     "page": 1,
     "x": 440,
     "y": 706,
     "width": 51,
-    "height": 5
+    "height": 5,
+    "fontSize": 8.5
   },
   "previousHistory": {
     "page": 1,
@@ -68,49 +64,32 @@
   },
   "beforePulseRate": {
     "page": 1,
-    "x": 195,
-    "y": 656,
-    "width": 17,
-    "height": 5
-  },
-  "beforeBpSys": {
-    "page": 1,
-    "x": 415,
+    "x": 185,
     "y": 655,
-    "width": 20,
-    "height": 7,
-    "whiteBg": true
+    "width": 60,
+    "height": 7
   },
-  "beforeBpDia": {
+  "beforeBp": {
     "page": 1,
-    "x": 445,
-    "y": 654,
-    "width": 24,
+    "x": 412,
+    "y": 655,
+    "width": 80,
     "height": 7,
     "whiteBg": true
   },
   "afterPulseRate": {
     "page": 1,
-    "x": 189,
-    "y": 623,
-    "width": 20,
-    "height": 7,
-    "whiteBg": true
-  },
-  "afterBpSys": {
-    "page": 1,
-    "x": 417,
+    "x": 185,
     "y": 624,
-    "width": 19,
-    "height": 5,
-    "whiteBg": true
+    "width": 60,
+    "height": 7
   },
-  "afterBpDia": {
+  "afterBp": {
     "page": 1,
-    "x": 446,
-    "y": 623,
-    "width": 19,
-    "height": 5,
+    "x": 412,
+    "y": 624,
+    "width": 80,
+    "height": 7,
     "whiteBg": true
   },
   "uncontrolledThoughts": {
@@ -345,14 +324,14 @@
   "certifiedName": {
     "page": 1,
     "x": 245,
-    "y": 186,
+    "y": 189,
     "width": 137,
     "height": 9
   },
   "fitWorkAt": {
     "page": 1,
     "x": 324,
-    "y": 155,
+    "y": 158,
     "width": 138,
     "height": 8
   },
@@ -372,10 +351,10 @@
   },
   "doctorName": {
     "page": 1,
-    "x": 374,
-    "y": 87,
-    "width": 59,
-    "height": 5
+    "x": 379,
+    "y": 74,
+    "width": 63,
+    "height": 7
   },
   "doctorStamp": {
     "page": 1,

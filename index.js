@@ -28,15 +28,19 @@ app.use(helmet());
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5174",
   "https://aster-medcare.vercel.app",
   process.env.CLIENT_URL
 ].filter(Boolean);
+
+const isLocalOrigin = (origin) => /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, or postman)
-      if (!origin || allowedOrigins.includes(origin) || origin.includes("aster-medcare")) {
+      if (!origin || allowedOrigins.includes(origin) || origin.includes("aster-medcare") || isLocalOrigin(origin)) {
         callback(null, true);
       } else {
         callback(new Error(`Origin ${origin} not allowed by CORS`));

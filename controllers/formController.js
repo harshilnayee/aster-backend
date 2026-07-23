@@ -40,6 +40,13 @@ async function saveForm(req, res, next) {
       isDraft: isDraft === true
     };
 
+    // Extract date from form data if present to set patient examinationDate permanently
+    const formDate = data.date || data.dateTop || data.examinationDate || data.examDate || data.regDate || data.certDate;
+    if (formDate && typeof formDate === "string") {
+      patient.examinationDate = formDate.split("T")[0];
+      patient.markModified("examinationDate");
+    }
+
     // Mark the forms path as modified so mongoose saves the nested updates
     patient.markModified(`forms.${formType}`);
     await patient.save();
