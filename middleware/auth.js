@@ -27,12 +27,23 @@ const verifyToken = async (req, res, next) => {
     }
 
     req.user = user;
+    // Attach clinicId from the JWT (already validated above) for tenant scoping
+    if (!req.user.clinicId && decoded.clinicId) {
+      req.user.clinicId = decoded.clinicId;
+    }
     next();
   } catch (error) {
-    console.error("Token verification error:", error.message);
     if (error.name === "TokenExpiredError") {
       return res.status(401).json({ message: "Token has expired" });
     }
+    if (error.name === "JsonWebTokenError" || error.name === "NotBeforeError") {
+      return res.status(401).json({ message: "Invalid authorization token" });
+    }
+    if (error.name?.includes("Mongo") || error.message?.includes("connection") || error.message?.includes("topology") || error.message?.includes("timed out")) {
+      console.error("Database connection error during authentication check:", error.message);
+      return res.status(503).json({ message: "Database connection error. Retrying connection..." });
+    }
+    console.error("Token verification error:", error.message);
     return res.status(401).json({ message: "Invalid authorization token" });
   }
 };
@@ -61,8 +72,8 @@ const checkFormAccess = (formTypeParamName = "formType") => {
       return res.status(401).json({ message: "Authentication required" });
     }
 
-    // Admins and Doctors always bypass form restrictions
-    if (req.user.role === "admin" || req.user.role === "doctor") {
+    // Superadmin, admins, and doctors always bypass form restrictions
+    if (req.user.role === "superadmin" || req.user.role === "admin" || req.user.role === "doctor") {
       return next();
     }
 
@@ -82,6 +93,16 @@ const checkFormAccess = (formTypeParamName = "formType") => {
   };
 };
 
+/** Returns true if user may access the given form key (admin/doctor always). */
+function userHasFormAccess(user, formKey) {
+  if (!user) return false;
+  if (user.role === "superadmin" || user.role === "admin" || user.role === "doctor") return true;
+  if (user.role === "employee") {
+    return Array.isArray(user.formAccess) && user.formAccess.includes(formKey);
+  }
+  return false;
+}
+
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 15, // Limit each IP to 15 login requests per windowMs
@@ -94,5 +115,6 @@ module.exports = {
   verifyToken,
   requireRole,
   checkFormAccess,
+  userHasFormAccess,
   loginLimiter
 };

@@ -32,8 +32,8 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: {
-        values: ["admin", "doctor", "employee"],
-        message: "Role must be admin, doctor, or employee"
+        values: ["superadmin", "admin", "doctor", "employee"],
+        message: "Role must be superadmin, admin, doctor, or employee"
       },
       required: [true, "Role is required"]
     },
@@ -45,6 +45,13 @@ const UserSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    // Multi-tenant: which clinic this user belongs to.
+    // superadmin has no clinicId (they can see all clinics).
+    clinicId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Clinic",
+      default: null
     }
   },
   {

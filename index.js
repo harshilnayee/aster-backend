@@ -19,7 +19,21 @@ const app = express();
 app.set("trust proxy", 1);
 
 const compression = require("compression");
-app.use(compression());
+app.use(compression({
+  // Prefer smaller JSON/API responses; skip already-compressed payloads
+  level: 6,
+  threshold: 1024,
+  filter: (req, res) => {
+    if (req.headers["x-no-compression"]) return false;
+    const type = res.getHeader("Content-Type");
+    if (typeof type === "string") {
+      if (type.includes("zip") || type.includes("pdf") || type.includes("image/")) {
+        return false;
+      }
+    }
+    return compression.filter(req, res);
+  }
+}));
 
 // 1. Security Headers
 app.use(helmet());
@@ -40,7 +54,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, or postman)
-      if (!origin || allowedOrigins.includes(origin) || origin.includes("aster-medcare") || isLocalOrigin(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || isLocalOrigin(origin)) {
         callback(null, true);
       } else {
         callback(new Error(`Origin ${origin} not allowed by CORS`));
@@ -57,19 +71,16 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// 5. Health Check Route
+// 5. Health Check Route (no sensitive DB metadata)
 app.get("/health", async (req, res) => {
   try {
-    const dbName = mongoose.connection.db ? mongoose.connection.db.databaseName : "Not Connected";
-    const userCount = await User.countDocuments();
-    res.status(200).json({ 
-      status: "UP", 
-      dbName,
-      userCount,
-      timestamp: new Date() 
+    const dbOk = mongoose.connection.readyState === 1;
+    res.status(200).json({
+      status: dbOk ? "UP" : "DEGRADED",
+      timestamp: Date.now()
     });
   } catch (err) {
-    res.status(500).json({ status: "DOWN", error: err.message });
+    res.status(500).json({ status: "DOWN", timestamp: Date.now() });
   }
 });
 
@@ -82,6 +93,8 @@ const userRoutes = require("./routes/users");
 // const analyticsRoutes = require("./routes/analytics");
 const pdfRoutes = require("./routes/pdf");
 const settingRoutes = require("./routes/settings");
+const developerRoutes = require("./routes/developer");
+const chatbotRoutes = require("./routes/chatbot");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/patients", patientRoutes);
@@ -91,6 +104,8 @@ app.use("/api/users", userRoutes);
 // app.use("/api/analytics", analyticsRoutes);
 app.use("/api/forms", pdfRoutes);
 app.use("/api/settings", settingRoutes);
+app.use("/api/developer", developerRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 // 7. 404 Route Handler
 app.use((req, res, next) => {
@@ -131,7 +146,13 @@ let retryCount = 0;
 async function connectDB() {
   while (retryCount < maxRetries) {
     try {
-      await mongoose.connect(MONGO_URI);
+      await mongoose.connect(MONGO_URI, {
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+        maxPoolSize: 10,
+        minPoolSize: 2,
+        family: 4
+      });
       console.log("Successfully connected to MongoDB.");
       return;
     } catch (error) {
@@ -150,17 +171,56 @@ async function connectDB() {
 const ALL_FORMS = [
   "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
   "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
-  "form9", "form10",
+  "form09", "form10",
   "11-form-audiometry-front", "12-form-audiometry-back", "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
   "16-form-vaccination-back", "17-form-food-handler-certificate", "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format", "26-form-death-certificate",
   "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back", "form23"
 ];
 
+async function ensureSuperAdmin() {
+  const email = process.env.SUPERADMIN_EMAIL?.toLowerCase().trim();
+  const password = process.env.SUPERADMIN_PASSWORD;
+  if (!email || !password) {
+    return;
+  }
+
+  try {
+    const existing = await User.findOne({ email });
+    if (existing) {
+      if (existing.role !== "superadmin") {
+        existing.role = "superadmin";
+        existing.formAccess = ALL_FORMS;
+        existing.isActive = true;
+        await existing.save();
+        console.log("Upgraded existing account to developer super-user.");
+      }
+      return;
+    }
+
+    const user = new User({
+      name: process.env.SUPERADMIN_NAME || "Platform Developer",
+      email,
+      password,
+      role: "superadmin",
+      formAccess: ALL_FORMS,
+      isActive: true
+    });
+    await user.save();
+    console.log("Developer super-user account created from environment variables.");
+  } catch (err) {
+    console.error("Failed to ensure developer super-user account:", err.message);
+  }
+}
+
 async function autoSeed() {
   try {
+    // Never auto-seed known passwords outside development
+    if (process.env.NODE_ENV === "production") {
+      return;
+    }
     const userCount = await User.countDocuments();
     if (userCount === 0) {
-      console.log("No users found in database. Auto-seeding default users...");
+      console.log("No users found in database. Auto-seeding default users (development only)...");
       const usersToSeed = [
         {
           name: "System Admin",
@@ -168,30 +228,6 @@ async function autoSeed() {
           password: "Admin@123456",
           role: "admin",
           formAccess: ALL_FORMS,
-          isActive: true
-        },
-        {
-          name: "Doctor Patel",
-          email: "doctor@astermedcare.com",
-          password: "Doctor@12345",
-          role: "doctor",
-          formAccess: ALL_FORMS,
-          isActive: true
-        },
-        {
-          name: "Staff Member One",
-          email: "staff1@astermedcare.com",
-          password: "Staff1@12345",
-          role: "employee",
-          formAccess: ["eyeExam", "postMedical"],
-          isActive: true
-        },
-        {
-          name: "Staff Member Two",
-          email: "staff2@astermedcare.com",
-          password: "Staff2@12345",
-          role: "employee",
-          formAccess: [],
           isActive: true
         }
       ];
@@ -206,12 +242,20 @@ async function autoSeed() {
   }
 }
 
+async function migrateDefaultGenders() {
+  // Intentionally disabled: rewriting patient gender on startup mutates production data.
+  // Bulk import now defaults missing gender to "Not Specified" instead of "Male".
+  return;
+}
+
 // 10. Start Server
 const PORT = process.env.PORT || 5000;
 let server;
 
 connectDB().then(async () => {
+  await ensureSuperAdmin();
   await autoSeed();
+  await migrateDefaultGenders();
   server = app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || "production"} mode on port ${PORT}`);
   });
