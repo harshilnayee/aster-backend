@@ -15,7 +15,15 @@ function getAllFormKeys() {
  */
 async function getUsers(req, res, next) {
   try {
-    const users = await User.find({}).sort({ createdAt: -1 });
+    let query;
+    if (req.user.role === "superadmin") {
+      // superadmin sees all users across all clinics
+      query = {};
+    } else {
+      // admins/doctors only see staff in their own clinic
+      query = { role: { $ne: "superadmin" }, clinicId: req.user.clinicId };
+    }
+    const users = await User.find(query).sort({ createdAt: -1 });
     return res.status(200).json(users);
   } catch (error) {
     console.error("GetUsers error:", error);
@@ -35,6 +43,10 @@ async function createUser(req, res, next) {
       return res.status(400).json({ message: "Name, email, password, and role are required." });
     }
 
+    if (role === "superadmin") {
+      return res.status(403).json({ message: "Developer accounts cannot be created from the clinic panel." });
+    }
+
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(409).json({ message: "User with this email already exists." });
@@ -50,7 +62,8 @@ async function createUser(req, res, next) {
       password, // Will be encrypted by Mongoose schema hook
       role,
       formAccess,
-      isActive: true
+      isActive: true,
+      clinicId: req.user.role === "superadmin" ? null : (req.user.clinicId ?? null)
     });
 
     await user.save();
@@ -81,6 +94,10 @@ async function updateUserAccess(req, res, next) {
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === "superadmin") {
+      return res.status(403).json({ message: "Developer accounts cannot be modified from the clinic panel." });
     }
 
     // Cannot update own access or self-deactivate for safety

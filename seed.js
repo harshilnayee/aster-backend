@@ -2,10 +2,15 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 require("dotenv").config();
 
+if (process.env.NODE_ENV === "production") {
+  console.error("Refusing to run seed.js in production (hardcoded passwords / user deletes).");
+  process.exit(1);
+}
+
 const ALL_FORMS = [
   "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
   "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
-  "form9", "form10",
+  "form09", "form10",
   "11-form-audiometry-front", "12-form-audiometry-back", "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
   "16-form-vaccination-back", "17-form-food-handler-certificate", "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format", "26-form-death-certificate",
   "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back", "form23"
@@ -18,30 +23,6 @@ const usersToSeed = [
     password: "Admin@123456", // String password will be hashed by UserSchema pre('save') hook
     role: "admin",
     formAccess: ALL_FORMS,
-    isActive: true
-  },
-  {
-    name: "Doctor Patel",
-    email: "doctor@astermedcare.com",
-    password: "Doctor@12345",
-    role: "doctor",
-    formAccess: ALL_FORMS,
-    isActive: true
-  },
-  {
-    name: "Staff Member One",
-    email: "staff1@astermedcare.com",
-    password: "Staff1@12345",
-    role: "employee",
-    formAccess: ["eyeExam", "postMedical"], // default access to two forms for immediate testing
-    isActive: true
-  },
-  {
-    name: "Staff Member Two",
-    email: "staff2@astermedcare.com",
-    password: "Staff2@12345",
-    role: "employee",
-    formAccess: [], // default empty formAccess
     isActive: true
   }
 ];
@@ -77,4 +58,8 @@ async function seedDatabase() {
   }
 }
 
-seedDatabase();
+if (require.main === module) {
+  seedDatabase();
+} else {
+  module.exports = { seedDatabase };
+}

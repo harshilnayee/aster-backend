@@ -87,7 +87,8 @@
     "pdfFile": "6 FORM 33.pdf",
     "coordinatesFile": "form-33.json",
     "defaultFont": "TimesRoman",
-    "defaultFontSize": 9.5
+    "defaultFontSize": 10.5,
+    "lockFontSize": true
   },
   "eyeExam": {
     "displayName": "Ophthalmological Examination Report (Front)",

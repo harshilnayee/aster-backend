@@ -28,8 +28,12 @@ async function login(req, res, next) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
+    if (!user.isActive) {
+      return res.status(403).json({ message: "User account has been deactivated" });
+    }
+
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, clinicId: user.clinicId ?? null },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "30d" }
     );

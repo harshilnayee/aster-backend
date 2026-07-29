@@ -2,56 +2,77 @@ const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
 
-
+function buildPatientQuery(id) {
+  return mongoose.Types.ObjectId.isValid(id)
+    ? { _id: id }
+    : { patientId: id };
+}
 
 /**
  * Save form data under patient.forms[formType]
+ * Uses atomic $set on only that form key so concurrent saves of other forms are not overwritten.
  * POST /api/patients/:id/forms/:formType
  */
 async function saveForm(req, res, next) {
   try {
     const { id, formType } = req.params;
-    const { data, isDraft } = req.body;
+    const { data } = req.body;
+    let { isDraft } = req.body;
 
     if (!data) {
       return res.status(400).json({ message: "Form data object is required" });
     }
 
-    // Determine query based on ID format
-    const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+    const query = buildPatientQuery(id);
+    const draftRequested = isDraft === true;
 
-    const patient = await Patient.findOne(query);
+    // Never demote a finalized form back to draft (autosave race after final save)
+    if (draftRequested) {
+      const existing = await Patient.findOne(query)
+        .select(`forms.${formType}`)
+        .lean();
+      const current = existing?.forms?.[formType];
+      if (current?.savedAt && current.isDraft === false) {
+        return res.status(200).json({
+          message: `Form ${formType} already finalized; draft autosave skipped`,
+          form: current,
+          skippedDraftDemotion: true
+        });
+      }
+    }
+
+    const formEntry = {
+      data,
+      savedAt: new Date(),
+      savedBy: req.user._id,
+      isDraft: draftRequested
+    };
+
+    const $set = {
+      [`forms.${formType}`]: formEntry
+    };
+
+    // Persist permanent examination date when present on the form payload
+    const formDate =
+      data.date ||
+      data.dateTop ||
+      data.examinationDate ||
+      data.examDate ||
+      data.regDate ||
+      data.certDate;
+    if (formDate && typeof formDate === "string" && formDate.trim()) {
+      $set.examinationDate = formDate.split("T")[0];
+    } else if (formDate instanceof Date && !Number.isNaN(formDate.getTime())) {
+      $set.examinationDate = formDate.toISOString().split("T")[0];
+    }
+
+    const patient = await Patient.findOneAndUpdate(query, { $set }, { new: true })
+      .select(`patientId forms.${formType}`);
+
     if (!patient) {
       return res.status(404).json({ message: "Patient record not found" });
     }
 
-    // Update the specific form
-    patient.forms = patient.forms || {};
-    
-    // We dynamically support the formType name in the forms object.
-    // If it's a new form type (one of the other 19), it will save correctly
-    // as mongoose.Schema.Types.Mixed allows it.
-    patient.forms[formType] = {
-      data: data,
-      savedAt: new Date(),
-      savedBy: req.user._id,
-      isDraft: isDraft === true
-    };
-
-    // Extract date from form data if present to set patient examinationDate permanently
-    const formDate = data.date || data.dateTop || data.examinationDate || data.examDate || data.regDate || data.certDate;
-    if (formDate && typeof formDate === "string") {
-      patient.examinationDate = formDate.split("T")[0];
-      patient.markModified("examinationDate");
-    }
-
-    // Mark the forms path as modified so mongoose saves the nested updates
-    patient.markModified(`forms.${formType}`);
-    await patient.save();
-
-    // Log the action
     await AuditLog.create({
       userId: req.user._id,
       userName: req.user.name,
@@ -79,9 +100,7 @@ async function getForm(req, res, next) {
   try {
     const { id, formType } = req.params;
 
-    const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+    const query = buildPatientQuery(id);
 
     const patient = await Patient.findOne(query)
       .select(`forms.${formType} patientId`)
@@ -94,9 +113,10 @@ async function getForm(req, res, next) {
 
     const form = patient.forms ? patient.forms[formType] : null;
     if (!form || !form.savedAt) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: `Form ${formType} has not been filled yet for this patient`,
-        formExists: false
+        formExists: false,
+        form: null
       });
     }
 

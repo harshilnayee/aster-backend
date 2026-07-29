@@ -75,331 +75,26 @@ async function fillPdfForm(req, res, next) {
   try {
     const { formId } = req.params;
     const { values } = req.body;
-
     if (!values) {
       return res.status(400).json({ message: "Field values are required" });
     }
 
-    // 1. Resolve form config
-    const registryPath = getRegistryPath();
-    if (!fs.existsSync(registryPath)) {
-      return res.status(500).json({ message: "Form registry not found" });
-    }
-    let registry;
-    try {
-      registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-    } catch (parseErr) {
-      console.error("Registry parse failure:", parseErr);
-      return res.status(500).json({ message: "Error parsing form registry configuration" });
-    }
-    const formConfig = registry[formId];
-    if (!formConfig) {
-      return res.status(404).json({ message: `Form config not found for: ${formId}` });
+    const { userHasFormAccess } = require("../middleware/auth");
+    if (!userHasFormAccess(req.user, formId)) {
+      return res.status(403).json({
+        message: `Access denied. You do not have permission to fill form: ${formId}`
+      });
     }
 
-    // 2. Load coordinates
-    const coordsPath = path.join(__dirname, "../config/form-coordinates", formConfig.coordinatesFile);
-    if (!fs.existsSync(coordsPath)) {
-      return res.status(500).json({ message: `Coordinates file not found: ${formConfig.coordinatesFile}` });
-    }
-    let coords;
-    try {
-      coords = JSON.parse(fs.readFileSync(coordsPath, "utf8"));
-    } catch (parseErr) {
-      console.error("Coordinates parse failure:", parseErr);
-      return res.status(500).json({ message: "Error parsing form coordinates configuration" });
-    }
-    
-    // Read doctor signature & stamp base64 images if they exist on disk
-    let doctorSignatureBase64 = null;
-    let doctorStampBase64 = null;
-    try {
-      const docSignPath = path.join(__dirname, "../assets/doctor_sign_drsajan.png");
-      if (fs.existsSync(docSignPath)) {
-        const docSignBytes = fs.readFileSync(docSignPath);
-        doctorSignatureBase64 = `data:image/png;base64,${docSignBytes.toString("base64")}`;
-      }
-      const docStampPath = path.join(__dirname, "../assets/doctor_stamp.png");
-      if (fs.existsSync(docStampPath)) {
-        const docStampBytes = fs.readFileSync(docStampPath);
-        doctorStampBase64 = `data:image/png;base64,${docStampBytes.toString("base64")}`;
-      }
-    } catch (err) {
-      console.error("Failed to load doctor signature/stamp from disk:", err);
-    }
-
-    // Auto-inject doctor signature base64 if defined in coordinates
-    const docSignKeys = ["doctorSignature", "doctorSignatureRow", "signatureMedicalOfficer"];
-    for (const key of docSignKeys) {
-      if (coords[key] && doctorSignatureBase64 && (!values[key] || (typeof values[key] === "string" && !values[key].startsWith("data:image")))) {
-        values[key] = doctorSignatureBase64;
-      }
-    }
-
-    // Auto-inject doctor stamp base64 if defined in coordinates
-    if (coords["doctorStamp"] && doctorStampBase64 && (!values["doctorStamp"] || (typeof values["doctorStamp"] === "string" && !values["doctorStamp"].startsWith("data:image")))) {
-      values["doctorStamp"] = doctorStampBase64;
-    }
-
-    // For food handler certificate, also draw doctor's signature in the candidate's signature box
-    if (formId === "17-form-food-handler-certificate" && doctorSignatureBase64) {
-      values["patientSignature"] = doctorSignatureBase64;
-    }
-
-    // 3. Load original PDF
-    const pdfPath = path.join(__dirname, "../all forms", formConfig.pdfFile);
-    if (!fs.existsSync(pdfPath)) {
-      return res.status(404).json({ message: `PDF template file not found: ${formConfig.pdfFile}` });
-    }
-    const pdfBytes = fs.readFileSync(pdfPath);
-
-    // 4. Load PDFDocument and draw text
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const zapfFont = await pdfDoc.embedFont(StandardFonts.ZapfDingbats);
-    const timesFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-    const timesBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-    
-    // Remove annotations (including the white filled square box covering signature) specifically for Form 5 and Form 36
-    if (formId === "5-form-height-pass" || formId === "36-form-airport-bohw-ht-back") {
-      const allPages = pdfDoc.getPages();
-      if (allPages.length > 0) {
-        const page = allPages[0];
-        page.node.delete(PDFName.of('Annots'));
-        page.drawRectangle({
-          x: 99.43,
-          y: 65.48,
-          width: 141.95,
-          height: 54.24,
-          borderColor: rgb(0, 0, 0),
-          borderWidth: 1.2
-        });
-      }
-    }
-    
-    // Auto-load doctor stamp image if configured in coords but not provided in values
-    if (coords.doctorStamp && !values.doctorStamp) {
-      try {
-        const stampPath = path.join(__dirname, "../../stm.png");
-        if (fs.existsSync(stampPath)) {
-          const stampBytes = fs.readFileSync(stampPath);
-          values.doctorStamp = `data:image/png;base64,${stampBytes.toString("base64")}`;
-        }
-      } catch (err) {
-        console.error("Failed to load doctorStamp from disk:", err);
-      }
-    }
-
-    // Draw each provided field value or coordinate (so we can clear empty inputs with whiteBg)
-    for (const [fieldName, coord] of Object.entries(coords)) {
-      const val = values[fieldName];
-      const pageIndex = (coord.page || 1) - 1;
-      const totalPages = pdfDoc.getPageCount();
-      
-      if (pageIndex >= 0 && pageIndex < totalPages) {
-        const page = pdfDoc.getPage(pageIndex);
-        
-        let drawVal = val !== undefined && val !== null ? String(val) : "";
-        let finalCoord = coord;
-
-        // Check if it's a binary choice field with yes/no sub-coordinates
-        if (coord.yes && coord.no) {
-          // If the "no" option has a whiteBg specified, clear it first (e.g. to cover pre-printed checkmarks)
-          if (coord.no.whiteBg && coord.no.width && coord.no.height) {
-            page.drawRectangle({
-              x: Number(coord.no.x),
-              y: Number(coord.no.y),
-              width: Number(coord.no.width),
-              height: Number(coord.no.height),
-              color: rgb(1, 1, 1),
-            });
-          }
-          const isYes = String(val).toUpperCase() === "YES" || val === true;
-          finalCoord = isYes ? coord.yes : coord.no;
-          drawVal = "√";
-        }
-
-        let textX = Number(finalCoord.x);
-        let textY = Number(finalCoord.y);
-
-        // Draw white background if requested and dimensions are present (regardless of whether val is empty)
-        if (finalCoord.whiteBg && finalCoord.width && finalCoord.height) {
-          page.drawRectangle({
-            x: Number(finalCoord.x),
-            y: Number(finalCoord.y),
-            width: Number(finalCoord.width),
-            height: Number(finalCoord.height),
-            color: rgb(1, 1, 1),
-          });
-        }
-
-        // Draw standard content only if a valid value exists
-        if (val !== undefined && val !== null && val !== "") {
-          if (finalCoord.drawCircle && finalCoord.width && finalCoord.height) {
-            try {
-              const centerX = Number(finalCoord.x) + Number(finalCoord.width) / 2;
-              const centerY = Number(finalCoord.y) + Number(finalCoord.height) / 2;
-              const radius = (Math.min(Number(finalCoord.width), Number(finalCoord.height)) / 2) + 1.5;
-              page.drawCircle({
-                x: centerX,
-                y: centerY,
-                size: radius,
-                borderColor: rgb(0, 0, 0),
-                borderWidth: 1.2,
-              });
-            } catch (err) {
-              console.error("Error drawing circle:", err);
-            }
-          } else if (finalCoord.drawSlash) {
-            try {
-              const startX = Number(finalCoord.x);
-              const startY = Number(finalCoord.y);
-              const endX = startX + Number(finalCoord.width || 0);
-              const endY = startY + Number(finalCoord.height || 0);
-              page.drawLine({
-                start: { x: startX, y: startY },
-                end: { x: endX, y: endY },
-                thickness: 1.5,
-                color: rgb(0, 0, 0)
-              });
-            } catch (err) {
-              console.error("Error drawing diagonal slash:", err);
-            }
-          } else if (finalCoord.drawLine) {
-            try {
-              const startX = Number(finalCoord.x);
-              const startY = Number(finalCoord.y) + Number(finalCoord.height || 0) / 2;
-              const endX = startX + Number(finalCoord.width || 0);
-              const endY = startY;
-              page.drawLine({
-                start: { x: startX, y: startY },
-                end: { x: endX, y: endY },
-                thickness: 1.5,
-                color: rgb(0, 0, 0)
-              });
-            } catch (err) {
-              console.error("Error drawing line strike-out:", err);
-            }
-          } else if (typeof drawVal === "string" && drawVal.startsWith("data:image/")) {
-            try {
-              let imageBuffer;
-              let isPng = true;
-              if (drawVal.startsWith("data:image/png;base64,")) {
-                imageBuffer = Buffer.from(drawVal.replace("data:image/png;base64,", ""), "base64");
-                isPng = true;
-              } else if (drawVal.startsWith("data:image/jpeg;base64,") || drawVal.startsWith("data:image/jpg;base64,")) {
-                imageBuffer = Buffer.from(drawVal.replace(/^data:image\/jpe?g;base64,/, ""), "base64");
-                isPng = false;
-              }
-              if (imageBuffer) {
-                const embeddedImage = isPng ? await pdfDoc.embedPng(imageBuffer) : await pdfDoc.embedJpg(imageBuffer);
-                page.drawImage(embeddedImage, {
-                  x: Number(finalCoord.x),
-                  y: Number(finalCoord.y),
-                  width: Number(finalCoord.width || 100),
-                  height: Number(finalCoord.height || 50),
-                });
-              }
-            } catch (err) {
-              console.error("Error embedding signature image:", err);
-            }
-          } else {
-            // Draw standard text at calculated/centered coordinates
-            let currentFontSize = Number(finalCoord.fontSize || formConfig.defaultFontSize || 11);
-            let currentFont = finalCoord.bold ? helveticaBoldFont : helveticaFont;
-
-            const preferredFont = finalCoord.font || formConfig.defaultFont;
-            if (preferredFont === "TimesRoman") {
-              currentFont = finalCoord.bold ? timesBoldFont : timesFont;
-            }
-
-            if (drawVal === "√" || drawVal === "\u2713" || drawVal === "\u2714") {
-              currentFont = zapfFont;
-              drawVal = "\u2714";
-            }
-
-            const wrapText = (text, maxChars) => {
-              const words = text.split(" ");
-              const lines = [];
-              let currentLine = "";
-              for (const word of words) {
-                if ((currentLine + " " + word).trim().length <= maxChars) {
-                  currentLine = (currentLine + " " + word).trim();
-                } else {
-                  if (currentLine) lines.push(currentLine);
-                  currentLine = word;
-                }
-              }
-              if (currentLine) lines.push(currentLine);
-              return lines;
-            };
-
-            let lines = [String(drawVal)];
-            if (finalCoord.multiline && finalCoord.maxChars) {
-              lines = wrapText(String(drawVal), finalCoord.maxChars);
-            } else if (String(drawVal).includes("\n")) {
-              lines = String(drawVal).split("\n");
-            }
-
-            // Auto-scale font size if text exceeds bounding box width (for single-line fields with specified width)
-            if (finalCoord.width && !finalCoord.multiline && lines.length === 1) {
-              try {
-                const textWidth = currentFont.widthOfTextAtSize(lines[0], currentFontSize);
-                const targetWidth = Number(finalCoord.width);
-                if (textWidth > targetWidth && targetWidth > 0) {
-                  const scale = targetWidth / textWidth;
-                  currentFontSize = Math.max(6, Math.floor(currentFontSize * scale * 10) / 10);
-                }
-              } catch (err) {
-                console.error("Error auto-scaling font size:", err);
-              }
-            }
-
-            const lineHeight = currentFontSize * 1.2;
-            const totalTextHeight = lines.length * lineHeight;
-
-            let initialY = textY;
-            if (finalCoord.centerText && finalCoord.height) {
-              const capHeight = currentFontSize * 0.7;
-              if (lines.length === 1) {
-                initialY = Number(finalCoord.y) + Math.max(0, (Number(finalCoord.height) - capHeight) / 2);
-              } else {
-                initialY = Number(finalCoord.y) + (Number(finalCoord.height) - totalTextHeight) / 2 + (lines.length - 1) * lineHeight;
-              }
-            }
-
-            for (let i = 0; i < lines.length; i++) {
-              const line = lines[i];
-              let lineX = textX;
-              if (finalCoord.centerText && finalCoord.width) {
-                try {
-                  const lineWidth = currentFont.widthOfTextAtSize(line, currentFontSize);
-                  lineX = Number(finalCoord.x) + (Number(finalCoord.width) - lineWidth) / 2;
-                } catch (err) {
-                  console.error("Error centering line:", err);
-                }
-              }
-              page.drawText(line, {
-                x: lineX,
-                y: initialY - i * lineHeight,
-                size: currentFontSize,
-                font: currentFont,
-                color: rgb(0, 0, 0),
-              });
-            }
-          }
-        }
-      }
-    }
-
-    const modifiedPdfBytes = await pdfDoc.save();
-
-    // 5. Stream modified PDF back
+    const { fillPdfToBytes } = require("../utils/pdf/fillService");
+    const result = await fillPdfToBytes(formId, values);
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename="filled_${formConfig.pdfFile}"`);
-    return res.send(Buffer.from(modifiedPdfBytes));
+    res.setHeader("Content-Disposition", `attachment; filename="${result.filename}"`);
+    return res.send(result.bytes);
   } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
     console.error("Error filling PDF form:", error);
     next(error);
   }
@@ -419,9 +114,265 @@ async function getDoctorSignature(req, res, next) {
   }
 }
 
+async function mapPool(items, concurrency, workerFn) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (true) {
+      const current = nextIndex;
+      nextIndex += 1;
+      if (current >= items.length) return;
+      results[current] = await workerFn(items[current], current);
+    }
+  }
+
+  const poolSize = Math.min(concurrency, Math.max(items.length, 1));
+  await Promise.all(Array.from({ length: poolSize }, () => worker()));
+  return results;
+}
+
+/** Fields needed to stamp selected forms (skip files / unused forms). */
+function buildBulkPatientProjection(formKeys) {
+  const projection = {
+    patientId: 1,
+    name: 1,
+    age: 1,
+    gender: 1,
+    mobile: 1,
+    employeeCode: 1,
+    company: 1,
+    address: 1,
+    fatherName: 1,
+    occupation: 1,
+    department: 1,
+    dob: 1,
+    aadharNo: 1,
+    govIdNumber: 1,
+    signature: 1,
+    createdAt: 1,
+    examinationDate: 1,
+    // Vitals fallbacks used by Height Pass / HT Back builders
+    "forms.preMedical": 1,
+    "forms.postMedical": 1,
+    "forms.1-form-personal-details": 1,
+    "forms.4-form-airport-bohw": 1,
+    "forms.5-form-height-pass": 1,
+    "forms.35-form-airport-bohw-ht-front": 1,
+    "forms.36-form-airport-bohw-ht-back": 1
+  };
+
+  for (const key of formKeys) {
+    projection[`forms.${key}`] = 1;
+  }
+  return projection;
+}
+
+/**
+ * Fast bulk export — fills PDFs on the server.
+ * POST /api/forms/bulk-export
+ * Body: { patientIds: string[], formKeys: string[], batchOffset?: number, batchLimit?: number, mode?: "zip" | "merged-pdf" }
+ *   mode "zip"        → one PDF per patient merged, all patients in a ZIP (default)
+ *   mode "merged-pdf" → every patient's pages stitched into a single PDF download
+ */
+async function bulkExportReports(req, res, next) {
+  try {
+    const { patientIds, formKeys, batchOffset = 0, batchLimit, mode = "zip" } = req.body || {};
+    if (!Array.isArray(patientIds) || patientIds.length === 0) {
+      return res.status(400).json({ message: "patientIds array is required" });
+    }
+    if (!Array.isArray(formKeys) || formKeys.length === 0) {
+      return res.status(400).json({ message: "formKeys array is required" });
+    }
+
+    const Patient = require("../models/Patient");
+    const archiver = require("archiver");
+    const { PDFDocument } = require("pdf-lib");
+    const { fillPdfToBytes } = require("../utils/pdf/fillService");
+    const {
+      buildBulkFormValues,
+      resolveFillFormId,
+      isFormReadyForExport
+    } = require("../utils/pdf/bulkFormValues");
+
+    const uniqueIds = [...new Set(patientIds.map(String))];
+    const { userHasFormAccess } = require("../middleware/auth");
+    const exportableFormKeys = formKeys
+      .map(String)
+      .filter((key) => resolveFillFormId(key))
+      .filter((key) => userHasFormAccess(req.user, key));
+
+    if (exportableFormKeys.length === 0) {
+      return res.status(403).json({
+        message: "None of the selected forms are allowed for your account (or none support PDF export)."
+      });
+    }
+
+    // Optional batching keeps each download smaller on slow networks
+    const offset = Math.max(0, Number(batchOffset) || 0);
+    const limit = batchLimit != null ? Math.max(1, Number(batchLimit)) : uniqueIds.length;
+    const batchIds = uniqueIds.slice(offset, offset + limit);
+    const hasMore = offset + limit < uniqueIds.length;
+
+    if (batchIds.length === 0) {
+      return res.status(400).json({ message: "No patients in this export batch." });
+    }
+
+    // Scope to caller's clinic when set (superadmin / missing clinicId = all)
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+
+    const patients = await Patient.find({ patientId: { $in: batchIds }, ...clinicScope })
+      .select(buildBulkPatientProjection(exportableFormKeys))
+      .lean();
+    const patientById = new Map(patients.map((p) => [p.patientId, p]));
+
+    const jobs = [];
+    for (const patientId of batchIds) {
+      const patient = patientById.get(patientId);
+      if (!patient) continue;
+      const readyKeys = exportableFormKeys.filter((key) =>
+        isFormReadyForExport(patient.forms?.[key])
+      );
+      if (readyKeys.length === 0) continue;
+      jobs.push({ patient, formKeys: readyKeys });
+    }
+
+    const exposeExportHeaders = () => {
+      res.setHeader(
+        "Access-Control-Expose-Headers",
+        "X-Export-Count, X-Export-Has-More, X-Export-Batch-Offset, X-Export-Batch-Size, X-Export-Total-Requested"
+      );
+      res.setHeader("X-Export-Has-More", hasMore ? "1" : "0");
+      res.setHeader("X-Export-Batch-Offset", String(offset));
+      res.setHeader("X-Export-Batch-Size", String(batchIds.length));
+      res.setHeader("X-Export-Total-Requested", String(uniqueIds.length));
+    };
+
+    // Soft-skip empty batches so later patient slices still export
+    if (jobs.length === 0) {
+      exposeExportHeaders();
+      res.setHeader("X-Export-Count", "0");
+      return res.status(200).json({
+        skipped: true,
+        exported: 0,
+        hasMore,
+        message: "No patients found for this batch."
+      });
+    }
+
+    // Fill first, then stream ZIP — avoids empty 200 ZIPs and wrong X-Export-Count
+    const concurrency = Math.min(16, Math.max(6, Math.ceil(jobs.length / 15)));
+    const compiled = [];
+
+    await mapPool(jobs, concurrency, async ({ patient, formKeys: keys }) => {
+      const mergedPdf = await PDFDocument.create();
+      let pagesAdded = 0;
+
+      for (const formKey of keys) {
+        try {
+          const fillId = resolveFillFormId(formKey);
+          const values = buildBulkFormValues(formKey, patient);
+          const { bytes } = await fillPdfToBytes(fillId, values);
+          const srcDoc = await PDFDocument.load(bytes);
+          const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
+          pages.forEach((page) => mergedPdf.addPage(page));
+          pagesAdded += pages.length;
+        } catch (err) {
+          console.error(
+            `Bulk export fill failed for ${patient.patientId} / ${formKey}:`,
+            err.message
+          );
+        }
+      }
+
+      if (pagesAdded === 0) return;
+
+      const pdfBytes = await mergedPdf.save({ useObjectStreams: true });
+      const safeName = String(patient.name || "Unknown").replace(/[^a-zA-Z0-9]/g, "_") || "Unknown";
+      const filename = `${safeName}_${patient.patientId}_Combined_Medical_Report.pdf`;
+      compiled.push({ filename, bytes: Buffer.from(pdfBytes) });
+    });
+
+    if (compiled.length === 0) {
+      exposeExportHeaders();
+      res.setHeader("X-Export-Count", "0");
+      return res.status(200).json({
+        skipped: true,
+        exported: 0,
+        hasMore,
+        message: "PDF fill produced no pages for this batch."
+      });
+    }
+
+    exposeExportHeaders();
+    res.setHeader("X-Export-Count", String(compiled.length));
+
+    if (mode === "merged-pdf") {
+      // Stitch all patient PDFs into one single PDF
+      const masterDoc = await PDFDocument.create();
+      for (const item of compiled) {
+        const srcDoc = await PDFDocument.load(item.bytes);
+        const pages = await masterDoc.copyPages(srcDoc, srcDoc.getPageIndices());
+        pages.forEach((page) => masterDoc.addPage(page));
+      }
+      const mergedBytes = await masterDoc.save({ useObjectStreams: true });
+      const stamp = Date.now();
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="Aster_Medcare_Reports_${stamp}.pdf"`
+      );
+      return res.send(Buffer.from(mergedBytes));
+    }
+
+    // Default: ZIP — one PDF per patient (deflate for bandwidth)
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="Aster_Medcare_Reports_Batch_${Date.now()}.zip"`
+    );
+
+    const archive = archiver("zip", { zlib: { level: 6 } });
+    archive.on("error", (err) => {
+      console.error("Bulk export archive error:", err);
+      try {
+        if (!res.headersSent) {
+          res.status(500).json({ message: "Failed to build ZIP archive." });
+        } else {
+          res.end();
+        }
+      } catch {
+        // ignore
+      }
+    });
+    archive.pipe(res);
+
+    for (const item of compiled) {
+      archive.append(item.bytes, { name: item.filename });
+    }
+
+    await archive.finalize();
+  } catch (error) {
+    console.error("Bulk export failed:", error);
+    if (!res.headersSent) {
+      next(error);
+    } else {
+      try {
+        res.end();
+      } catch {
+        // ignore
+      }
+    }
+  }
+}
+
 module.exports = {
   getForms,
   getFormCoordinates,
   fillPdfForm,
-  getDoctorSignature
+  getDoctorSignature,
+  bulkExportReports
 };

@@ -12,6 +12,9 @@ router.get("/:formId/coordinates", verifyToken, pdfController.getFormCoordinates
 // GET /api/forms/doctor-signature - Retrieve doctor signature image
 router.get("/doctor-signature", verifyToken, pdfController.getDoctorSignature);
 
+// POST /api/forms/bulk-export - Fast server-side ZIP of filled PDFs
+router.post("/bulk-export", verifyToken, pdfController.bulkExportReports);
+
 // POST /api/forms/fill/:formId - Fill a PDF form template by registered ID
 router.post("/fill/:formId", verifyToken, pdfController.fillPdfForm);
 

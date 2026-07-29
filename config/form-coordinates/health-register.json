@@ -28,7 +28,10 @@
     "y": 669,
     "width": 64,
     "height": 12,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true,
+    "clip": true
   },
   "department": {
     "page": 1,
@@ -44,7 +47,10 @@
     "y": 618,
     "width": 205,
     "height": 10,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true,
+    "clip": true,
+    "fitToWidth": true
   },
   "dangerousProcess": {
     "page": 1,
@@ -52,15 +58,47 @@
     "y": 604,
     "width": 205,
     "height": 9,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true,
+    "clip": true,
+    "fitToWidth": true
   },
   "natureOfJob": {
     "page": 1,
-    "x": 340,
+    "x": 363,
     "y": 588,
-    "width": 205,
-    "height": 9,
-    "whiteBg": true
+    "width": 156,
+    "height": 11,
+    "whiteBg": true,
+    "clip": true,
+    "fitToWidth": true
+  },
+  "natureOfJobStrikeFullTime": {
+    "page": 1,
+    "x": 363,
+    "y": 593,
+    "width": 52,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "natureOfJobStrikePartTime": {
+    "page": 1,
+    "x": 418,
+    "y": 593,
+    "width": 52,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "natureOfJobStrikeContractual": {
+    "page": 1,
+    "x": 475,
+    "y": 593,
+    "width": 44,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "materialsExposed": {
     "page": 1,
@@ -96,11 +134,14 @@
   },
   "examDate": {
     "page": 1,
-    "x": 340,
+    "x": 418,
     "y": 483,
-    "width": 205,
+    "width": 62,
     "height": 12,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true,
+    "clip": true
   },
   "signsSymptoms": {
     "page": 1,
@@ -112,19 +153,32 @@
   },
   "natureOfTests": {
     "page": 1,
-    "x": 327,
-    "y": 427,
-    "width": 223,
-    "height": 9,
-    "whiteBg": true
+    "x": 328,
+    "y": 424,
+    "width": 225,
+    "height": 14,
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true,
+    "clip": true
   },
-  "result": {
+  "resultStrikeFit": {
     "page": 1,
-    "x": 340,
-    "y": 410,
-    "width": 205,
-    "height": 12,
-    "whiteBg": true
+    "x": 413,
+    "y": 415,
+    "width": 20,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "resultStrikeUnfit": {
+    "page": 1,
+    "x": 437,
+    "y": 415,
+    "width": 29,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "temporaryWithdrawal": {
     "page": 1,
@@ -158,19 +212,15 @@
     "height": 12,
     "whiteBg": true
   },
-  "doctorSignature": {
-    "page": 1,
-    "x": 360,
-    "y": 215,
-    "width": 180,
-    "height": 46
-  },
   "doctorSignatureDate": {
     "page": 1,
-    "x": 377,
-    "y": 195,
-    "width": 63,
-    "height": 12,
-    "whiteBg": true
+    "x": 376,
+    "y": 194,
+    "width": 69,
+    "height": 15,
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true,
+    "clip": true
   }
 }

@@ -66,7 +66,8 @@ const PatientSchema = new mongoose.Schema(
       enum: {
         values: ["Male", "Female", "Other", "Not Specified"],
         message: "Gender must be Male, Female, Other, or Not Specified"
-      }
+      },
+      default: "Male"
     },
     mobile: {
       type: String,
@@ -100,6 +101,8 @@ const PatientSchema = new mongoose.Schema(
       trim: true
     },
     dob: { type: Date },
+    dateOfJoining: { type: Date },
+    companyAddress: { type: String, trim: true },
     surname: { type: String, trim: true },
     city: { type: String, trim: true },
     state: { type: String, trim: true },
@@ -113,6 +116,8 @@ const PatientSchema = new mongoose.Schema(
     contractingAgency: { type: String, trim: true },
     diet: { type: String, trim: true },
     knownHabit: { type: String, trim: true },
+    // Permanent exam date inherited across forms (YYYY-MM-DD string)
+    examinationDate: { type: String, trim: true },
     // Storage for 24 forms. Dynamic Mixed storage.
     forms: {
       type: mongoose.Schema.Types.Mixed,
@@ -122,6 +127,12 @@ const PatientSchema = new mongoose.Schema(
     whatsappRemindersSent: {
       type: Number,
       default: 0
+    },
+    // Multi-tenant: which clinic this patient belongs to.
+    clinicId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Clinic",
+      default: null
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -140,5 +151,8 @@ PatientSchema.index({ company: 1 });
 PatientSchema.index({ mobile: 1 });
 PatientSchema.index({ updatedAt: -1 });
 PatientSchema.index({ createdAt: -1 });
+// Multi-tenant compound index — always query by clinicId first
+PatientSchema.index({ clinicId: 1, updatedAt: -1 });
+PatientSchema.index({ clinicId: 1, company: 1 });
 
 module.exports = mongoose.model("Patient", PatientSchema);

@@ -17,7 +17,13 @@ function escapeRegex(str) {
 async function getPatients(req, res, next) {
   try {
     const { name, company, mobile, patientId, search, fromDate, toDate, formType } = req.query;
-    const filter = {};
+    // Start filter with tenant scope so we never cross clinic boundaries
+    const filter = {
+      ...(req.tenantFilter || {}),
+      ...(req.user?.role !== "superadmin" && req.user?.clinicId
+        ? { clinicId: req.user.clinicId }
+        : {})
+    };
 
     if (search) {
       const searchRegex = { $regex: escapeRegex(search), $options: "i" };
@@ -62,7 +68,7 @@ async function getPatients(req, res, next) {
     const ALL_FORMS = [
       "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
       "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
-      "form9", "form10", "11-form-audiometry-front", "12-form-audiometry-back",
+      "form09", "form10", "11-form-audiometry-front", "12-form-audiometry-back",
       "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
       "16-form-vaccination-back", "17-form-food-handler-certificate",
       "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format",
@@ -96,9 +102,15 @@ async function getPatients(req, res, next) {
 
     const patients = await Patient.find(filter)
       .select(projection)
-      .populate("createdBy", "name email role")
       .sort({ updatedAt: -1 })
       .lean();
+
+    // Harden signature strip for older Mongo / projection edge cases
+    for (const p of patients) {
+      if (p.signature && p.signature !== "present" && String(p.signature).length > 20) {
+        p.signature = "present";
+      }
+    }
 
     return res.status(200).json(patients);
   } catch (error) {
@@ -151,7 +163,8 @@ async function createPatient(req, res, next) {
       contractingAgency,
       diet,
       knownHabit,
-      createdBy: req.user._id
+      createdBy: req.user._id,
+      clinicId: req.user.clinicId ?? null  // stamp the patient with the creating user's clinic
     });
 
     const savedPatient = await patient.save();
@@ -166,7 +179,13 @@ async function createPatient(req, res, next) {
       details: `Created patient record for ${name} (${gender}, age ${age})`
     });
 
-    return res.status(201).json(savedPatient);
+    const out = savedPatient.toObject();
+    out.govIdNumber = decrypt(out.govIdNumber);
+    // Never echo base64 signature / photo on create — list/detail can fetch when needed
+    if (out.signature) out.signature = "present";
+    delete out.photo;
+
+    return res.status(201).json(out);
   } catch (error) {
     console.error("CreatePatient error:", error);
     next(error);
@@ -182,26 +201,43 @@ async function getPatient(req, res, next) {
     const { id } = req.params;
 
     // Search by ObjectId if valid, otherwise search by unique patientId string
+    // Always scope to the calling user's clinic (tenantFilter may be unset without middleware)
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
+      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
 
+    // lean + minimal populate — avoid heavy savedBy joins on every form open
     const patient = await Patient.findOne(query)
+      .select("-__v")
       .populate("createdBy", "name email role")
-      .populate("forms.postMedical.savedBy", "name email role")
-      .populate("forms.eyeExam.savedBy", "name email role")
-      .populate("forms.form33.savedBy", "name email role")
-      .populate("forms.healthRegister.savedBy", "name email role")
-      .populate("forms.xrayReport.savedBy", "name email role")
-      .populate("files.uploadedBy", "name email role");
+      .populate("files.uploadedBy", "name")
+      .lean();
 
     if (!patient) {
       return res.status(404).json({ message: "Patient record not found" });
     }
 
-    const patientObj = patient.toObject();
-    patientObj.govIdNumber = decrypt(patientObj.govIdNumber);
-    return res.status(200).json(patientObj);
+    patient.govIdNumber = decrypt(patient.govIdNumber);
+
+    // Employees only see forms they are allowed to access
+    if (
+      req.user?.role === "employee" &&
+      patient.forms &&
+      typeof patient.forms === "object"
+    ) {
+      const allowed = new Set(req.user.formAccess || []);
+      const filtered = {};
+      for (const [key, value] of Object.entries(patient.forms)) {
+        if (allowed.has(key)) filtered[key] = value;
+      }
+      patient.forms = filtered;
+    }
+
+    return res.status(200).json(patient);
   } catch (error) {
     console.error("GetPatient error:", error);
     next(error);
@@ -220,8 +256,8 @@ async function updatePatient(req, res, next) {
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+      ? { _id: id, ...req.tenantFilter }
+      : { patientId: id, ...req.tenantFilter };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -267,7 +303,13 @@ async function updatePatient(req, res, next) {
       details: `Updated patient details: ${Object.keys(req.body).join(", ")}`
     });
 
-    return res.status(200).json(updatedPatient);
+    // Return demographics only — avoid shipping full forms/signature payload after a simple edit
+    const slim = updatedPatient.toObject();
+    delete slim.forms;
+    delete slim.files;
+    if (slim.signature) slim.signature = "present";
+    slim.govIdNumber = decrypt(slim.govIdNumber);
+    return res.status(200).json(slim);
   } catch (error) {
     console.error("UpdatePatient error:", error);
     next(error);
@@ -298,14 +340,14 @@ async function bulkCreatePatients(req, res, next) {
 
     validRecords.forEach((p, idx) => {
       const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation, govIdType, govIdNumber,
-        dob, city, state, pincode, department } = p;
+        dob, city, state, pincode, department, dateOfJoining, companyAddress } = p;
       const patientId = patientIds[idx];
 
       createdPatients.push({
         patientId,
         name,
         age: Number(age),
-        gender: gender || "Not Specified",
+        gender: gender || "Male",
         mobile,
         employeeCode,
         company: company || "",
@@ -315,11 +357,14 @@ async function bulkCreatePatients(req, res, next) {
         govIdType,
         govIdNumber: govIdNumber ? encrypt(govIdNumber) : undefined,
         dob,
+        dateOfJoining,
+        companyAddress,
         city,
         state,
         pincode,
         department,
         createdBy: req.user._id,
+        clinicId: req.user.clinicId ?? null,  // stamp bulk-created patients
         forms: {}
       });
     });
@@ -349,6 +394,67 @@ async function bulkCreatePatients(req, res, next) {
   }
 }
 
+async function cleanupPatientR2Files(patient) {
+  const urlsToDelete = [];
+  if (patient.photo) urlsToDelete.push(patient.photo);
+  if (patient.signature) urlsToDelete.push(patient.signature);
+  if (patient.files && Array.isArray(patient.files)) {
+    for (const file of patient.files) {
+      if (file.fileUrl) urlsToDelete.push(file.fileUrl);
+    }
+  }
+
+  for (const fileUrl of urlsToDelete) {
+    if (typeof fileUrl !== "string" || fileUrl.startsWith("data:")) continue;
+    try {
+      const urlObj = new URL(fileUrl);
+      const key = decodeURIComponent(urlObj.pathname.substring(1));
+      if (key) {
+        await deleteFromR2(key);
+      }
+    } catch (err) {
+      console.error(`Failed to delete R2 file ${fileUrl}:`, err);
+    }
+  }
+}
+
+/**
+ * Delete a single patient (Admin only) — also clears R2 assets.
+ * DELETE /api/patients/:id
+ */
+async function deletePatient(req, res, next) {
+  try {
+    const { id } = req.params;
+    const query = mongoose.Types.ObjectId.isValid(id)
+      ? { $or: [{ _id: id }, { patientId: id }], ...req.tenantFilter }
+      : { patientId: id, ...req.tenantFilter };
+
+    const patient = await Patient.findOne(query);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient record not found" });
+    }
+
+    await cleanupPatientR2Files(patient);
+    await Patient.deleteOne({ _id: patient._id });
+
+    await AuditLog.create({
+      userId: req.user._id,
+      userName: req.user.name,
+      userRole: req.user.role,
+      action: "patient_deleted",
+      patientId: patient.patientId,
+      details: `Permanently deleted patient record for ${patient.name}`
+    });
+
+    return res.status(200).json({
+      message: "Patient record deleted successfully"
+    });
+  } catch (error) {
+    console.error("DeletePatient error:", error);
+    next(error);
+  }
+}
+
 async function bulkDeletePatients(req, res, next) {
   try {
     const { patientIds } = req.body;
@@ -357,36 +463,13 @@ async function bulkDeletePatients(req, res, next) {
       return res.status(400).json({ message: "An array of patientIds is required." });
     }
 
-    // Fetch the full patient documents first to clean up their files in Cloudflare R2
-    const patients = await Patient.find({ patientId: { $in: patientIds } });
-
+    const patients = await Patient.find({ patientId: { $in: patientIds }, ...req.tenantFilter });
     for (const patient of patients) {
-      const urlsToDelete = [];
-      if (patient.photo) urlsToDelete.push(patient.photo);
-      if (patient.signature) urlsToDelete.push(patient.signature);
-      if (patient.files && Array.isArray(patient.files)) {
-        for (const file of patient.files) {
-          if (file.fileUrl) urlsToDelete.push(file.fileUrl);
-        }
-      }
-
-      for (const fileUrl of urlsToDelete) {
-        if (typeof fileUrl !== "string" || fileUrl.startsWith("data:")) continue;
-        try {
-          const urlObj = new URL(fileUrl);
-          const key = decodeURIComponent(urlObj.pathname.substring(1));
-          if (key) {
-            await deleteFromR2(key);
-          }
-        } catch (err) {
-          console.error(`Failed to delete R2 file ${fileUrl}:`, err);
-        }
-      }
+      await cleanupPatientR2Files(patient);
     }
 
-    const result = await Patient.deleteMany({ patientId: { $in: patientIds } });
+    const result = await Patient.deleteMany({ patientId: { $in: patientIds }, ...req.tenantFilter });
 
-    // Log the action
     await AuditLog.create({
       userId: req.user._id,
       userName: req.user.name,
@@ -409,8 +492,8 @@ async function recordWhatsappReminder(req, res, next) {
   try {
     const { id } = req.params;
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+      ? { _id: id, ...req.tenantFilter }
+      : { patientId: id, ...req.tenantFilter };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -447,5 +530,6 @@ module.exports = {
   updatePatient,
   bulkCreatePatients,
   bulkDeletePatients,
+  deletePatient,
   recordWhatsappReminder
 };

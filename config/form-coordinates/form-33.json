@@ -3,30 +3,33 @@
     "page": 1,
     "x": 334,
     "y": 727,
-    "width": 192,
-    "height": 7
+    "width": 205,
+    "height": 10
   },
   "workerName": {
     "page": 1,
     "x": 332,
     "y": 700,
-    "width": 98,
+    "width": 205,
     "height": 10,
     "whiteBg": true
   },
   "fatherHusbandName": {
     "page": 1,
-    "x": 332,
+    "x": 331,
     "y": 675,
-    "width": 119,
-    "height": 10,
-    "whiteBg": true
+    "width": 104,
+    "height": 11,
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true,
+    "clip": true
   },
   "gender": {
     "page": 1,
     "x": 332,
     "y": 650,
-    "width": 27,
+    "width": 100,
     "height": 10,
     "whiteBg": true
   },
@@ -36,117 +39,153 @@
     "y": 624,
     "width": 205,
     "height": 10,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true
   },
   "residenceLine2": {
     "page": 1,
     "x": 326,
     "y": 602,
-    "width": 108,
-    "height": 9,
-    "whiteBg": true
+    "width": 111,
+    "height": 10,
+    "whiteBg": true,
+    "clearAlways": true
   },
   "pinCode": {
     "page": 1,
-    "x": 483,
-    "y": 599,
-    "width": 31,
-    "height": 10,
-    "whiteBg": true
+    "x": 481,
+    "y": 600,
+    "width": 34,
+    "height": 8,
+    "whiteBg": true,
+    "clearAlways": true
   },
   "city": {
     "page": 1,
-    "x": 351,
+    "x": 350,
     "y": 574,
-    "width": 59,
-    "height": 10,
-    "whiteBg": true
+    "width": 54,
+    "height": 9,
+    "whiteBg": true,
+    "clearAlways": true
   },
   "state": {
     "page": 1,
     "x": 454,
     "y": 573,
-    "width": 44,
+    "width": 80,
     "height": 10,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true
   },
   "dob": {
     "page": 1,
     "x": 334,
     "y": 549,
-    "width": 48,
-    "height": 8,
+    "width": 150,
+    "height": 10,
     "whiteBg": true
   },
   "factoryName": {
     "page": 1,
     "x": 334,
     "y": 521,
-    "width": 189,
+    "width": 205,
     "height": 10,
     "whiteBg": true
+  },
+  "hazardousChoice": {
+    "page": 1,
+    "x": 335,
+    "y": 472,
+    "width": 37,
+    "height": 9,
+    "whiteBg": true,
+    "clearAlways": true,
+    "centerText": true,
+    "fontSize": 8.5
   },
   "hazardousYes": {
     "page": 1,
-    "x": 335,
-    "y": 473,
-    "width": 17,
-    "height": 8,
-    "whiteBg": true
+    "x": 336,
+    "y": 476,
+    "width": 14,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "hazardousNo": {
     "page": 1,
-    "x": 357,
-    "y": 471,
+    "x": 356,
+    "y": 476,
     "width": 14,
-    "height": 9,
-    "whiteBg": true
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "hazardousArea": {
     "page": 1,
-    "x": 430,
-    "y": 473,
+    "x": 432,
+    "y": 472,
     "width": 60,
     "height": 8,
-    "whiteBg": true
+    "whiteBg": true,
+    "clearAlways": true
+  },
+  "dangerousChoice": {
+    "page": 1,
+    "x": 335,
+    "y": 446,
+    "width": 37,
+    "height": 9,
+    "whiteBg": true,
+    "clearAlways": true,
+    "centerText": true,
+    "fontSize": 8.5
   },
   "dangerousYes": {
     "page": 1,
-    "x": 335,
-    "y": 447,
-    "width": 16,
-    "height": 10,
-    "whiteBg": true
+    "x": 336,
+    "y": 450,
+    "width": 14,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "dangerousNo": {
     "page": 1,
-    "x": 357,
-    "y": 447,
+    "x": 356,
+    "y": 450,
     "width": 14,
-    "height": 9,
-    "whiteBg": true
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "dangerousArea": {
     "page": 1,
-    "x": 432,
+    "x": 431,
     "y": 447,
-    "width": 56,
-    "height": 9,
-    "whiteBg": true
+    "width": 60,
+    "height": 8,
+    "whiteBg": true,
+    "clearAlways": true
   },
   "identificationMarks": {
     "page": 1,
     "x": 63,
     "y": 393,
-    "width": 256,
-    "height": 10,
-    "whiteBg": true
+    "width": 120,
+    "height": 12,
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true,
+    "clip": true
   },
   "examinedAge": {
     "page": 1,
     "x": 515,
     "y": 374,
-    "width": 22,
+    "width": 25,
     "height": 10,
     "whiteBg": true
   },
@@ -154,37 +193,87 @@
     "page": 1,
     "x": 119,
     "y": 310,
-    "width": 86,
-    "height": 8,
-    "whiteBg": true
+    "width": 150,
+    "height": 10
   },
   "previousCertificate": {
     "page": 1,
     "x": 293,
     "y": 287,
-    "width": 86,
-    "height": 10,
-    "whiteBg": true
+    "width": 150,
+    "height": 10
   },
-  "pronounHisHer1": {
+  "strikeHis1": {
     "page": 1,
     "x": 251,
-    "y": 375,
-    "width": 29,
-    "height": 9,
-    "whiteBg": true,
-    "fontSize": 8.5,
-    "centerText": true
+    "y": 379,
+    "width": 13,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
-  "pronounHeShe1": {
+  "strikeHer1": {
     "page": 1,
-    "x": 159,
-    "y": 347,
-    "width": 31,
-    "height": 10,
-    "whiteBg": true,
-    "fontSize": 8.5,
-    "centerText": true
+    "x": 265,
+    "y": 379,
+    "width": 14,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "strikeHe1": {
+    "page": 1,
+    "x": 158,
+    "y": 352,
+    "width": 12,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "strikeShe1": {
+    "page": 1,
+    "x": 176,
+    "y": 352,
+    "width": 14,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "strikeHe2": {
+    "page": 1,
+    "x": 161,
+    "y": 325,
+    "width": 13,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "strikeShe2": {
+    "page": 1,
+    "x": 180,
+    "y": 325,
+    "width": 16,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "strikeHe3": {
+    "page": 1,
+    "x": 209,
+    "y": 312,
+    "width": 12,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
+  },
+  "strikeShe3": {
+    "page": 1,
+    "x": 224,
+    "y": 312,
+    "width": 14,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   },
   "certificateDateTime": {
     "page": 1,
@@ -196,26 +285,27 @@
   },
   "patientSignature": {
     "page": 1,
-    "x": 87,
-    "y": 221,
-    "width": 172,
-    "height": 33,
-    "whiteBg": true
+    "x": 82,
+    "y": 219,
+    "width": 174,
+    "height": 35,
+    "whiteBg": true,
+    "clearAlways": true
   },
-  "doctorSignature": {
+  "bottomCompanyName": {
     "page": 1,
-    "x": 400,
-    "y": 187,
-    "width": 118,
-    "height": 27,
+    "x": 158,
+    "y": 170,
+    "width": 123,
+    "height": 12,
     "whiteBg": true
   },
   "bottomExamDate": {
     "page": 1,
     "x": 78,
     "y": 105,
-    "width": 51,
-    "height": 9,
+    "width": 55,
+    "height": 10,
     "whiteBg": true
   },
   "bottomUnfitPeriod": {
@@ -223,23 +313,24 @@
     "x": 177,
     "y": 105,
     "width": 150,
-    "height": 9,
-    "whiteBg": true
+    "height": 10
   },
   "bottomSymptoms": {
     "page": 1,
-    "x": 344,
-    "y": 104,
+    "x": 346,
+    "y": 101,
     "width": 91,
-    "height": 12,
-    "whiteBg": true
+    "height": 14,
+    "whiteBg": true,
+    "clip": true,
+    "fitToWidth": true
   },
   "bottomSignatureDate": {
     "page": 1,
     "x": 481,
     "y": 105,
     "width": 68,
-    "height": 9,
+    "height": 10,
     "whiteBg": true
   }
 }
