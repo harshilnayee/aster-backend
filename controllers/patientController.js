@@ -339,7 +339,7 @@ async function bulkCreatePatients(req, res, next) {
     const createdPatients = [];
 
     validRecords.forEach((p, idx) => {
-      const { name, age, gender, mobile, employeeCode, company, address, fatherName, occupation, govIdType, govIdNumber,
+      const { name, age, gender, mobile, employeeCode, company, address, fatherName, surname, occupation, govIdType, govIdNumber,
         dob, city, state, pincode, department, dateOfJoining, companyAddress } = p;
       const patientId = patientIds[idx];
 
@@ -353,6 +353,7 @@ async function bulkCreatePatients(req, res, next) {
         company: company || "",
         address,
         fatherName,
+        surname,
         occupation,
         govIdType,
         govIdNumber: govIdNumber ? encrypt(govIdNumber) : undefined,
