@@ -137,20 +137,35 @@ function buildBulkPatientProjection(formKeys) {
   const projection = {
     patientId: 1,
     name: 1,
+    surname: 1,
     age: 1,
     gender: 1,
     mobile: 1,
     employeeCode: 1,
     company: 1,
+    companyAddress: 1,
     address: 1,
+    city: 1,
+    state: 1,
+    pincode: 1,
     fatherName: 1,
     occupation: 1,
     department: 1,
     dob: 1,
-    aadharNo: 1,
+    dateOfJoining: 1,
+    govIdType: 1,
     govIdNumber: 1,
+    aadharNo: 1,
+    bloodGroup: 1,
+    email: 1,
+    employmentType: 1,
+    contractingAgency: 1,
+    diet: 1,
+    knownHabit: 1,
+    photo: 1,
     signature: 1,
     createdAt: 1,
+    updatedAt: 1,
     examinationDate: 1,
     // Vitals fallbacks used by Height Pass / HT Back builders
     "forms.preMedical": 1,
@@ -240,10 +255,19 @@ async function bulkExportReports(req, res, next) {
       jobs.push({ patient, formKeys: readyKeys });
     }
 
+    function sanitizeFilenameSegment(str) {
+      if (!str || typeof str !== "string") return "";
+      return str
+        .trim()
+        .replace(/[^a-zA-Z0-9]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
     const exposeExportHeaders = () => {
       res.setHeader(
         "Access-Control-Expose-Headers",
-        "X-Export-Count, X-Export-Has-More, X-Export-Batch-Offset, X-Export-Batch-Size, X-Export-Total-Requested"
+        "X-Export-Count, X-Export-Has-More, X-Export-Batch-Offset, X-Export-Batch-Size, X-Export-Total-Requested, Content-Disposition"
       );
       res.setHeader("X-Export-Has-More", hasMore ? "1" : "0");
       res.setHeader("X-Export-Batch-Offset", String(offset));
@@ -291,9 +315,12 @@ async function bulkExportReports(req, res, next) {
       if (pagesAdded === 0) return;
 
       const pdfBytes = await mergedPdf.save({ useObjectStreams: true });
-      const safeName = String(patient.name || "Unknown").replace(/[^a-zA-Z0-9]/g, "_") || "Unknown";
-      const filename = `${safeName}_${patient.patientId}_Combined_Medical_Report.pdf`;
-      compiled.push({ filename, bytes: Buffer.from(pdfBytes) });
+      const safeCompany = sanitizeFilenameSegment(patient.company);
+      const companyPrefix = safeCompany ? `${safeCompany}_` : "";
+      const safeName = sanitizeFilenameSegment(patient.name) || "Unknown";
+      const safeEmp = sanitizeFilenameSegment(patient.employeeCode || patient.patientId) || "Unknown";
+      const filename = `${companyPrefix}${safeName}_${safeEmp}_Combined_Medical_Report.pdf`;
+      compiled.push({ filename, bytes: Buffer.from(pdfBytes), company: patient.company });
     });
 
     if (compiled.length === 0) {
@@ -310,6 +337,15 @@ async function bulkExportReports(req, res, next) {
     exposeExportHeaders();
     res.setHeader("X-Export-Count", String(compiled.length));
 
+    const uniqueCompanies = [
+      ...new Set(
+        compiled
+          .map((item) => sanitizeFilenameSegment(item.company))
+          .filter(Boolean)
+      )
+    ];
+    const companyTag = uniqueCompanies.length === 1 ? `${uniqueCompanies[0]}_` : "";
+
     if (mode === "merged-pdf") {
       // Stitch all patient PDFs into one single PDF
       const masterDoc = await PDFDocument.create();
@@ -323,7 +359,7 @@ async function bulkExportReports(req, res, next) {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="Aster_Medcare_Reports_${stamp}.pdf"`
+        `attachment; filename="${companyTag}Aster_Medcare_Reports_${stamp}.pdf"`
       );
       return res.send(Buffer.from(mergedBytes));
     }
@@ -332,7 +368,7 @@ async function bulkExportReports(req, res, next) {
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="Aster_Medcare_Reports_Batch_${Date.now()}.zip"`
+      `attachment; filename="${companyTag}Aster_Medcare_Reports_Batch_${Date.now()}.zip"`
     );
 
     const archive = archiver("zip", { zlib: { level: 6 } });

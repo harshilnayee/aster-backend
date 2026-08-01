@@ -433,41 +433,63 @@ function cleanAddressPart(val) {
 }
 
 function addressPartFromForm(formVal, patientVal) {
-  if (formVal !== undefined && formVal !== null) return cleanAddressPart(formVal);
+  const fromForm = cleanAddressPart(formVal);
+  if (fromForm) return fromForm;
   return cleanAddressPart(patientVal);
+}
+
+function fullWorkerName(actualForm, patient) {
+  const name = String(actualForm?.name || patient?.name || "").trim();
+  const surname = String(actualForm?.surname || patient?.surname || "").trim();
+  if (!surname) return name;
+  if (name.toLowerCase().endsWith(surname.toLowerCase())) return name;
+  return `${name} ${surname}`.trim();
+}
+
+/** Form 32: Surname + given name + father's name */
+function form32WorkerName(actualForm, patient) {
+  const surname = String(actualForm?.surname || patient?.surname || "").trim();
+  let given = String(patient?.name || "").trim();
+  if (!given) {
+    given = String(actualForm?.name || "").trim();
+  }
+  if (surname && given.toLowerCase().endsWith(surname.toLowerCase())) {
+    given = given.slice(0, given.length - surname.length).trim();
+  }
+  // Form name may have been prefilled as "NAME SURNAME" — strip leading surname too
+  if (surname && given.toLowerCase().startsWith(surname.toLowerCase() + " ")) {
+    given = given.slice(surname.length).trim();
+  }
+  const father = String(
+    actualForm?.fatherName || actualForm?.fatherHusbandName || patient?.fatherName || ""
+  ).trim();
+  return [surname, given, father].filter(Boolean).join(" ");
+}
+
+function form33WorkerName(actualForm, patient) {
+  return fullWorkerName(actualForm, patient);
 }
 
 function buildForm33Values(actualForm, patient) {
   const fullAddress = addressPartFromForm(actualForm.residence, patient.address);
   const deduped = dedupeAddress(fullAddress);
-  const { residence: r1, residence2: r2 } = splitAddress(deduped, 45);
-  const genderLower = String(actualForm.sex || patient.gender || "").toLowerCase();
-  const isFemale = genderLower.includes("female");
-  const isUnfit = actualForm.fitStatus === "UNFIT";
+  // Value boxes are 195pt wide at 10.5pt Times ≈ 33 chars; overflow wraps to line 2
+  const { residence: r1, residence2: r2 } = splitAddress(deduped, 33);
+
+  // Factory address always falls back to the patient record — older saved forms
+  // stored "" before this field existed and must not blank the printed address.
+  const factoryAddrRaw =
+    cleanAddressPart(actualForm.factoryAddress) || cleanAddressPart(patient.companyAddress);
+  const factoryClean = dedupeAddress(String(factoryAddrRaw).replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim());
+  const { residence: factoryAddressLine1, residence2: factoryAddressLine2 } = splitAddress(factoryClean, 33);
+
   const isHazardous = String(actualForm.hazardousProcess || "").toLowerCase() === "yes";
   const isDangerous = String(actualForm.dangerousOperation || "").toLowerCase() === "yes";
 
-  const examDateStr = formatDateDMY(
-    actualForm.examinationDate || (actualForm.savedAt ? String(actualForm.savedAt).split("T")[0] : "")
-  );
-  let timeStr = "";
-  const signDateToUse = actualForm.doctorSignatureDate;
-  if (signDateToUse) {
-    const d = new Date(signDateToUse);
-    if (!Number.isNaN(d.getTime())) {
-      let hours = d.getHours();
-      const minutes = String(d.getMinutes()).padStart(2, "0");
-      const ampm = hours >= 12 ? "PM" : "AM";
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      timeStr = `${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
-    }
-  }
-  const certDateTime = `${examDateStr}${timeStr ? `      ${timeStr}` : ""}`.trim();
-
   return {
-    serialNumber: actualForm.serialNumber || "",
-    workerName: actualForm.name || patient.name || "",
+    // Serial-number box on the new blank is used for Emp ID
+    serialNumber: String(patient.employeeCode || actualForm.serialNumber || "").trim(),
+    workerName: form33WorkerName(actualForm, patient),
     fatherHusbandName: String(actualForm.fatherHusbandName || patient.fatherName || "").trim(),
     gender: actualForm.sex || patient.gender || "",
     residenceLine1: r1,
@@ -477,35 +499,27 @@ function buildForm33Values(actualForm, patient) {
     state: addressPartFromForm(actualForm.state, patient.state),
     dob: formatDateDMY(actualForm.dateOfBirth || patient.dob || ""),
     factoryName: actualForm.factoryName || patient.company || "",
-    // Blank Form 33 already strikes "Yes". Clear + rewrite Yes/No, strike only the
-    // unused option. Area Name stays blank unless a real name is set (no "NA").
-    hazardousChoice: "Yes / No",
-    hazardousYes: isHazardous ? "" : "yes",
-    hazardousNo: isHazardous ? "yes" : "",
+    factoryAddressLine1,
+    factoryAddressLine2,
+    // Reprint "Yes / No" (whiteBg clears the pre-printed mark), then strike the unused word
+    hazardousYesNo: "Yes / No",
+    hazardousStrikeYes: isHazardous ? "" : "yes",
+    hazardousStrikeNo: isHazardous ? "yes" : "",
     hazardousArea: cleanAreaName(actualForm.hazardousArea),
-    dangerousChoice: "Yes / No",
-    dangerousYes: isDangerous ? "" : "yes",
-    dangerousNo: isDangerous ? "yes" : "",
+    dangerousYesNo: "Yes / No",
+    dangerousStrikeYes: isDangerous ? "" : "yes",
+    dangerousStrikeNo: isDangerous ? "yes" : "",
     dangerousArea: cleanAreaName(actualForm.dangerousArea),
     identificationMarks: actualForm.identificationMarks || patient.identificationMarks || "",
     examinedAge: actualForm.examinedAge || (patient.age != null ? String(patient.age) : ""),
-    unfitReason: isUnfit ? actualForm.unfitReason || "" : "",
-    previousCertificate: isUnfit ? actualForm.previousCertificate || "" : "",
-    strikeHis1: isFemale ? "yes" : "",
-    strikeHer1: isFemale ? "" : "yes",
-    strikeHe1: isFemale ? "yes" : "",
-    strikeShe1: isFemale ? "" : "yes",
-    strikeHe2: isUnfit ? (isFemale ? "yes" : "") : "",
-    strikeShe2: isUnfit ? (isFemale ? "" : "yes") : "",
-    strikeHe3: isUnfit ? (isFemale ? "yes" : "") : "",
-    strikeShe3: isUnfit ? (isFemale ? "" : "yes") : "",
-    certificateDateTime: certDateTime,
+    // Leave blank — do not auto-stamp save date/time on the certificate
+    certificateDateTime: "",
     patientSignature: "",
     bottomCompanyName: actualForm.factoryName || patient.company || "",
     bottomExamDate: formatDateDMY(actualForm.bottomExamDate || ""),
-    bottomUnfitPeriod: isUnfit ? actualForm.extensionNote || "" : "",
-    bottomSymptoms: actualForm.symptoms || (isUnfit ? "" : "Fit For Joining"),
-    bottomSignatureDate: formatDateDMY(actualForm.bottomSignatureDate || "")
+    bottomSignatureDate: formatDateDMY(actualForm.bottomSignatureDate || ""),
+    // Always strike this printed mark/line on the new blank
+    bottomDefaultStrike: "yes"
   };
 }
 
@@ -539,8 +553,8 @@ function buildHealthRegisterValues(actualForm, patient) {
   const natureOfJobStrikeContractual = selectedType === "contract" || selectedType === "field" ? "" : "yes";
 
   return {
-    serialNumber: actualForm.serialNumber || "",
-    workerName: actualForm.name || patient.name || "",
+    serialNumber: String(patient.employeeCode || actualForm.serialNumber || "").trim(),
+    workerName: form32WorkerName(actualForm, patient),
     gender: actualForm.sex || patient.gender || "",
     dob: formatDateDMY(actualForm.dateOfBirth || patient.dob || ""),
     department: actualForm.departmentWorks || patient.department || "",

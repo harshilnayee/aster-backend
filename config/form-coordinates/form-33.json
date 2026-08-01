@@ -1,336 +1,271 @@
 {
   "serialNumber": {
     "page": 1,
-    "x": 334,
-    "y": 727,
-    "width": 205,
-    "height": 10
-  },
-  "workerName": {
-    "page": 1,
-    "x": 332,
-    "y": 700,
-    "width": 205,
-    "height": 10,
-    "whiteBg": true
-  },
-  "fatherHusbandName": {
-    "page": 1,
-    "x": 331,
-    "y": 675,
-    "width": 104,
+    "x": 342,
+    "y": 723.2,
+    "width": 195,
     "height": 11,
     "whiteBg": true,
     "clearAlways": true,
-    "fitToWidth": true,
-    "clip": true
+    "centerText": true
+  },
+  "workerName": {
+    "page": 1,
+    "x": 342,
+    "y": 699,
+    "width": 195,
+    "height": 11,
+    "whiteBg": true,
+    "fitToWidth": true
+  },
+  "fatherHusbandName": {
+    "page": 1,
+    "x": 342,
+    "y": 675,
+    "width": 195,
+    "height": 11,
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "gender": {
     "page": 1,
-    "x": 332,
-    "y": 650,
-    "width": 100,
-    "height": 10,
+    "x": 342,
+    "y": 649,
+    "width": 195,
+    "height": 11,
     "whiteBg": true
   },
   "residenceLine1": {
     "page": 1,
-    "x": 332,
-    "y": 624,
-    "width": 205,
-    "height": 10,
+    "x": 342,
+    "y": 623,
+    "width": 195,
+    "height": 11,
     "whiteBg": true,
-    "clearAlways": true
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "residenceLine2": {
     "page": 1,
-    "x": 326,
+    "x": 342,
     "y": 602,
-    "width": 111,
-    "height": 10,
+    "width": 93,
+    "height": 11,
     "whiteBg": true,
-    "clearAlways": true
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "pinCode": {
     "page": 1,
     "x": 481,
-    "y": 600,
-    "width": 34,
-    "height": 8,
+    "y": 602,
+    "width": 56,
+    "height": 11,
     "whiteBg": true,
-    "clearAlways": true
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "city": {
     "page": 1,
-    "x": 350,
-    "y": 574,
-    "width": 54,
-    "height": 9,
+    "x": 352,
+    "y": 573,
+    "width": 60,
+    "height": 11,
     "whiteBg": true,
-    "clearAlways": true
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "state": {
     "page": 1,
-    "x": 454,
+    "x": 458,
     "y": 573,
-    "width": 80,
-    "height": 10,
+    "width": 79,
+    "height": 11,
     "whiteBg": true,
-    "clearAlways": true
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "dob": {
     "page": 1,
-    "x": 334,
-    "y": 549,
-    "width": 150,
-    "height": 10,
+    "x": 342,
+    "y": 546,
+    "width": 195,
+    "height": 11,
     "whiteBg": true
   },
   "factoryName": {
     "page": 1,
-    "x": 334,
-    "y": 521,
-    "width": 205,
-    "height": 10,
-    "whiteBg": true
+    "x": 342,
+    "y": 522,
+    "width": 195,
+    "height": 11,
+    "whiteBg": true,
+    "fitToWidth": true
   },
-  "hazardousChoice": {
+  "factoryAddressLine1": {
     "page": 1,
-    "x": 335,
-    "y": 472,
-    "width": 37,
-    "height": 9,
+    "x": 342,
+    "y": 499,
+    "width": 195,
+    "height": 11,
     "whiteBg": true,
     "clearAlways": true,
-    "centerText": true,
-    "fontSize": 8.5
+    "fitToWidth": true
   },
-  "hazardousYes": {
+  "factoryAddressLine2": {
     "page": 1,
-    "x": 336,
-    "y": 476,
-    "width": 14,
+    "x": 342,
+    "y": 479,
+    "width": 195,
+    "height": 11,
+    "whiteBg": true,
+    "clearAlways": true,
+    "fitToWidth": true
+  },
+  "hazardousYesNo": {
+    "page": 1,
+    "x": 362,
+    "y": 441,
+    "width": 43,
+    "height": 10,
+    "whiteBg": true,
+    "clearAlways": true,
+    "centerText": true
+  },
+  "hazardousStrikeYes": {
+    "page": 1,
+    "x": 365.4,
+    "y": 446,
+    "width": 15.3,
     "height": 1,
     "drawLine": true,
     "lineThickness": 1
   },
-  "hazardousNo": {
+  "hazardousStrikeNo": {
     "page": 1,
-    "x": 356,
-    "y": 476,
-    "width": 14,
+    "x": 388.8,
+    "y": 446,
+    "width": 12.9,
     "height": 1,
     "drawLine": true,
     "lineThickness": 1
   },
   "hazardousArea": {
     "page": 1,
-    "x": 432,
-    "y": 472,
-    "width": 60,
-    "height": 8,
-    "whiteBg": true,
-    "clearAlways": true
-  },
-  "dangerousChoice": {
-    "page": 1,
-    "x": 335,
-    "y": 446,
-    "width": 37,
-    "height": 9,
+    "x": 470,
+    "y": 443,
+    "width": 67,
+    "height": 11,
     "whiteBg": true,
     "clearAlways": true,
-    "centerText": true,
-    "fontSize": 8.5
+    "fitToWidth": true
   },
-  "dangerousYes": {
+  "dangerousYesNo": {
     "page": 1,
-    "x": 336,
-    "y": 450,
-    "width": 14,
+    "x": 362,
+    "y": 416,
+    "width": 41,
+    "height": 10,
+    "whiteBg": true,
+    "clearAlways": true,
+    "centerText": true
+  },
+  "dangerousStrikeYes": {
+    "page": 1,
+    "x": 364.4,
+    "y": 421,
+    "width": 15.3,
     "height": 1,
     "drawLine": true,
     "lineThickness": 1
   },
-  "dangerousNo": {
+  "dangerousStrikeNo": {
     "page": 1,
-    "x": 356,
-    "y": 450,
-    "width": 14,
+    "x": 387.8,
+    "y": 421,
+    "width": 12.9,
     "height": 1,
     "drawLine": true,
     "lineThickness": 1
   },
   "dangerousArea": {
     "page": 1,
-    "x": 431,
-    "y": 447,
-    "width": 60,
-    "height": 8,
+    "x": 470,
+    "y": 417,
+    "width": 67,
+    "height": 11,
     "whiteBg": true,
-    "clearAlways": true
+    "clearAlways": true,
+    "fitToWidth": true
   },
   "identificationMarks": {
     "page": 1,
-    "x": 63,
-    "y": 393,
-    "width": 120,
-    "height": 12,
+    "x": 69,
+    "y": 368,
+    "width": 288,
+    "height": 11,
     "whiteBg": true,
     "clearAlways": true,
-    "fitToWidth": true,
-    "clip": true
+    "fitToWidth": true
   },
   "examinedAge": {
     "page": 1,
     "x": 515,
-    "y": 374,
-    "width": 25,
-    "height": 10,
+    "y": 348,
+    "width": 30,
+    "height": 11,
     "whiteBg": true
-  },
-  "unfitReason": {
-    "page": 1,
-    "x": 119,
-    "y": 310,
-    "width": 150,
-    "height": 10
-  },
-  "previousCertificate": {
-    "page": 1,
-    "x": 293,
-    "y": 287,
-    "width": 150,
-    "height": 10
-  },
-  "strikeHis1": {
-    "page": 1,
-    "x": 251,
-    "y": 379,
-    "width": 13,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeHer1": {
-    "page": 1,
-    "x": 265,
-    "y": 379,
-    "width": 14,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeHe1": {
-    "page": 1,
-    "x": 158,
-    "y": 352,
-    "width": 12,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeShe1": {
-    "page": 1,
-    "x": 176,
-    "y": 352,
-    "width": 14,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeHe2": {
-    "page": 1,
-    "x": 161,
-    "y": 325,
-    "width": 13,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeShe2": {
-    "page": 1,
-    "x": 180,
-    "y": 325,
-    "width": 16,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeHe3": {
-    "page": 1,
-    "x": 209,
-    "y": 312,
-    "width": 12,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
-  },
-  "strikeShe3": {
-    "page": 1,
-    "x": 224,
-    "y": 312,
-    "width": 14,
-    "height": 1,
-    "drawLine": true,
-    "lineThickness": 1
   },
   "certificateDateTime": {
     "page": 1,
-    "x": 403,
-    "y": 238,
-    "width": 159,
-    "height": 10,
+    "x": 415,
+    "y": 221,
+    "width": 129,
+    "height": 11,
     "whiteBg": true
   },
   "patientSignature": {
     "page": 1,
-    "x": 82,
-    "y": 219,
-    "width": 174,
-    "height": 35,
+    "x": 86,
+    "y": 196,
+    "width": 193,
+    "height": 39,
     "whiteBg": true,
     "clearAlways": true
   },
   "bottomCompanyName": {
     "page": 1,
-    "x": 158,
-    "y": 170,
-    "width": 123,
-    "height": 12,
-    "whiteBg": true
+    "x": 156,
+    "y": 154,
+    "width": 119,
+    "height": 11,
+    "whiteBg": true,
+    "fitToWidth": true
   },
   "bottomExamDate": {
     "page": 1,
-    "x": 78,
-    "y": 105,
-    "width": 55,
-    "height": 10,
+    "x": 74,
+    "y": 82,
+    "width": 66,
+    "height": 11,
     "whiteBg": true
-  },
-  "bottomUnfitPeriod": {
-    "page": 1,
-    "x": 177,
-    "y": 105,
-    "width": 150,
-    "height": 10
-  },
-  "bottomSymptoms": {
-    "page": 1,
-    "x": 346,
-    "y": 101,
-    "width": 91,
-    "height": 14,
-    "whiteBg": true,
-    "clip": true,
-    "fitToWidth": true
   },
   "bottomSignatureDate": {
     "page": 1,
-    "x": 481,
-    "y": 105,
-    "width": 68,
-    "height": 10,
+    "x": 483,
+    "y": 82,
+    "width": 66,
+    "height": 11,
     "whiteBg": true
+  },
+  "bottomDefaultStrike": {
+    "page": 1,
+    "x": 364,
+    "y": 86,
+    "width": 71,
+    "height": 1,
+    "drawLine": true,
+    "lineThickness": 1
   }
 }

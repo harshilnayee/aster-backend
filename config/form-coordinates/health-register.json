@@ -1,10 +1,13 @@
 {
   "serialNumber": {
     "page": 1,
-    "x": 336,
-    "y": 728,
-    "width": 200,
-    "height": 8
+    "x": 392,
+    "y": 726,
+    "width": 69,
+    "height": 12,
+    "whiteBg": true,
+    "clearAlways": true,
+    "centerText": true
   },
   "workerName": {
     "page": 1,

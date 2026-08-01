@@ -11,6 +11,38 @@ function escapeRegex(str) {
 }
 
 /**
+ * Distinct company names for import / filter dropdowns
+ * GET /api/patients/companies
+ */
+async function listCompanies(req, res, next) {
+  try {
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+
+    const raw = await Patient.distinct("company", {
+      ...(req.tenantFilter || {}),
+      ...clinicScope,
+      company: { $nin: [null, ""] }
+    });
+
+    const companies = [
+      ...new Set(
+        (raw || [])
+          .map((c) => String(c || "").trim())
+          .filter(Boolean)
+      )
+    ].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+    return res.status(200).json({ companies });
+  } catch (error) {
+    console.error("ListCompanies error:", error);
+    next(error);
+  }
+}
+
+/**
  * Get all patients with search/filter queries
  * GET /api/patients
  */
@@ -125,7 +157,7 @@ async function getPatients(req, res, next) {
  */
 async function createPatient(req, res, next) {
   try {
-    const { name, age, gender, mobile, employeeCode, company, address, photo, signature, fatherName, occupation,
+    const { name, age, gender, mobile, employeeCode, company, address, companyAddress, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
@@ -145,6 +177,7 @@ async function createPatient(req, res, next) {
       employeeCode,
       company: company || "",
       address,
+      companyAddress,
       photo,
       signature,
       fatherName,
@@ -251,7 +284,7 @@ async function getPatient(req, res, next) {
 async function updatePatient(req, res, next) {
   try {
     const { id } = req.params;
-    const { name, age, gender, mobile, employeeCode, company, address, photo, signature, fatherName, occupation,
+    const { name, age, gender, mobile, employeeCode, company, address, companyAddress, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
@@ -272,6 +305,7 @@ async function updatePatient(req, res, next) {
     if (employeeCode !== undefined) patient.employeeCode = employeeCode;
     if (company !== undefined) patient.company = company;
     if (address !== undefined) patient.address = address;
+    if (companyAddress !== undefined) patient.companyAddress = companyAddress;
     if (photo !== undefined) patient.photo = photo;
     if (signature !== undefined) patient.signature = signature;
     if (fatherName !== undefined) patient.fatherName = fatherName;
@@ -391,6 +425,167 @@ async function bulkCreatePatients(req, res, next) {
     });
   } catch (error) {
     console.error("BulkCreatePatients error:", error);
+    next(error);
+  }
+}
+
+/**
+ * Bulk update existing patients by employeeCode (Excel re-import / fill forgotten fields).
+ * POST /api/patients/bulk-update
+ * Body: { patients: [...], fillBlanksOnly?: boolean }
+ */
+async function bulkUpdatePatients(req, res, next) {
+  try {
+    const { patients, fillBlanksOnly = true } = req.body;
+
+    if (!patients || !Array.isArray(patients) || patients.length === 0) {
+      return res.status(400).json({ message: "An array of patients is required in the 'patients' property." });
+    }
+
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+
+    const UPDATABLE = [
+      "name", "surname", "fatherName", "age", "dob", "gender", "mobile",
+      "company", "address", "companyAddress", "city", "state", "pincode",
+      "occupation", "department", "employeeCode", "govIdType", "govIdNumber"
+    ];
+
+    const normalizeCode = (v) => String(v || "").trim().toLowerCase();
+    const normalizeName = (v) => String(v || "").trim().toLowerCase().replace(/\s+/g, " ");
+
+    const rows = patients.filter((p) => normalizeCode(p.employeeCode) || normalizeName(p.name));
+    if (rows.length === 0) {
+      return res.status(400).json({
+        message: "Each update row needs an Employee Code (Emp ID) or Name so we can match existing patients."
+      });
+    }
+
+    const codes = [...new Set(rows.map((p) => String(p.employeeCode || "").trim()).filter(Boolean))];
+    const names = [...new Set(rows.map((p) => String(p.name || "").trim()).filter(Boolean))];
+
+    const orClauses = [];
+    if (codes.length) orClauses.push({ employeeCode: { $in: codes } });
+    if (names.length) orClauses.push({ name: { $in: names } });
+
+    const existing = await Patient.find({
+      $or: orClauses,
+      ...(req.tenantFilter || {}),
+      ...clinicScope
+    }).select("_id patientId employeeCode name mobile surname fatherName govIdType govIdNumber " + UPDATABLE.join(" "));
+
+    const byCode = new Map();
+    const byNameMobile = new Map();
+    const byNameSurname = new Map();
+    for (const doc of existing) {
+      const codeKey = normalizeCode(doc.employeeCode);
+      if (codeKey && !byCode.has(codeKey)) byCode.set(codeKey, doc);
+      const n = normalizeName(doc.name);
+      if (n) {
+        const nm = `${n}||${normalizeCode(doc.mobile)}`;
+        if (!byNameMobile.has(nm)) byNameMobile.set(nm, doc);
+        const ns = `${n}||${normalizeName(doc.surname)}`;
+        if (!byNameSurname.has(ns)) byNameSurname.set(ns, doc);
+      }
+    }
+
+    const ops = [];
+    let updated = 0;
+    let unchanged = 0;
+    let notFound = 0;
+    const notFoundCodes = [];
+
+    for (const row of rows) {
+      const codeKey = normalizeCode(row.employeeCode);
+      let doc = codeKey ? byCode.get(codeKey) : null;
+      if (!doc && normalizeName(row.name)) {
+        const n = normalizeName(row.name);
+        if (row.mobile) doc = byNameMobile.get(`${n}||${normalizeCode(row.mobile)}`);
+        if (!doc && row.surname) doc = byNameSurname.get(`${n}||${normalizeName(row.surname)}`);
+      }
+      if (!doc) {
+        notFound += 1;
+        if (notFoundCodes.length < 25) {
+          notFoundCodes.push(String(row.employeeCode || row.name || "").trim());
+        }
+        continue;
+      }
+
+      const $set = {};
+      for (const field of UPDATABLE) {
+        if (!(field in row)) continue;
+        let nextVal = row[field];
+        if (nextVal === null || nextVal === undefined) continue;
+        if (typeof nextVal === "string") nextVal = nextVal.trim();
+        if (nextVal === "") continue;
+        if (field === "age") {
+          const n = Number(nextVal);
+          if (!n || Number.isNaN(n) || n <= 0) continue;
+          nextVal = n;
+        }
+        if (field === "govIdNumber") {
+          nextVal = String(nextVal).replace(/\s+/g, "");
+        }
+
+        const current = doc[field];
+        const currentEmpty =
+          current === null ||
+          current === undefined ||
+          (typeof current === "string" && current.trim() === "");
+
+        if (fillBlanksOnly && !currentEmpty) continue;
+        if (field !== "govIdNumber" && String(current ?? "") === String(nextVal)) continue;
+
+        if (field === "govIdNumber") {
+          $set.govIdNumber = encrypt(nextVal);
+          if (!doc.govIdType && !row.govIdType) $set.govIdType = "Aadhaar";
+          if (row.govIdType) $set.govIdType = String(row.govIdType).trim();
+          continue;
+        }
+        if (field === "govIdType" && $set.govIdNumber) {
+          $set.govIdType = nextVal;
+          continue;
+        }
+        $set[field] = nextVal;
+      }
+
+      if (Object.keys($set).length === 0) {
+        unchanged += 1;
+        continue;
+      }
+
+      ops.push({
+        updateOne: {
+          filter: { _id: doc._id },
+          update: { $set }
+        }
+      });
+      updated += 1;
+    }
+
+    if (ops.length > 0) {
+      await Patient.bulkWrite(ops, { ordered: false });
+    }
+
+    await AuditLog.create({
+      userId: req.user._id,
+      userName: req.user.name,
+      userRole: req.user.role,
+      action: "patient_updated",
+      details: `Bulk update: ${updated} updated, ${unchanged} unchanged, ${notFound} not found (fillBlanksOnly=${!!fillBlanksOnly})`
+    });
+
+    return res.status(200).json({
+      message: `Updated ${updated} patient(s). ${unchanged} already had values. ${notFound} Emp ID(s) not found.`,
+      updated,
+      unchanged,
+      notFound,
+      notFoundCodes
+    });
+  } catch (error) {
+    console.error("BulkUpdatePatients error:", error);
     next(error);
   }
 }
@@ -526,10 +721,12 @@ async function recordWhatsappReminder(req, res, next) {
 
 module.exports = {
   getPatients,
+  listCompanies,
   createPatient,
   getPatient,
   updatePatient,
   bulkCreatePatients,
+  bulkUpdatePatients,
   bulkDeletePatients,
   deletePatient,
   recordWhatsappReminder

@@ -9,11 +9,17 @@ const AuditLog = require("../models/AuditLog");
 // GET /api/patients - Get patient list (Admin, Doctor, Employee)
 router.get("/", verifyToken, patientController.getPatients);
 
+// GET /api/patients/companies - Distinct company names for dropdowns
+router.get("/companies", verifyToken, patientController.listCompanies);
+
 // POST /api/patients - Create a new patient (Admin, Doctor, Employee)
 router.post("/", verifyToken, patientController.createPatient);
 
 // POST /api/patients/bulk - Bulk create patients from Excel (Admin, Employee)
 router.post("/bulk", verifyToken, patientController.bulkCreatePatients);
+
+// POST /api/patients/bulk-update - Patch existing patients by Emp ID (forgotten columns)
+router.post("/bulk-update", verifyToken, patientController.bulkUpdatePatients);
 
 // GET /api/patients/:id - Get patient details by ID (Admin, Doctor, Employee)
 router.get("/:id", verifyToken, patientController.getPatient);
