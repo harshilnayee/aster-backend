@@ -84,21 +84,30 @@ function dedupeAddress(str) {
   return uniqueParts.join(", ");
 }
 
-function splitAddress(fullAddress, maxLen = 55) {
+function splitAddress(fullAddress, maxLen = 45) {
   if (!fullAddress) return { residence: "", residence2: "" };
-  if (fullAddress.length <= maxLen) {
-    return { residence: fullAddress, residence2: "" };
+  const clean = String(fullAddress).replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+  if (clean.length <= 33) {
+    return { residence: clean, residence2: "" };
   }
-  const splitIndex = fullAddress.lastIndexOf(" ", maxLen);
-  if (splitIndex !== -1 && splitIndex > 20) {
+
+  // Balance long address into 2 visually even lines
+  const idealSplitPoint = Math.min(48, Math.max(28, Math.ceil(clean.length / 2)));
+  let splitIndex = clean.lastIndexOf(" ", idealSplitPoint);
+  if (splitIndex === -1 || splitIndex < 15) {
+    splitIndex = clean.indexOf(" ", idealSplitPoint);
+  }
+
+  if (splitIndex !== -1 && splitIndex > 10 && splitIndex < clean.length - 5) {
     return {
-      residence: fullAddress.slice(0, splitIndex),
-      residence2: fullAddress.slice(splitIndex).trim()
+      residence: clean.slice(0, splitIndex).trim(),
+      residence2: clean.slice(splitIndex).trim()
     };
   }
+
   return {
-    residence: fullAddress.slice(0, maxLen),
-    residence2: fullAddress.slice(maxLen).trim()
+    residence: clean.slice(0, 48).trim(),
+    residence2: clean.slice(48).trim()
   };
 }
 
