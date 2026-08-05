@@ -16,9 +16,13 @@ async function uploadFile(req, res, next) {
       return res.status(400).json({ message: "No file provided for upload" });
     }
 
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
+      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -79,9 +83,13 @@ async function getFiles(req, res, next) {
   try {
     const { id } = req.params;
 
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
+      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
 
     const patient = await Patient.findOne(query)
       .select("files patientId")

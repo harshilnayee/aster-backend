@@ -38,11 +38,18 @@ router.delete("/:id", verifyToken, requireRole("admin"), async (req, res, next) 
   try {
     const { id } = req.params;
 
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+
     const patient = await Patient.findOne({
       $or: [
         { _id: mongoose.Types.ObjectId.isValid(id) ? id : null },
         { patientId: id }
-      ].filter(Boolean)
+      ].filter(Boolean),
+      ...(req.tenantFilter || {}),
+      ...clinicScope
     });
 
     if (!patient) {
@@ -56,7 +63,7 @@ router.delete("/:id", verifyToken, requireRole("admin"), async (req, res, next) 
       userId: req.user._id,
       userName: req.user.name,
       userRole: req.user.role,
-      action: "patient_updated",
+      action: "patient_deleted",
       patientId: patient.patientId,
       details: `Permanently deleted patient record for ${patient.name}`
     });

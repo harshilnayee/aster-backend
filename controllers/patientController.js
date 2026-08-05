@@ -288,9 +288,14 @@ async function updatePatient(req, res, next) {
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...req.tenantFilter }
-      : { patientId: id, ...req.tenantFilter };
+      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
+      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -659,12 +664,18 @@ async function bulkDeletePatients(req, res, next) {
       return res.status(400).json({ message: "An array of patientIds is required." });
     }
 
-    const patients = await Patient.find({ patientId: { $in: patientIds }, ...req.tenantFilter });
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+    const deleteFilter = { patientId: { $in: patientIds }, ...(req.tenantFilter || {}), ...clinicScope };
+
+    const patients = await Patient.find(deleteFilter);
     for (const patient of patients) {
       await cleanupPatientR2Files(patient);
     }
 
-    const result = await Patient.deleteMany({ patientId: { $in: patientIds }, ...req.tenantFilter });
+    const result = await Patient.deleteMany(deleteFilter);
 
     await AuditLog.create({
       userId: req.user._id,
@@ -687,9 +698,13 @@ async function bulkDeletePatients(req, res, next) {
 async function recordWhatsappReminder(req, res, next) {
   try {
     const { id } = req.params;
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...req.tenantFilter }
-      : { patientId: id, ...req.tenantFilter };
+      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
+      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {

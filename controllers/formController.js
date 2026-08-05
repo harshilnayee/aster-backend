@@ -2,10 +2,15 @@ const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
 
-function buildPatientQuery(id) {
-  return mongoose.Types.ObjectId.isValid(id)
+function buildPatientQuery(id, req) {
+  const clinicScope =
+    req?.user?.role === "superadmin" || !req?.user?.clinicId
+      ? {}
+      : { clinicId: req.user.clinicId };
+  const base = mongoose.Types.ObjectId.isValid(id)
     ? { _id: id }
     : { patientId: id };
+  return { ...base, ...(req?.tenantFilter || {}), ...clinicScope };
 }
 
 /**
@@ -23,7 +28,7 @@ async function saveForm(req, res, next) {
       return res.status(400).json({ message: "Form data object is required" });
     }
 
-    const query = buildPatientQuery(id);
+    const query = buildPatientQuery(id, req);
     const draftRequested = isDraft === true;
 
     // Never demote a finalized form back to draft (autosave race after final save)
@@ -100,7 +105,7 @@ async function getForm(req, res, next) {
   try {
     const { id, formType } = req.params;
 
-    const query = buildPatientQuery(id);
+    const query = buildPatientQuery(id, req);
 
     const patient = await Patient.findOne(query)
       .select(`forms.${formType} patientId`)

@@ -6,7 +6,12 @@ const Patient = require("../models/Patient");
  */
 async function getSummary(req, res, next) {
   try {
-    const patients = await Patient.find({}, "createdAt forms");
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+    const filter = { ...(req.tenantFilter || {}), ...clinicScope };
+    const patients = await Patient.find(filter, "createdAt forms");
 
     const now = new Date();
     
@@ -76,7 +81,13 @@ async function getSummary(req, res, next) {
  */
 async function getCompanies(req, res, next) {
   try {
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+    const matchFilter = { ...(req.tenantFilter || {}), ...clinicScope };
     const companyStats = await Patient.aggregate([
+      { $match: matchFilter },
       {
         $group: {
           _id: { $trim: { input: "$company" } },
@@ -111,10 +122,19 @@ async function getCompanyAnalytics(req, res, next) {
 
     // Query patients matching the trimmed company name (case-insensitively to be safe)
     const escapedComp = comp.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
     const query = {
-      $or: [
-        { company: comp },
-        { company: { $regex: new RegExp("^\\s*" + escapedComp + "\\s*$", "i") } }
+      $and: [
+        { ...(req.tenantFilter || {}), ...clinicScope },
+        {
+          $or: [
+            { company: comp },
+            { company: { $regex: new RegExp("^\\s*" + escapedComp + "\\s*$", "i") } }
+          ]
+        }
       ]
     };
 

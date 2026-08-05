@@ -117,52 +117,52 @@ function detectIntent(msg) {
 // ─────────────────────────────────────────────────────────────────────────────
 // MONGO QUERIES
 // ─────────────────────────────────────────────────────────────────────────────
-async function executeQuery(intent, entity) {
+async function executeQuery(intent, entity, clinicScope = {}) {
   switch (intent) {
     case "totalCount": {
-      const count = await Patient.countDocuments();
+      const count = await Patient.countDocuments(clinicScope);
       return { count };
     }
     case "countByGender": {
-      const count = await Patient.countDocuments({ gender: entity });
+      const count = await Patient.countDocuments({ gender: entity, ...clinicScope });
       return { count, gender: entity };
     }
     case "countByFit": {
       const field = "forms.form33.data.fitStatus";
-      const count = await Patient.countDocuments({ [field]: entity });
+      const count = await Patient.countDocuments({ [field]: entity, ...clinicScope });
       return { count, status: entity };
     }
     case "lookupByPatientId": {
-      const p = await Patient.findOne({ patientId: entity.toUpperCase() })
+      const p = await Patient.findOne({ patientId: entity.toUpperCase(), ...clinicScope })
         .select("patientId name age gender company employeeCode mobile");
       return { patient: p };
     }
     case "lookupByEmpCode": {
-      const p = await Patient.findOne({ employeeCode: entity })
+      const p = await Patient.findOne({ employeeCode: entity, ...clinicScope })
         .select("patientId name age gender company employeeCode mobile");
       return { patient: p };
     }
     case "lookupByMobile": {
-      const p = await Patient.findOne({ mobile: entity })
+      const p = await Patient.findOne({ mobile: entity, ...clinicScope })
         .select("patientId name age gender company employeeCode mobile");
       return { patient: p };
     }
     case "lookupByName": {
-      const patients = await Patient.find({ name: { $regex: entity, $options: "i" } })
+      const patients = await Patient.find({ name: { $regex: entity, $options: "i" }, ...clinicScope })
         .select("patientId name age gender company employeeCode mobile")
         .limit(5)
         .lean();
       return { patients };
     }
     case "countByCompany": {
-      const count = await Patient.countDocuments({ company: { $regex: entity, $options: "i" } });
-      const sample = await Patient.findOne({ company: { $regex: entity, $options: "i" } })
+      const count = await Patient.countDocuments({ company: { $regex: entity, $options: "i" }, ...clinicScope });
+      const sample = await Patient.findOne({ company: { $regex: entity, $options: "i" }, ...clinicScope })
         .select("company")
         .lean();
       return { count, company: sample?.company || entity };
     }
     case "listCompanies": {
-      const companies = await Patient.distinct("company");
+      const companies = await Patient.distinct("company", { ...clinicScope, company: { $nin: [null, ""] } });
       return { companies: companies.filter(Boolean).sort() };
     }
     case "pendingForm": {
@@ -173,11 +173,11 @@ async function executeQuery(intent, entity) {
           entity.includes(k.toLowerCase().replace(/[^a-z0-9]/g, ""))
       );
       if (!matchedKey) return { pendingFormKey: entity, patients: [], error: "unknownForm" };
-      const patients = await Patient.find({ [`forms.${matchedKey}`]: { $exists: false } })
+      const patients = await Patient.find({ [`forms.${matchedKey}`]: { $exists: false }, ...clinicScope })
         .select("patientId name company")
         .limit(10)
         .lean();
-      const total = await Patient.countDocuments({ [`forms.${matchedKey}`]: { $exists: false } });
+      const total = await Patient.countDocuments({ [`forms.${matchedKey}`]: { $exists: false }, ...clinicScope });
       return {
         pendingFormKey: matchedKey,
         formLabel: FORM_LABELS[matchedKey],
@@ -353,11 +353,16 @@ exports.query = async (req, res) => {
     let reply;
     let contextUpdate = null;
 
+    const clinicScope =
+      req.user?.role === "superadmin" || !req.user?.clinicId
+        ? {}
+        : { clinicId: req.user.clinicId };
+
     // 1) Direct ID / emp code in message (emp id 21, whose id is 21, PT-2026-1292)
     const lookupToken = extractLookupToken(message);
     if (lookupToken) {
       intent = "lookupFlexible";
-      const flexResult = await lookupFlexible(lookupToken);
+      const flexResult = await lookupFlexible(lookupToken, clinicScope);
       reply = buildFlexibleLookupReply(flexResult, lookupToken, replyLang);
       if (flexResult.patient) {
         contextUpdate = patientToContext(flexResult.patient);
@@ -381,7 +386,7 @@ exports.query = async (req, res) => {
         const idFromMsg = extractPatientIdFromText(message);
         const targetId = idFromMsg || historyIds[historyIds.length - 1];
         if (targetId) {
-          const p = await Patient.findOne({ patientId: targetId })
+          const p = await Patient.findOne({ patientId: targetId, ...clinicScope })
             .select("patientId name age gender company employeeCode mobile");
           lastPatient = patientToContext(p);
         }
@@ -403,7 +408,7 @@ exports.query = async (req, res) => {
     // 4) Live database intents
     const detected = detectIntent(message);
     intent = detected.intent;
-    const data = await executeQuery(intent, detected.entity);
+    const data = await executeQuery(intent, detected.entity, clinicScope);
     reply = buildDataReply(intent, data, replyLang);
     contextUpdate = buildContextUpdate(intent, data);
 

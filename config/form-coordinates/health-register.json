@@ -113,10 +113,10 @@
   },
   "dateOfPosting": {
     "page": 1,
-    "x": 340,
-    "y": 545,
-    "width": 205,
-    "height": 8,
+    "x": 392,
+    "y": 544,
+    "width": 89,
+    "height": 11,
     "whiteBg": true
   },
   "dateOfLeaving": {

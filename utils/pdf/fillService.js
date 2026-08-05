@@ -131,9 +131,42 @@ async function fillPdfToBytes(formId, inputValues) {
       values["doctorStamp"] = doctorStampBase64;
     }
 
-    // For food handler certificate, also draw doctor's signature in the candidate's signature box
-    if (formId === "17-form-food-handler-certificate" && doctorSignatureBase64) {
-      values["patientSignature"] = doctorSignatureBase64;
+function formatDateToMonthYear(val) {
+  if (!val) {
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const yyyy = now.getFullYear();
+    return `/${mm}/${yyyy}`;
+  }
+  const s = String(val).trim();
+  if (s.includes("T")) {
+    const parts = s.split("T")[0].split("-");
+    if (parts.length >= 2) return `/${parts[1]}/${parts[0]}`;
+  }
+  const isoMatch = s.match(/^(\d{4})-(\d{2})/);
+  if (isoMatch) return `/${isoMatch[2]}/${isoMatch[1]}`;
+  const dmyMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (dmyMatch) return `/${dmyMatch[2].padStart(2, "0")}/${dmyMatch[3]}`;
+  try {
+    const d = new Date(s);
+    if (!Number.isNaN(d.getTime())) {
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `/${mm}/${yyyy}`;
+    }
+  } catch {
+    // fallback
+  }
+  return s;
+}
+
+    // For food handler certificate, do NOT draw candidate or doctor signatures & format date as /MM/YYYY
+    if (formId === "17-form-food-handler-certificate") {
+      values["patientSignature"] = "";
+      values["doctorSignature"] = "";
+      if (values["date"]) {
+        values["date"] = formatDateToMonthYear(values["date"]);
+      }
     }
 
     const pdfBytes = loadPdfTemplateBytes(formConfig.pdfFile);
@@ -355,7 +388,8 @@ async function fillPdfToBytes(formId, inputValues) {
                 const targetWidth = Number(finalCoord.width);
                 if (textWidth > targetWidth && targetWidth > 0) {
                   const scale = targetWidth / textWidth;
-                  currentFontSize = Math.max(6, Math.floor(currentFontSize * scale * 10) / 10);
+                  const minFontSize = finalCoord.fitToWidth ? 4.5 : 6;
+                  currentFontSize = Math.max(minFontSize, Math.floor(currentFontSize * scale * 10) / 10);
                 }
               } catch (err) {
                 console.error("Error auto-scaling font size:", err);

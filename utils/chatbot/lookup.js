@@ -35,21 +35,22 @@ function extractLookupToken(message) {
 /**
  * Try employee code, patient ID suffix, and partial matches for short IDs like "21".
  */
-async function lookupFlexible(token) {
+async function lookupFlexible(token, clinicScope = {}) {
   const raw = String(token).trim();
   if (!raw) return { patient: null };
 
   if (/^PT-/i.test(raw)) {
-    const patient = await Patient.findOne({ patientId: raw.toUpperCase() }).select(PATIENT_SELECT);
+    const patient = await Patient.findOne({ patientId: raw.toUpperCase(), ...clinicScope }).select(PATIENT_SELECT);
     return { patient, matchType: "patientId" };
   }
 
   // Exact employee code (string field — works for "21", "10187398", etc.)
-  let patient = await Patient.findOne({ employeeCode: raw }).select(PATIENT_SELECT);
+  let patient = await Patient.findOne({ employeeCode: raw, ...clinicScope }).select(PATIENT_SELECT);
   if (patient) return { patient, matchType: "employeeCode" };
 
   patient = await Patient.findOne({
-    employeeCode: { $regex: `^${escapeRegex(raw)}$`, $options: "i" }
+    employeeCode: { $regex: `^${escapeRegex(raw)}$`, $options: "i" },
+    ...clinicScope
   }).select(PATIENT_SELECT);
   if (patient) return { patient, matchType: "employeeCode" };
 
@@ -57,7 +58,8 @@ async function lookupFlexible(token) {
   if (/^\d+$/.test(raw)) {
     const suffix = raw.replace(/^0+/, "") || raw;
     const bySuffix = await Patient.find({
-      patientId: { $regex: `-0*${escapeRegex(suffix)}$`, $options: "i" }
+      patientId: { $regex: `-0*${escapeRegex(suffix)}$`, $options: "i" },
+      ...clinicScope
     })
       .select(PATIENT_SELECT)
       .limit(6)
@@ -73,7 +75,8 @@ async function lookupFlexible(token) {
 
   // Partial employee code (e.g. ends with 21)
   const byEmpPartial = await Patient.find({
-    employeeCode: { $regex: escapeRegex(raw), $options: "i" }
+    employeeCode: { $regex: escapeRegex(raw), $options: "i" },
+    ...clinicScope
   })
     .select(PATIENT_SELECT)
     .limit(6)

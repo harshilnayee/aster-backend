@@ -100,6 +100,10 @@ async function updateUserAccess(req, res, next) {
       return res.status(403).json({ message: "Developer accounts cannot be modified from the clinic panel." });
     }
 
+    if (req.user.role !== "superadmin" && String(user.clinicId || "") !== String(req.user.clinicId || "")) {
+      return res.status(403).json({ message: "Access denied. Target user belongs to a different clinic." });
+    }
+
     // Cannot update own access or self-deactivate for safety
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ message: "Administrators cannot modify their own privileges or status." });

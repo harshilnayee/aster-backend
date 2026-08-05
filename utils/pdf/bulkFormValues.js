@@ -92,10 +92,15 @@ function splitAddress(fullAddress, maxLen = 45) {
   }
 
   // Balance long address into 2 visually even lines
-  const idealSplitPoint = Math.min(48, Math.max(28, Math.ceil(clean.length / 2)));
-  let splitIndex = clean.lastIndexOf(" ", idealSplitPoint);
-  if (splitIndex === -1 || splitIndex < 15) {
-    splitIndex = clean.indexOf(" ", idealSplitPoint);
+  const idealSplitPoint = Math.ceil(clean.length / 2);
+  let splitIndex = clean.indexOf(",", idealSplitPoint - 10);
+  if (splitIndex !== -1 && splitIndex >= 15 && splitIndex <= clean.length - 15) {
+    splitIndex = splitIndex + 1;
+  } else {
+    splitIndex = clean.lastIndexOf(" ", idealSplitPoint + 10);
+    if (splitIndex === -1 || splitIndex < 15) {
+      splitIndex = clean.indexOf(" ", idealSplitPoint);
+    }
   }
 
   if (splitIndex !== -1 && splitIndex > 10 && splitIndex < clean.length - 5) {
@@ -106,8 +111,8 @@ function splitAddress(fullAddress, maxLen = 45) {
   }
 
   return {
-    residence: clean.slice(0, 48).trim(),
-    residence2: clean.slice(48).trim()
+    residence: clean.slice(0, idealSplitPoint).trim(),
+    residence2: clean.slice(idealSplitPoint).trim()
   };
 }
 
@@ -418,6 +423,7 @@ function applyCommonDefaults(data, patient) {
   if (!data.companyName) data.companyName = patient.company || "";
   if (!data.fatherName) data.fatherName = patient.fatherName || "";
   if (!data.patientSignature) data.patientSignature = patient.signature || "";
+  if (!data.date) data.date = getPatientPermanentDate(patient);
 
   for (const key of ["date", "dateTop", "dob", "examinationDate", "examDate", "regDate", "certDate"]) {
     if (data[key]) data[key] = formatDateDMY(data[key]);
