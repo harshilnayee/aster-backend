@@ -475,10 +475,38 @@ function form32WorkerName(actualForm, patient) {
   if (surname && given.toLowerCase().startsWith(surname.toLowerCase() + " ")) {
     given = given.slice(surname.length).trim();
   }
+  if (surname) {
+    const surnameWords = surname.toLowerCase().split(/\s+/);
+    let givenWords = given.split(/\s+/);
+    while (givenWords.length > 0 && surnameWords.includes(givenWords[0].toLowerCase())) {
+      givenWords.shift();
+    }
+    given = givenWords.join(" ");
+  }
   const father = String(
     actualForm?.fatherName || actualForm?.fatherHusbandName || patient?.fatherName || ""
   ).trim();
-  return [surname, given, father].filter(Boolean).join(" ");
+  return [surname, given, father].filter(Boolean).join(" ").replace(/\s+/g, " ");
+}
+
+function splitAddress3(fullAddress) {
+  if (!fullAddress) return { line1: "", line2: "", line3: "" };
+  const clean = String(fullAddress).replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+  if (clean.length <= 33) return { line1: clean, line2: "", line3: "" };
+  const parts = [];
+  let remaining = clean;
+  while (remaining.length > 0 && parts.length < 3) {
+    if (remaining.length <= 33) {
+      parts.push(remaining.trim());
+      break;
+    }
+    let idx = remaining.lastIndexOf(",", 33);
+    if (idx < 10) idx = remaining.lastIndexOf(" ", 33);
+    if (idx < 10) idx = 33;
+    parts.push(remaining.slice(0, idx).trim());
+    remaining = remaining.slice(idx).replace(/^[\s,]+/, "").trim();
+  }
+  return { line1: parts[0] || "", line2: parts[1] || "", line3: parts[2] || "" };
 }
 
 function form33WorkerName(actualForm, patient) {
@@ -488,15 +516,14 @@ function form33WorkerName(actualForm, patient) {
 function buildForm33Values(actualForm, patient) {
   const fullAddress = addressPartFromForm(actualForm.residence, patient.address);
   const deduped = dedupeAddress(fullAddress);
-  // Value boxes are 195pt wide at 10.5pt Times ≈ 33 chars; overflow wraps to line 2
-  const { residence: r1, residence2: r2 } = splitAddress(deduped, 33);
+  const { line1: r1, line2: r2, line3: r3 } = splitAddress3(deduped);
 
   // Factory address always falls back to the patient record — older saved forms
   // stored "" before this field existed and must not blank the printed address.
   const factoryAddrRaw =
     cleanAddressPart(actualForm.factoryAddress) || cleanAddressPart(patient.companyAddress);
   const factoryClean = dedupeAddress(String(factoryAddrRaw).replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim());
-  const { residence: factoryAddressLine1, residence2: factoryAddressLine2 } = splitAddress(factoryClean, 33);
+  const { line1: factoryAddressLine1, line2: factoryAddressLine2, line3: factoryAddressLine3 } = splitAddress3(factoryClean);
 
   const isHazardous = String(actualForm.hazardousProcess || "").toLowerCase() === "yes";
   const isDangerous = String(actualForm.dangerousOperation || "").toLowerCase() === "yes";
@@ -509,6 +536,7 @@ function buildForm33Values(actualForm, patient) {
     gender: actualForm.sex || patient.gender || "",
     residenceLine1: r1,
     residenceLine2: r2,
+    residenceLine3: r3,
     pinCode: addressPartFromForm(actualForm.pinCode, patient.pincode),
     city: addressPartFromForm(actualForm.city, patient.city),
     state: addressPartFromForm(actualForm.state, patient.state),
@@ -516,6 +544,7 @@ function buildForm33Values(actualForm, patient) {
     factoryName: actualForm.factoryName || patient.company || "",
     factoryAddressLine1,
     factoryAddressLine2,
+    factoryAddressLine3,
     // Reprint "Yes / No" (whiteBg clears the pre-printed mark), then strike the unused word
     hazardousYesNo: "Yes / No",
     hazardousStrikeYes: isHazardous ? "" : "yes",
@@ -579,12 +608,12 @@ function buildHealthRegisterValues(actualForm, patient) {
     natureOfJobStrikeFullTime,
     natureOfJobStrikePartTime,
     natureOfJobStrikeContractual,
-    materialsExposed: actualForm.rawMaterialsExposed || "NA",
+    materialsExposed: String(actualForm.rawMaterialsExposed || "").trim().replace(/^n\/?a$/i, ""),
     dateOfPosting: formatDateDMY(actualForm.dateOfPosting || patient.dateOfJoining || ""),
     dateOfLeaving: formatDateDMY(actualForm.dateOfLeaving || ""),
     reasonForLeaving: actualForm.reasonsForLeaving || "",
     examDate: formatDateDMY(actualForm.examinationDate || ""),
-    signsSymptoms: actualForm.signsSymptoms || "",
+    signsSymptoms: String(actualForm.signsSymptoms || "").trim().replace(/^no$/i, ""),
     natureOfTests: String(actualForm.natureOfTests || "").trim(),
     // Result: keep printed "Fit / Unfit"; cross only the unused option
     resultStrikeFit: String(actualForm.result || "FIT").toUpperCase() === "UNFIT" ? "yes" : "",

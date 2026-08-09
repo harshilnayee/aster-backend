@@ -79,12 +79,15 @@
   },
   "healthRegister": {
     "displayName": "Form No. 32 (Health Register)",
-    "pdfFile": "7 FORM 32.pdf",
-    "coordinatesFile": "health-register.json"
+    "pdfFile": "form_32_updated_09082026.pdf",
+    "coordinatesFile": "health-register.json",
+    "defaultFont": "TimesRoman",
+    "defaultFontSize": 10.5,
+    "lockFontSize": true
   },
   "form33": {
     "displayName": "Form No. 33 (Fitness Certificate)",
-    "pdfFile": "6 FORM 33.pdf",
+    "pdfFile": "FORM33_08092026.pdf",
     "coordinatesFile": "form-33.json",
     "defaultFont": "TimesRoman",
     "defaultFontSize": 10.5,

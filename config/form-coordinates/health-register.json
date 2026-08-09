@@ -1,80 +1,52 @@
 {
-  "serialNumber": {
-    "page": 1,
-    "x": 392,
-    "y": 726,
-    "width": 69,
-    "height": 12,
-    "whiteBg": true,
-    "clearAlways": true,
-    "centerText": true
-  },
   "workerName": {
     "page": 1,
-    "x": 332,
-    "y": 707,
-    "width": 176,
-    "height": 10,
-    "whiteBg": true
+    "x": 342,
+    "y": 726,
+    "width": 187,
+    "height": 11
   },
   "gender": {
     "page": 1,
-    "x": 332,
-    "y": 688,
-    "width": 39,
-    "height": 12,
-    "whiteBg": true
+    "x": 345,
+    "y": 706,
+    "width": 180,
+    "height": 11
   },
   "dob": {
     "page": 1,
-    "x": 332,
-    "y": 669,
-    "width": 64,
-    "height": 12,
-    "whiteBg": true,
-    "clearAlways": true,
-    "fitToWidth": true,
-    "clip": true
+    "x": 347,
+    "y": 688,
+    "width": 172,
+    "height": 9
   },
   "department": {
     "page": 1,
-    "x": 340,
-    "y": 633,
-    "width": 205,
-    "height": 10,
-    "whiteBg": true
+    "x": 344,
+    "y": 668,
+    "width": 181,
+    "height": 12
   },
   "hazardousProcess": {
     "page": 1,
     "x": 340,
     "y": 618,
     "width": 205,
-    "height": 10,
-    "whiteBg": true,
-    "clearAlways": true,
-    "clip": true,
-    "fitToWidth": true
+    "height": 10
   },
   "dangerousProcess": {
     "page": 1,
     "x": 340,
     "y": 604,
     "width": 205,
-    "height": 9,
-    "whiteBg": true,
-    "clearAlways": true,
-    "clip": true,
-    "fitToWidth": true
+    "height": 9
   },
   "natureOfJob": {
     "page": 1,
     "x": 363,
     "y": 588,
     "width": 156,
-    "height": 11,
-    "whiteBg": true,
-    "clip": true,
-    "fitToWidth": true
+    "height": 11
   },
   "natureOfJobStrikeFullTime": {
     "page": 1,
@@ -108,62 +80,49 @@
     "x": 340,
     "y": 565,
     "width": 205,
-    "height": 12,
-    "whiteBg": true
+    "height": 12
   },
   "dateOfPosting": {
     "page": 1,
-    "x": 392,
+    "x": 363,
     "y": 544,
-    "width": 89,
-    "height": 11,
-    "whiteBg": true
+    "width": 140,
+    "height": 9
   },
   "dateOfLeaving": {
     "page": 1,
     "x": 340,
     "y": 531,
     "width": 205,
-    "height": 7,
-    "whiteBg": true
+    "height": 7
   },
   "reasonForLeaving": {
     "page": 1,
     "x": 340,
     "y": 507,
     "width": 205,
-    "height": 9,
-    "whiteBg": true
+    "height": 9
   },
   "examDate": {
     "page": 1,
-    "x": 418,
+    "x": 363,
     "y": 483,
-    "width": 62,
-    "height": 12,
-    "whiteBg": true,
-    "clearAlways": true,
-    "fitToWidth": true,
-    "clip": true
+    "width": 157,
+    "height": 9
   },
   "signsSymptoms": {
     "page": 1,
     "x": 340,
     "y": 449,
     "width": 205,
-    "height": 20,
-    "whiteBg": true
+    "height": 20
   },
   "natureOfTests": {
     "page": 1,
     "x": 328,
     "y": 424,
     "width": 225,
-    "height": 14,
-    "whiteBg": true,
-    "clearAlways": true,
-    "fitToWidth": true,
-    "clip": true
+    "height": 14
   },
   "resultStrikeFit": {
     "page": 1,
@@ -188,42 +147,34 @@
     "x": 340,
     "y": 380,
     "width": 205,
-    "height": 9,
-    "whiteBg": true
+    "height": 9
   },
   "reasonForWithdrawal": {
     "page": 1,
     "x": 340,
     "y": 341,
     "width": 205,
-    "height": 10,
-    "whiteBg": true
+    "height": 10
   },
   "dateDeclaredUnfit": {
     "page": 1,
     "x": 340,
     "y": 315,
     "width": 205,
-    "height": 13,
-    "whiteBg": true
+    "height": 13
   },
   "dateOfFitnessCertificate": {
     "page": 1,
-    "x": 340,
+    "x": 376,
     "y": 285,
-    "width": 205,
-    "height": 12,
-    "whiteBg": true
+    "width": 135,
+    "height": 12
   },
   "doctorSignatureDate": {
     "page": 1,
     "x": 376,
     "y": 194,
     "width": 69,
-    "height": 15,
-    "whiteBg": true,
-    "clearAlways": true,
-    "fitToWidth": true,
-    "clip": true
+    "height": 15
   }
 }
