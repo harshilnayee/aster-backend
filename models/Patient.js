@@ -153,6 +153,9 @@ PatientSchema.index({ updatedAt: -1 });
 PatientSchema.index({ createdAt: -1 });
 // Multi-tenant compound index — always query by clinicId first
 PatientSchema.index({ clinicId: 1, updatedAt: -1 });
+PatientSchema.index({ clinicId: 1, createdAt: -1 });
 PatientSchema.index({ clinicId: 1, company: 1 });
+PatientSchema.index({ clinicId: 1, name: 1 });
+PatientSchema.index({ clinicId: 1, mobile: 1 });
 
 module.exports = mongoose.model("Patient", PatientSchema);

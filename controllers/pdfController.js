@@ -25,6 +25,7 @@ async function getForms(req, res, next) {
       coordinatesFile: config.coordinatesFile
     }));
     
+    res.setHeader("Cache-Control", "private, max-age=300, stale-while-revalidate=600");
     return res.status(200).json(formsList);
   } catch (error) {
     console.error("Error fetching forms list:", error);
@@ -60,6 +61,7 @@ async function getFormCoordinates(req, res, next) {
     
     // We only return the keys (input fields) that the client should fill
     const fields = Object.keys(coords);
+    res.setHeader("Cache-Control", "private, max-age=300, stale-while-revalidate=600");
     return res.status(200).json({ fields });
   } catch (error) {
     console.error("Error fetching coordinates:", error);

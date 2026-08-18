@@ -111,10 +111,19 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { message: "Too many clinic registrations from this IP, please try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 module.exports = {
   verifyToken,
   requireRole,
   checkFormAccess,
   userHasFormAccess,
-  loginLimiter
+  loginLimiter,
+  registerLimiter
 };

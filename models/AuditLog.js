@@ -27,6 +27,7 @@ const AuditLogSchema = new mongoose.Schema({
       "report_downloaded",
       "login",
       "logout",
+      "register",
       "whatsapp_reminder_sent"
     ]
   },

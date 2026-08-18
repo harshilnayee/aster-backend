@@ -35,6 +35,7 @@ async function listCompanies(req, res, next) {
       )
     ].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
 
+    res.setHeader("Cache-Control", "private, max-age=60, stale-while-revalidate=120");
     return res.status(200).json({ companies });
   } catch (error) {
     console.error("ListCompanies error:", error);
@@ -42,43 +43,126 @@ async function listCompanies(req, res, next) {
   }
 }
 
+/** Active form keys used for progress / pending stats (excludes placeholders). */
+const ACTIVE_FORM_KEYS = [
+  "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
+  "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
+  "11-form-audiometry-front", "12-form-audiometry-back",
+  "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
+  "16-form-vaccination-back", "17-form-food-handler-certificate",
+  "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format",
+  "26-form-death-certificate", "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back"
+];
+
+function clinicScopeFilter(req) {
+  return {
+    ...(req.tenantFilter || {}),
+    ...(req.user?.role !== "superadmin" && req.user?.clinicId
+      ? { clinicId: req.user.clinicId }
+      : {})
+  };
+}
+
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function endOfToday() {
+  const d = new Date();
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
+/** Match registration OR any finalized form save within a time window / day. */
+function activityTimeClause(from, to) {
+  const range = {};
+  if (from) range.$gte = from;
+  if (to) range.$lte = to;
+  const formClauses = ACTIVE_FORM_KEYS.map((key) => ({
+    [`forms.${key}.savedAt`]: range,
+    [`forms.${key}.isDraft`]: { $ne: true }
+  }));
+  return {
+    $or: [{ createdAt: range }, ...formClauses]
+  };
+}
+
+/** Patients with zero finalized active forms. */
+function pendingPatientsClause() {
+  return {
+    $and: ACTIVE_FORM_KEYS.map((key) => ({
+      $or: [
+        { [`forms.${key}.savedAt`]: { $exists: false } },
+        { [`forms.${key}.savedAt`]: null },
+        { [`forms.${key}.isDraft`]: true }
+      ]
+    }))
+  };
+}
+
 /**
- * Get all patients with search/filter queries
- * GET /api/patients
+ * Paginated patient directory (bandwidth-optimized)
+ * GET /api/patients?page=1&limit=50&search=&company=&gender=&activity=&datePreset=&fromDate=&toDate=&pendingField=&pendingForm=&completedForm=&fields=ids
+ *
+ * Response: { patients, pagination, stats }
+ * Compact forms: { [formKey]: { savedAt: true, isDraft: boolean } } — no ISO timestamps in list payloads.
  */
 async function getPatients(req, res, next) {
   try {
-    const { name, company, mobile, patientId, search, fromDate, toDate, formType } = req.query;
-    // Start filter with tenant scope so we never cross clinic boundaries
-    const filter = {
-      ...(req.tenantFilter || {}),
-      ...(req.user?.role !== "superadmin" && req.user?.clinicId
-        ? { clinicId: req.user.clinicId }
-        : {})
-    };
+    const {
+      name,
+      company,
+      mobile,
+      patientId,
+      search,
+      fromDate,
+      toDate,
+      formType,
+      gender,
+      activity,
+      datePreset,
+      pendingField,
+      pendingForm,
+      completedForm,
+      fields
+    } = req.query;
+
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(200, Math.max(1, parseInt(req.query.limit, 10) || 50));
+    const skip = (page - 1) * limit;
+    const idsOnly = fields === "ids";
+
+    const baseScope = clinicScopeFilter(req);
+    const filter = { ...baseScope };
+    const andExtra = [];
 
     if (search) {
-      const searchRegex = { $regex: escapeRegex(search), $options: "i" };
+      const searchRegex = { $regex: escapeRegex(String(search).trim()), $options: "i" };
       filter.$or = [
         { name: searchRegex },
         { company: searchRegex },
         { patientId: searchRegex },
-        { mobile: searchRegex }
+        { mobile: searchRegex },
+        { employeeCode: searchRegex }
       ];
     } else {
       if (name) filter.name = { $regex: escapeRegex(name), $options: "i" };
-      if (company && company !== "All") filter.company = { $regex: escapeRegex(company), $options: "i" };
       if (mobile) filter.mobile = { $regex: escapeRegex(mobile), $options: "i" };
       if (patientId) filter.patientId = { $regex: escapeRegex(patientId), $options: "i" };
     }
 
-    // Additional exact company filter if not using search regex
-    if (company && company !== "All" && !filter.company) {
+    if (company && company !== "All") {
       filter.company = company;
     }
 
-    // Date range filter
-    if (fromDate || toDate) {
+    if (gender && gender !== "All") {
+      filter.gender = gender;
+    }
+
+    // Explicit registration date range (legacy fromDate/toDate)
+    if ((fromDate || toDate) && !datePreset) {
       filter.createdAt = {};
       if (fromDate) {
         const start = new Date(fromDate);
@@ -92,23 +176,111 @@ async function getPatients(req, res, next) {
       }
     }
 
-    // Form Type filter (ensures the form was completed/saved)
-    if (formType && formType !== "All") {
-      filter[`forms.${formType}.savedAt`] = { $exists: true, $ne: null };
+    // UI date presets (registration OR form activity)
+    if (datePreset && datePreset !== "All") {
+      const now = new Date();
+      if (datePreset === "Last 30 Min") {
+        andExtra.push(activityTimeClause(new Date(now.getTime() - 30 * 60 * 1000), now));
+      } else if (datePreset === "Last 1 Hour") {
+        andExtra.push(activityTimeClause(new Date(now.getTime() - 60 * 60 * 1000), now));
+      } else if (datePreset === "Last 4 Hours") {
+        andExtra.push(activityTimeClause(new Date(now.getTime() - 4 * 60 * 60 * 1000), now));
+      } else if (datePreset === "Today") {
+        andExtra.push(activityTimeClause(startOfToday(), endOfToday()));
+      } else if (datePreset === "This Week") {
+        andExtra.push(activityTimeClause(new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), now));
+      } else if (datePreset === "This Month") {
+        andExtra.push(activityTimeClause(new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), now));
+      }
     }
 
-    const ALL_FORMS = [
-      "preMedical", "postMedical", "eyeExam", "form33", "healthRegister", "xrayReport",
-      "4-form-airport-bohw", "5-form-height-pass", "10-form-ophthal-form-6",
-      "form09", "form10", "11-form-audiometry-front", "12-form-audiometry-back",
-      "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
-      "16-form-vaccination-back", "17-form-food-handler-certificate",
-      "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format",
-      "26-form-death-certificate", "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back",
-      "form23"
-    ];
+    // Custom start/end date filters from UI (registration OR form saved)
+    if (fromDate && toDate && datePreset) {
+      // already handled via datePreset; ignore conflict
+    } else if (req.query.startDate || req.query.endDate) {
+      const start = req.query.startDate ? new Date(req.query.startDate) : null;
+      const end = req.query.endDate ? new Date(req.query.endDate) : null;
+      if (start) start.setHours(0, 0, 0, 0);
+      if (end) end.setHours(23, 59, 59, 999);
+      andExtra.push(activityTimeClause(start || undefined, end || undefined));
+    }
 
-    const projection = {
+    if (formType && formType !== "All") {
+      filter[`forms.${formType}.savedAt`] = { $exists: true, $ne: null };
+      filter[`forms.${formType}.isDraft`] = { $ne: true };
+    }
+
+    if (completedForm && completedForm !== "All") {
+      filter[`forms.${completedForm}.savedAt`] = { $exists: true, $ne: null };
+      filter[`forms.${completedForm}.isDraft`] = { $ne: true };
+    }
+
+    if (pendingForm && pendingForm !== "All") {
+      andExtra.push({
+        $or: [
+          { [`forms.${pendingForm}.savedAt`]: { $exists: false } },
+          { [`forms.${pendingForm}.savedAt`]: null },
+          { [`forms.${pendingForm}.isDraft`]: true }
+        ]
+      });
+    }
+
+    if (activity === "Pending") {
+      andExtra.push(pendingPatientsClause());
+    } else if (activity === "RegisteredToday") {
+      filter.createdAt = { $gte: startOfToday(), $lte: endOfToday() };
+    } else if (activity === "ProcessedToday") {
+      andExtra.push({
+        $or: ACTIVE_FORM_KEYS.map((key) => ({
+          [`forms.${key}.savedAt`]: { $gte: startOfToday(), $lte: endOfToday() },
+          [`forms.${key}.isDraft`]: { $ne: true }
+        }))
+      });
+    }
+
+    if (pendingField && pendingField !== "All") {
+      if (pendingField === "Signature") {
+        andExtra.push({
+          $or: [{ signature: { $exists: false } }, { signature: null }, { signature: "" }]
+        });
+      } else if (pendingField === "FatherName") {
+        andExtra.push({
+          $or: [{ fatherName: { $exists: false } }, { fatherName: null }, { fatherName: "" }]
+        });
+      } else if (pendingField === "Gender") {
+        andExtra.push({
+          $or: [{ gender: { $exists: false } }, { gender: null }, { gender: "" }, { gender: "Not Specified" }]
+        });
+      } else if (pendingField === "Mobile") {
+        andExtra.push({
+          $or: [{ mobile: { $exists: false } }, { mobile: null }, { mobile: "" }]
+        });
+      } else if (pendingField === "Department") {
+        andExtra.push({
+          $or: [{ department: { $exists: false } }, { department: null }, { department: "" }]
+        });
+      } else if (pendingField === "Company") {
+        andExtra.push({
+          $or: [{ company: { $exists: false } }, { company: null }, { company: "" }]
+        });
+      } else if (pendingField === "Address") {
+        andExtra.push({
+          $or: [{ address: { $exists: false } }, { address: null }, { address: "" }]
+        });
+      }
+    }
+
+    if (andExtra.length) {
+      filter.$and = [...(filter.$and || []), ...andExtra];
+    }
+
+    const formProjection = {};
+    ACTIVE_FORM_KEYS.forEach((f) => {
+      formProjection[`forms.${f}.savedAt`] = 1;
+      formProjection[`forms.${f}.isDraft`] = 1;
+    });
+
+    const listProjection = {
       patientId: 1,
       name: 1,
       age: 1,
@@ -119,32 +291,88 @@ async function getPatients(req, res, next) {
       whatsappRemindersSent: 1,
       updatedAt: 1,
       createdAt: 1,
-      createdBy: 1,
       fatherName: 1,
       department: 1,
       address: 1,
-      signature: { $cond: [{ $ifNull: ["$signature", false] }, "present", ""] },
-      "forms.postMedical.data.fitStatus": 1
+      signature: 1,
+      "forms.postMedical.data.fitStatus": 1,
+      ...formProjection
     };
 
-    ALL_FORMS.forEach(f => {
-      projection[`forms.${f}.savedAt`] = 1;
-      projection[`forms.${f}.isDraft`] = 1;
-    });
+    const todayStart = startOfToday();
+    const todayEnd = endOfToday();
 
-    const patients = await Patient.find(filter)
-      .select(projection)
-      .sort({ updatedAt: -1 })
-      .lean();
+    if (idsOnly) {
+      const rows = await Patient.find(filter)
+        .select({ patientId: 1, _id: 0 })
+        .sort({ updatedAt: -1 })
+        .limit(5000)
+        .lean();
+      return res.status(200).json({
+        patientIds: rows.map((r) => r.patientId).filter(Boolean),
+        total: rows.length
+      });
+    }
 
-    // Harden signature strip for older Mongo / projection edge cases
+    const [patients, filteredTotal, statsTotal, statsPending, statsProcessedToday] = await Promise.all([
+      Patient.find(filter)
+        .select(listProjection)
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Patient.countDocuments(filter),
+      Patient.countDocuments(baseScope),
+      Patient.countDocuments({ ...baseScope, ...pendingPatientsClause() }),
+      Patient.countDocuments({
+        ...baseScope,
+        $or: ACTIVE_FORM_KEYS.map((key) => ({
+          [`forms.${key}.savedAt`]: { $gte: todayStart, $lte: todayEnd },
+          [`forms.${key}.isDraft`]: { $ne: true }
+        }))
+      })
+    ]);
+
+    // Compact payload: drop heavy signature blobs + ISO form timestamps
     for (const p of patients) {
-      if (p.signature && p.signature !== "present" && String(p.signature).length > 20) {
-        p.signature = "present";
+      p.signature = p.signature ? "present" : "";
+      if (p.forms && typeof p.forms === "object") {
+        const compact = {};
+        for (const key of Object.keys(p.forms)) {
+          const entry = p.forms[key];
+          if (!entry || !entry.savedAt) continue;
+          if (key === "postMedical" && entry.data?.fitStatus) {
+            compact[key] = {
+              savedAt: true,
+              isDraft: entry.isDraft === true,
+              data: { fitStatus: entry.data.fitStatus }
+            };
+          } else {
+            compact[key] = {
+              savedAt: true,
+              isDraft: entry.isDraft === true
+            };
+          }
+        }
+        p.forms = compact;
       }
     }
 
-    return res.status(200).json(patients);
+    res.setHeader("Cache-Control", "private, no-store");
+    return res.status(200).json({
+      patients,
+      pagination: {
+        page,
+        limit,
+        total: filteredTotal,
+        totalPages: Math.max(1, Math.ceil(filteredTotal / limit))
+      },
+      stats: {
+        total: statsTotal,
+        pending: statsPending,
+        processedToday: statsProcessedToday
+      }
+    });
   } catch (error) {
     console.error("GetPatients error:", error);
     next(error);
