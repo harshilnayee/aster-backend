@@ -366,11 +366,12 @@ async function bulkExportReports(req, res, next) {
       return res.send(Buffer.from(mergedBytes));
     }
 
-    // Default: ZIP — one PDF per patient (deflate for bandwidth)
+    const stamp = Date.now();
+    const zipLabel = hasMore || offset > 0 ? `_Part${Math.floor(offset / Math.max(limit, 1)) + 1}` : "";
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${companyTag}Aster_Medcare_Reports_Batch_${Date.now()}.zip"`
+      `attachment; filename="${companyTag}Aster_Medcare_Reports${zipLabel}_${stamp}.zip"`
     );
 
     const archive = archiver("zip", { zlib: { level: 6 } });

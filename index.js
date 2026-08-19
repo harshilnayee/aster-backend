@@ -96,7 +96,10 @@ const settingRoutes = require("./routes/settings");
 const developerRoutes = require("./routes/developer");
 const chatbotRoutes = require("./routes/chatbot");
 
+const publicPatientRoutes = require("./routes/publicPatients");
+
 app.use("/api/auth", authRoutes);
+app.use("/api/public/patients", publicPatientRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/patients", formRoutes);
 app.use("/api/patients", fileRoutes);

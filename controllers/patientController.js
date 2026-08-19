@@ -596,7 +596,11 @@ async function bulkCreatePatients(req, res, next) {
       return res.status(400).json({ message: "An array of patients is required in the 'patients' property." });
     }
 
-    const validRecords = patients.filter(p => p.name && p.age);
+    const validRecords = patients.filter((p) => {
+      const n = String(p.name || "").trim();
+      const s = String(p.surname || "").trim();
+      return Boolean(n || s);
+    });
     if (validRecords.length === 0) {
       return res.status(400).json({ message: "No valid patient records to insert." });
     }
@@ -609,11 +613,14 @@ async function bulkCreatePatients(req, res, next) {
       const { name, age, gender, mobile, employeeCode, company, address, fatherName, surname, occupation, govIdType, govIdNumber,
         dob, city, state, pincode, department, dateOfJoining, companyAddress } = p;
       const patientId = patientIds[idx];
+      const resolvedName = String(name || "").trim() || String(surname || "").trim();
+      const ageNum = Number(age);
+      const hasAge = Number.isFinite(ageNum) && ageNum > 0;
 
       createdPatients.push({
         patientId,
-        name,
-        age: Number(age),
+        name: resolvedName,
+        ...(hasAge ? { age: ageNum } : {}),
         gender: gender || "Male",
         mobile,
         employeeCode,
@@ -962,11 +969,116 @@ async function recordWhatsappReminder(req, res, next) {
   }
 }
 
+const PUBLIC_FORM_LABELS = {
+  preMedical: "Personal / Pre-medical",
+  postMedical: "Post-medical & fitness",
+  eyeExam: "Eye examination",
+  form33: "Form 33 fitness certificate",
+  healthRegister: "Health register (Form 32)",
+  xrayReport: "X-ray report",
+  "4-form-airport-bohw": "Airport BOHW",
+  "5-form-height-pass": "Height pass",
+  "10-form-ophthal-form-6": "Ophthal form 6",
+  "11-form-audiometry-front": "Audiometry (front)",
+  "12-form-audiometry-back": "Audiometry (back)",
+  "15-form-vaccination-front": "Vaccination (front)",
+  "16-form-vaccination-back": "Vaccination (back)",
+  "13-form-pft-front": "PFT (front)",
+  "14-form-pft-back": "PFT (back)",
+  "17-form-food-handler-certificate": "Food handler certificate",
+  "18-form-vaccine-ircs-forms-2": "Vaccine certificate",
+  "19-form-ecg": "ECG",
+  "25-form-for-medical-fitness-certificate-format": "Medical fitness certificate",
+  "26-form-death-certificate": "Death certificate",
+  "35-form-airport-bohw-ht-front": "Airport BOHW-HT (front)",
+  "36-form-airport-bohw-ht-back": "Airport BOHW-HT (back)"
+};
+
+function formDate(savedAt) {
+  if (!savedAt) return "";
+  const d = new Date(savedAt);
+  if (isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+}
+
+function pickText(...values) {
+  for (const v of values) {
+    const s = String(v || "").trim();
+    if (s) return s;
+  }
+  return "";
+}
+
+/**
+ * Public QR card for workers scanning an ID without clinic login.
+ * GET /api/public/patients/:id
+ * Same QR URL as staff; this payload omits Aadhaar, home address, files, and signatures.
+ */
+async function getPublicPatientCard(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!id || String(id).length > 40) {
+      return res.status(400).json({ message: "Invalid patient ID" });
+    }
+
+    const query = mongoose.Types.ObjectId.isValid(id)
+      ? { _id: id }
+      : { patientId: String(id).trim() };
+
+    const patient = await Patient.findOne(query)
+      .select("patientId name surname age gender bloodGroup company department occupation employeeCode photo examinationDate forms")
+      .lean();
+
+    if (!patient) {
+      return res.status(404).json({ message: "Worker record not found" });
+    }
+
+    const forms = patient.forms && typeof patient.forms === "object" ? patient.forms : {};
+    const post = forms.postMedical?.data || {};
+    const vax = forms["15-form-vaccination-front"]?.data || {};
+
+    const completedForms = Object.entries(PUBLIC_FORM_LABELS)
+      .filter(([key]) => forms[key]?.savedAt && forms[key]?.isDraft !== true)
+      .map(([key, label]) => ({
+        key,
+        label,
+        completedOn: formDate(forms[key].savedAt)
+      }));
+
+    return res.status(200).json({
+      patientId: patient.patientId,
+      name: [patient.name, patient.surname].filter(Boolean).join(" ").trim(),
+      age: patient.age ?? null,
+      gender: patient.gender || "",
+      bloodGroup: patient.bloodGroup || "",
+      company: patient.company || "",
+      department: patient.department || "",
+      occupation: patient.occupation || "",
+      employeeCode: patient.employeeCode || "",
+      photo: patient.photo && String(patient.photo).startsWith("http") ? patient.photo : "",
+      examinationDate: patient.examinationDate || "",
+      fitness: {
+        status: pickText(post.fitStatus) || "Pending",
+        validTill: pickText(post.employmentTill),
+        certificateDate: pickText(post.certificateDate)
+      },
+      prescription: pickText(post.treatmentRecommendation),
+      otherMedications: pickText(vax.q10_medicationList),
+      vaccines: pickText(vax.q6_vaccineList),
+      completedForms
+    });
+  } catch (error) {
+    console.error("GetPublicPatientCard error:", error);
+    next(error);
+  }
+}
+
 module.exports = {
   getPatients,
   listCompanies,
   createPatient,
   getPatient,
+  getPublicPatientCard,
   updatePatient,
   bulkCreatePatients,
   bulkUpdatePatients,
