@@ -1,7 +1,16 @@
+const path = require("path");
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const AuditLog = require("../models/AuditLog");
+
+function getAllFormKeys() {
+  const registryPath = path.join(__dirname, "../config/formRegistry.json");
+  if (!fs.existsSync(registryPath)) return [];
+  const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+  return Object.keys(registry);
+}
 
 /**
  * Handles user login authentication
@@ -144,7 +153,7 @@ async function register(req, res, next) {
       role: "admin",
       clinicId: clinic._id,
       isActive: true,
-      formAccess: []
+      formAccess: getAllFormKeys()
     });
 
     // Auto-seed 2 demo patients for instant trial experience

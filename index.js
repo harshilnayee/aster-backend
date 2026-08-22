@@ -45,6 +45,7 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://127.0.0.1:5174",
   "https://aster-medcare.vercel.app",
+  "https://drsvl.vercel.app",
   process.env.CLIENT_URL
 ].filter(Boolean);
 
