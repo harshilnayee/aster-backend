@@ -4,6 +4,7 @@ const AuditLog = require("../models/AuditLog");
 const { generatePatientId, generatePatientIdsBatch } = require("../utils/patientId");
 const { encrypt, decrypt } = require("../utils/encryption");
 const { deleteFromR2 } = require("../utils/r2");
+const { listCompletedForms } = require("../utils/publicCardForms");
 
 function escapeRegex(str) {
   if (!str) return "";
@@ -969,38 +970,6 @@ async function recordWhatsappReminder(req, res, next) {
   }
 }
 
-const PUBLIC_FORM_LABELS = {
-  preMedical: "Personal / Pre-medical",
-  postMedical: "Post-medical & fitness",
-  eyeExam: "Eye examination",
-  form33: "Form 33 fitness certificate",
-  healthRegister: "Health register (Form 32)",
-  xrayReport: "X-ray report",
-  "4-form-airport-bohw": "Airport BOHW",
-  "5-form-height-pass": "Height pass",
-  "10-form-ophthal-form-6": "Ophthal form 6",
-  "11-form-audiometry-front": "Audiometry (front)",
-  "12-form-audiometry-back": "Audiometry (back)",
-  "15-form-vaccination-front": "Vaccination (front)",
-  "16-form-vaccination-back": "Vaccination (back)",
-  "13-form-pft-front": "PFT (front)",
-  "14-form-pft-back": "PFT (back)",
-  "17-form-food-handler-certificate": "Food handler certificate",
-  "18-form-vaccine-ircs-forms-2": "Vaccine certificate",
-  "19-form-ecg": "ECG",
-  "25-form-for-medical-fitness-certificate-format": "Medical fitness certificate",
-  "26-form-death-certificate": "Death certificate",
-  "35-form-airport-bohw-ht-front": "Airport BOHW-HT (front)",
-  "36-form-airport-bohw-ht-back": "Airport BOHW-HT (back)"
-};
-
-function formDate(savedAt) {
-  if (!savedAt) return "";
-  const d = new Date(savedAt);
-  if (isNaN(d.getTime())) return "";
-  return d.toISOString().slice(0, 10);
-}
-
 function pickText(...values) {
   for (const v of values) {
     const s = String(v || "").trim();
@@ -1037,13 +1006,7 @@ async function getPublicPatientCard(req, res, next) {
     const post = forms.postMedical?.data || {};
     const vax = forms["15-form-vaccination-front"]?.data || {};
 
-    const completedForms = Object.entries(PUBLIC_FORM_LABELS)
-      .filter(([key]) => forms[key]?.savedAt && forms[key]?.isDraft !== true)
-      .map(([key, label]) => ({
-        key,
-        label,
-        completedOn: formDate(forms[key].savedAt)
-      }));
+    const completedForms = listCompletedForms(forms);
 
     return res.status(200).json({
       patientId: patient.patientId,

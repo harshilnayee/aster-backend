@@ -1,5 +1,7 @@
 const { calculateAfterPulse, calculateAfterBp } = require("./afterVitals");
 const { decrypt } = require("../encryption");
+const { applyExportPrefsToValues } = require("./clinicExportPrefs");
+const { applyFormFieldRules } = require("./formFieldRules");
 
 /**
  * Maps client form keys → pdf-lib fill registry IDs.
@@ -637,34 +639,35 @@ function buildHealthRegisterValues(actualForm, patient) {
   };
 }
 
-function buildBulkFormValues(formKey, patient) {
+function buildBulkFormValues(formKey, patient, prefs, fieldRules) {
   const safePatient = patient
     ? { ...patient, govIdNumber: decrypt(patient.govIdNumber) }
     : patient;
   const formEntry = safePatient?.forms?.[formKey] || {};
-  const actualForm = formEntry.data || {};
+  const actualForm = applyFormFieldRules(formEntry.data || {}, fieldRules);
 
+  let values;
   switch (formKey) {
     case "form33":
-      return buildForm33Values(actualForm, safePatient);
+      values = buildForm33Values(actualForm, safePatient);
+      break;
     case "healthRegister":
-      return buildHealthRegisterValues(actualForm, safePatient);
+      values = buildHealthRegisterValues(actualForm, safePatient);
+      break;
     case "5-form-height-pass":
     case "36-form-airport-bohw-ht-back":
-      return buildHeightPassLikeValues(actualForm, safePatient);
+      values = buildHeightPassLikeValues(actualForm, safePatient);
+      break;
     case "4-form-airport-bohw":
-      return buildAirportBohwValues(actualForm, safePatient);
+      values = buildAirportBohwValues(actualForm, safePatient);
+      break;
     case "35-form-airport-bohw-ht-front":
-      return buildAirportBohwHtFrontValues(actualForm, safePatient);
-    default: {
-      const data = applyCommonDefaults({ ...actualForm }, safePatient);
-      if (formKey === "preMedical") {
-        // registry id differs from form key
-        return data;
-      }
-      return data;
-    }
+      values = buildAirportBohwHtFrontValues(actualForm, safePatient);
+      break;
+    default:
+      values = applyCommonDefaults({ ...actualForm }, safePatient);
   }
+  return applyFormFieldRules(applyExportPrefsToValues(values, prefs), fieldRules);
 }
 
 function resolveFillFormId(formKey) {
@@ -675,11 +678,12 @@ function resolveFillFormId(formKey) {
 }
 
 /**
- * Bulk export always includes selected forms, even when unsaved/draft.
- * Unsaved forms still fill from patient defaults so staff can print blanks for manual work.
+ * By default include unsaved/draft forms (patient defaults / blanks for manual work).
+ * Clinic setting includeUnsavedForms=false exports only finalized saved forms.
  */
-function isFormReadyForExport(_formEntry) {
-  return true;
+function isFormReadyForExport(formEntry, prefs) {
+  if (!prefs || prefs.includeUnsavedForms !== false) return true;
+  return Boolean(formEntry?.savedAt && formEntry.isDraft !== true);
 }
 
 module.exports = {

@@ -62,6 +62,7 @@ app.use(
       }
     },
     credentials: true,
+    exposedHeaders: ["Content-Disposition"],
     optionsSuccessStatus: 200
   })
 );

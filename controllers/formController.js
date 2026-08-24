@@ -28,6 +28,10 @@ async function saveForm(req, res, next) {
       return res.status(400).json({ message: "Form data object is required" });
     }
 
+    const { applyFormFieldRules, loadFormFieldRules } = require("../utils/pdf/formFieldRules");
+    const fieldRules = await loadFormFieldRules(req.user, formType);
+    const formData = applyFormFieldRules(data, fieldRules, { persist: true });
+
     const query = buildPatientQuery(id, req);
     const draftRequested = isDraft === true;
 
@@ -47,7 +51,7 @@ async function saveForm(req, res, next) {
     }
 
     const formEntry = {
-      data,
+      data: formData,
       savedAt: new Date(),
       savedBy: req.user._id,
       isDraft: draftRequested
@@ -59,12 +63,12 @@ async function saveForm(req, res, next) {
 
     // Persist permanent examination date when present on the form payload
     const formDate =
-      data.date ||
-      data.dateTop ||
-      data.examinationDate ||
-      data.examDate ||
-      data.regDate ||
-      data.certDate;
+      formData.date ||
+      formData.dateTop ||
+      formData.examinationDate ||
+      formData.examDate ||
+      formData.regDate ||
+      formData.certDate;
     if (formDate && typeof formDate === "string" && formDate.trim()) {
       $set.examinationDate = formDate.split("T")[0];
     } else if (formDate instanceof Date && !Number.isNaN(formDate.getTime())) {

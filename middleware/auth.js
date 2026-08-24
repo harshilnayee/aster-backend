@@ -82,6 +82,10 @@ const checkFormAccess = (formTypeParamName = "formType") => {
       return res.status(400).json({ message: "Form type parameter is required" });
     }
 
+    if (formType === "prescription") {
+      return next();
+    }
+
     // Check if the employee has access to this form
     if (req.user.role === "employee" && req.user.formAccess.includes(formType)) {
       return next();

@@ -25,6 +25,31 @@ const ClinicSchema = new mongoose.Schema(
       default: "",
       trim: true
     },
+    formFieldRules: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {}
+    },
+    exportPrefs: {
+      stampMode: {
+        type: String,
+        enum: ["fill", "handwrite"],
+        default: "fill"
+      },
+      emptyFieldMode: {
+        type: String,
+        enum: ["blank", "NA"],
+        default: "blank"
+      },
+      includeUnsavedForms: {
+        type: Boolean,
+        default: true
+      },
+      defaultExportMode: {
+        type: String,
+        enum: ["zip", "merged-pdf"],
+        default: "zip"
+      }
+    },
     isActive: {
       type: Boolean,
       default: true
