@@ -98,9 +98,10 @@ async function fillPdfForm(req, res, next) {
     const clientKey = fillIdToClient[formId] || formId;
     const fieldRules = { ...(allFieldRules[formId] || {}), ...(allFieldRules[clientKey] || {}) };
     const result = await fillPdfToBytes(formId, applyFormFieldRules(values, fieldRules));
+    const pdfBytes = Buffer.isBuffer(result.bytes) ? result.bytes : Buffer.from(result.bytes);
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${result.filename}"`);
-    return res.send(result.bytes);
+    return res.send(pdfBytes);
   } catch (error) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });

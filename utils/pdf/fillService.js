@@ -190,7 +190,12 @@ async function fillPdfToBytes(formId, inputValues) {
     const values = await compressValueImages(withDoctors, coords);
     const pdfBytes = await loadPdfTemplateBytes(formConfig.pdfFile);
     const { fillPdfFromParts } = await loadFillCore();
-    return fillPdfFromParts(pdfBytes, coords, formConfig, formId, values);
+    const result = await fillPdfFromParts(pdfBytes, coords, formConfig, formId, values);
+    // Express 4 treats a raw Uint8Array as JSON. Previews must send a Buffer.
+    return {
+      filename: result.filename,
+      bytes: Buffer.from(result.bytes)
+    };
   } catch (error) {
     if (error.status) throw error;
     console.error("Error filling PDF form:", error);
