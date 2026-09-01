@@ -21,6 +21,7 @@ const publicPdfLimiter = rateLimit({
   message: { message: "Too many downloads. Please try again in a few minutes." }
 });
 
+router.get("/stats", patientController.getPublicStats);
 router.get("/:id/forms-pack", publicPdfLimiter, publicFormDownload.downloadPublicFormPack);
 router.get("/:id/forms/:formKey", publicPdfLimiter, publicFormDownload.downloadPublicForm);
 router.get("/:id", publicCardLimiter, patientController.getPublicPatientCard);

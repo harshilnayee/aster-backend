@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
 const { uploadToR2, deleteFromR2 } = require("../utils/r2");
+const { clinicScopeFilter } = require("../utils/tenant");
 
 /**
  * Upload a file against a patient's profile
@@ -16,13 +17,10 @@ async function uploadFile(req, res, next) {
       return res.status(400).json({ message: "No file provided for upload" });
     }
 
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
-      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
+      ? { _id: id, ...scope }
+      : { patientId: id, ...scope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -40,33 +38,33 @@ async function uploadFile(req, res, next) {
       });
     }
 
-    // Upload to Cloudflare R2
-    const fileUrl = await uploadToR2(file, key);
+    // Attempt stream upload to Cloudflare R2
+    const uploadResult = await uploadToR2(file.buffer, key, file.mimetype);
 
-    // Save file metadata to patient record
     const fileData = {
       fileName: file.originalname,
       fileType: file.mimetype,
       category: req.body.category || "Other",
-      fileUrl: fileUrl,
-      uploadedBy: req.user._id
+      fileUrl: uploadResult.url,
+      uploadedBy: req.user._id,
+      uploadedAt: new Date()
     };
 
     patient.files.push(fileData);
     await patient.save();
 
-    // Log action
     await AuditLog.create({
       userId: req.user._id,
       userName: req.user.name,
       userRole: req.user.role,
       action: "file_uploaded",
       patientId: patient.patientId,
-      details: `Uploaded file '${file.originalname}' (${file.mimetype})`
+      details: `Uploaded file ${file.originalname} (${file.mimetype}, category: ${fileData.category})`
     });
 
-    return res.status(200).json({
+    return res.status(201).json({
       message: "File uploaded successfully",
+      patientId: patient.patientId,
       file: patient.files[patient.files.length - 1]
     });
   } catch (error) {
@@ -76,20 +74,17 @@ async function uploadFile(req, res, next) {
 }
 
 /**
- * Get all files for a specific patient
+ * Retrieve list of files associated with a patient
  * GET /api/patients/:id/files
  */
 async function getFiles(req, res, next) {
   try {
     const { id } = req.params;
 
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
-      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
+      ? { _id: id, ...scope }
+      : { patientId: id, ...scope };
 
     const patient = await Patient.findOne(query)
       .select("files patientId")
@@ -116,9 +111,10 @@ async function deleteFile(req, res, next) {
   try {
     const { id, fileId } = req.params;
 
+    const scope = clinicScopeFilter(req);
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id }
-      : { patientId: id };
+      ? { _id: id, ...scope }
+      : { patientId: id, ...scope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {

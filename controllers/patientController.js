@@ -5,6 +5,7 @@ const { generatePatientId, generatePatientIdsBatch } = require("../utils/patient
 const { encrypt, decrypt } = require("../utils/encryption");
 const { deleteFromR2 } = require("../utils/r2");
 const { listCompletedForms } = require("../utils/publicCardForms");
+const { clinicScopeFilter } = require("../utils/tenant");
 
 function escapeRegex(str) {
   if (!str) return "";
@@ -17,24 +18,31 @@ function escapeRegex(str) {
  */
 async function listCompanies(req, res, next) {
   try {
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
 
     const raw = await Patient.distinct("company", {
-      ...(req.tenantFilter || {}),
-      ...clinicScope,
+      ...scope,
       company: { $nin: [null, ""] }
     });
 
-    const companies = [
-      ...new Set(
-        (raw || [])
-          .map((c) => String(c || "").trim())
-          .filter(Boolean)
-      )
-    ].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+    const companyMap = new Map();
+    (raw || []).forEach((c) => {
+      const trimmed = String(c || "").trim();
+      if (!trimmed) return;
+      const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (!companyMap.has(normKey)) {
+        companyMap.set(normKey, trimmed);
+      } else {
+        const existing = companyMap.get(normKey);
+        if (trimmed === trimmed.toUpperCase() && existing !== existing.toUpperCase()) {
+          companyMap.set(normKey, trimmed);
+        }
+      }
+    });
+
+    const companies = Array.from(companyMap.values()).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
+    );
 
     res.setHeader("Cache-Control", "private, max-age=60, stale-while-revalidate=120");
     return res.status(200).json({ companies });
@@ -54,15 +62,6 @@ const ACTIVE_FORM_KEYS = [
   "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format",
   "26-form-death-certificate", "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back"
 ];
-
-function clinicScopeFilter(req) {
-  return {
-    ...(req.tenantFilter || {}),
-    ...(req.user?.role !== "superadmin" && req.user?.clinicId
-      ? { clinicId: req.user.clinicId }
-      : {})
-  };
-}
 
 function startOfToday() {
   const d = new Date();
@@ -155,7 +154,7 @@ async function getPatients(req, res, next) {
     }
 
     if (company && company !== "All") {
-      filter.company = company;
+      filter.company = { $regex: new RegExp(`^${escapeRegex(company)}$`, "i") };
     }
 
     if (gender && gender !== "All") {
@@ -464,13 +463,10 @@ async function getPatient(req, res, next) {
 
     // Search by ObjectId if valid, otherwise search by unique patientId string
     // Always scope to the calling user's clinic (tenantFilter may be unset without middleware)
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
-      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
+      ? { _id: id, ...scope }
+      : { patientId: id, ...scope };
 
     // lean + minimal populate — avoid heavy savedBy joins on every form open
     const patient = await Patient.findOne(query)
@@ -517,14 +513,11 @@ async function updatePatient(req, res, next) {
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit } = req.body;
 
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
 
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
-      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
+      ? { _id: id, ...scope }
+      : { patientId: id, ...scope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -900,11 +893,8 @@ async function bulkDeletePatients(req, res, next) {
       return res.status(400).json({ message: "An array of patientIds is required." });
     }
 
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
-    const deleteFilter = { patientId: { $in: patientIds }, ...(req.tenantFilter || {}), ...clinicScope };
+    const scope = clinicScopeFilter(req);
+    const deleteFilter = { patientId: { $in: patientIds }, ...scope };
 
     const patients = await Patient.find(deleteFilter);
     for (const patient of patients) {
@@ -934,13 +924,10 @@ async function bulkDeletePatients(req, res, next) {
 async function recordWhatsappReminder(req, res, next) {
   try {
     const { id } = req.params;
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
     const query = mongoose.Types.ObjectId.isValid(id)
-      ? { _id: id, ...(req.tenantFilter || {}), ...clinicScope }
-      : { patientId: id, ...(req.tenantFilter || {}), ...clinicScope };
+      ? { _id: id, ...scope }
+      : { patientId: id, ...scope };
 
     const patient = await Patient.findOne(query);
     if (!patient) {
@@ -1036,12 +1023,34 @@ async function getPublicPatientCard(req, res, next) {
   }
 }
 
+/**
+ * Get total workers/patients count for public landing page stats
+ * GET /api/public/patients/stats
+ */
+async function getPublicStats(req, res, next) {
+  try {
+    const totalWorkers = await Patient.countDocuments();
+    res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=120");
+    return res.status(200).json({
+      totalWorkers: totalWorkers || 1968,
+      formsAutoFilled: 22
+    });
+  } catch (error) {
+    console.error("GetPublicStats error:", error);
+    return res.status(200).json({
+      totalWorkers: 1968,
+      formsAutoFilled: 22
+    });
+  }
+}
+
 module.exports = {
   getPatients,
   listCompanies,
   createPatient,
   getPatient,
   getPublicPatientCard,
+  getPublicStats,
   updatePatient,
   bulkCreatePatients,
   bulkUpdatePatients,
@@ -1049,3 +1058,4 @@ module.exports = {
   deletePatient,
   recordWhatsappReminder
 };
+

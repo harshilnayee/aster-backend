@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { PDFDocument, rgb, StandardFonts, PDFName } = require("pdf-lib");
+const { clinicScopeFilter } = require("../utils/tenant");
 
 // Helper to get registry path
 const getRegistryPath = () => path.join(__dirname, "../config/formRegistry.json");
@@ -267,13 +268,9 @@ async function bulkExportReports(req, res, next) {
       return res.status(400).json({ message: "No patients in this export batch." });
     }
 
-    // Scope to caller's clinic when set (superadmin / missing clinicId = all)
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
 
-    const patients = await Patient.find({ patientId: { $in: batchIds }, ...clinicScope })
+    const patients = await Patient.find({ patientId: { $in: batchIds }, ...scope })
       .select(buildBulkPatientProjection(exportableFormKeys))
       .lean();
     const patientById = new Map(patients.map((p) => [p.patientId, p]));

@@ -229,8 +229,8 @@ async function autoSeed() {
       const usersToSeed = [
         {
           name: "System Admin",
-          email: "admin@astermedcare.com",
-          password: "Admin@123456",
+          email: "admin@drsvl.com",
+          password: "AdminSajan@2026",
           role: "admin",
           formAccess: ALL_FORMS,
           isActive: true

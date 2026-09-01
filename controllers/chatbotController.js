@@ -1,5 +1,6 @@
 const Patient = require("../models/Patient");
 const { matchKnowledge, getKnowledgeAnswer, FORM_LABELS } = require("../data/chatbotKnowledge");
+const { clinicScopeFilter } = require("../utils/tenant");
 const {
   isContextFollowUp,
   extractPatientIdFromText,
@@ -353,10 +354,7 @@ exports.query = async (req, res) => {
     let reply;
     let contextUpdate = null;
 
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const clinicScope = clinicScopeFilter(req);
 
     // 1) Direct ID / emp code in message (emp id 21, whose id is 21, PT-2026-1292)
     const lookupToken = extractLookupToken(message);

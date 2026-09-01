@@ -19,8 +19,8 @@ const ALL_FORMS = [
 const usersToSeed = [
   {
     name: "System Admin",
-    email: "admin@astermedcare.com",
-    password: "Admin@123456", // String password will be hashed by UserSchema pre('save') hook
+    email: "admin@drsvl.com",
+    password: "AdminSajan@2026", // String password will be hashed by UserSchema pre('save') hook
     role: "admin",
     formAccess: ALL_FORMS,
     isActive: true

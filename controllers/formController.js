@@ -1,16 +1,14 @@
 const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AuditLog = require("../models/AuditLog");
+const { clinicScopeFilter } = require("../utils/tenant");
 
 function buildPatientQuery(id, req) {
-  const clinicScope =
-    req?.user?.role === "superadmin" || !req?.user?.clinicId
-      ? {}
-      : { clinicId: req.user.clinicId };
+  const scope = clinicScopeFilter(req);
   const base = mongoose.Types.ObjectId.isValid(id)
     ? { _id: id }
     : { patientId: id };
-  return { ...base, ...(req?.tenantFilter || {}), ...clinicScope };
+  return { ...base, ...scope };
 }
 
 /**

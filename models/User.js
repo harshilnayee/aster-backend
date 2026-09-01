@@ -1,6 +1,15 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const SessionSchema = new mongoose.Schema({
+  sessionId: { type: String, required: true },
+  ip: { type: String, default: "127.0.0.1" },
+  userAgent: { type: String, default: "Unknown Browser / Device" },
+  deviceType: { type: String, default: "Desktop Browser" },
+  createdAt: { type: Date, default: Date.now },
+  lastActiveAt: { type: Date, default: Date.now }
+});
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -52,6 +61,11 @@ const UserSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Clinic",
       default: null
+    },
+    // Active logged-in devices & IP sessions tracking
+    activeSessions: {
+      type: [SessionSchema],
+      default: []
     }
   },
   {

@@ -25,6 +25,26 @@ const ClinicSchema = new mongoose.Schema(
       default: "",
       trim: true
     },
+    doctorRegNo: {
+      type: String,
+      default: "",
+      trim: true
+    },
+    doctorQualification: {
+      type: String,
+      default: "",
+      trim: true
+    },
+    cityState: {
+      type: String,
+      default: "",
+      trim: true
+    },
+    monthlyVolume: {
+      type: String,
+      default: "",
+      trim: true
+    },
     formFieldRules: {
       type: mongoose.Schema.Types.Mixed,
       default: {}
@@ -48,6 +68,25 @@ const ClinicSchema = new mongoose.Schema(
         type: String,
         enum: ["zip", "merged-pdf"],
         default: "zip"
+      }
+    },
+    subscription: {
+      plan: {
+        type: String,
+        enum: ["starter", "certifying", "industrial"],
+        default: "certifying"
+      },
+      planName: {
+        type: String,
+        default: "Certifying Surgeon Plan"
+      },
+      monthlyLimit: {
+        type: Number,
+        default: 2500
+      },
+      topUpCredits: {
+        type: Number,
+        default: 0
       }
     },
     isActive: {

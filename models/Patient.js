@@ -133,6 +133,11 @@ const PatientSchema = new mongoose.Schema(
       ref: "Clinic",
       default: null
     },
+    // Flag sample/demo records created during onboarding
+    isSample: {
+      type: Boolean,
+      default: false
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -156,5 +161,6 @@ PatientSchema.index({ clinicId: 1, createdAt: -1 });
 PatientSchema.index({ clinicId: 1, company: 1 });
 PatientSchema.index({ clinicId: 1, name: 1 });
 PatientSchema.index({ clinicId: 1, mobile: 1 });
+PatientSchema.index({ clinicId: 1, isSample: 1 });
 
 module.exports = mongoose.model("Patient", PatientSchema);

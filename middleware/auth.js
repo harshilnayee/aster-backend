@@ -26,6 +26,14 @@ const verifyToken = async (req, res, next) => {
       return res.status(403).json({ message: "User account has been deactivated" });
     }
 
+    // Check session validity if token carries a sessionId
+    if (decoded.sessionId && Array.isArray(user.activeSessions) && user.activeSessions.length > 0) {
+      const activeSess = user.activeSessions.find((s) => s.sessionId === decoded.sessionId);
+      if (!activeSess) {
+        return res.status(401).json({ message: "Session or IP address revoked by developer. Please log in again." });
+      }
+    }
+
     req.user = user;
     // Attach clinicId from the JWT (already validated above) for tenant scoping
     if (!req.user.clinicId && decoded.clinicId) {

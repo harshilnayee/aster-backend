@@ -1,4 +1,5 @@
 const Patient = require("../models/Patient");
+const { clinicScopeFilter } = require("../utils/tenant");
 
 /**
  * Returns a summary of medical operations statistics
@@ -6,11 +7,7 @@ const Patient = require("../models/Patient");
  */
 async function getSummary(req, res, next) {
   try {
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
-    const filter = { ...(req.tenantFilter || {}), ...clinicScope };
+    const filter = clinicScopeFilter(req);
     const patients = await Patient.find(filter, "createdAt forms");
 
     const now = new Date();
@@ -81,11 +78,7 @@ async function getSummary(req, res, next) {
  */
 async function getCompanies(req, res, next) {
   try {
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
-    const matchFilter = { ...(req.tenantFilter || {}), ...clinicScope };
+    const matchFilter = clinicScopeFilter(req);
     const companyStats = await Patient.aggregate([
       { $match: matchFilter },
       {
@@ -122,13 +115,10 @@ async function getCompanyAnalytics(req, res, next) {
 
     // Query patients matching the trimmed company name (case-insensitively to be safe)
     const escapedComp = comp.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const clinicScope =
-      req.user?.role === "superadmin" || !req.user?.clinicId
-        ? {}
-        : { clinicId: req.user.clinicId };
+    const scope = clinicScopeFilter(req);
     const query = {
       $and: [
-        { ...(req.tenantFilter || {}), ...clinicScope },
+        scope,
         {
           $or: [
             { company: comp },
