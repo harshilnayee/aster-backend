@@ -10,7 +10,7 @@ const { applyFormFieldRules } = require("./formFieldRules");
  */
 const FORM_KEY_TO_FILL_ID = {
   preMedical: "1-form-personal-details",
-  postMedical: null, // HTML template only; coords file is {}
+  postMedical: "medicalExamReport",
   eyeExam: "eyeExam",
   form33: "form33",
   healthRegister: "healthRegister",
@@ -666,6 +666,7 @@ function buildBulkFormValues(formKey, patient, prefs, fieldRules) {
       values = buildAirportBohwHtFrontValues(actualForm, safePatient);
       break;
     case "medicalExamReport":
+    case "postMedical":
       values = buildMedicalExamReportValues(actualForm, safePatient);
       break;
     default:

@@ -57,8 +57,8 @@
   },
   "22-form-post-medical": {
     "displayName": "22 FORM Post Medical",
-    "pdfFile": "22_FORM_Post_Medical.pdf",
-    "coordinatesFile": "22-form-post-medical.json"
+    "pdfFile": "medical_examination_report.pdf",
+    "coordinatesFile": "medical-exam-report.json"
   },
   "25-form-for-medical-fitness-certificate-format": {
     "displayName": "25 FORM for Medical Fitness Certificate Format",
