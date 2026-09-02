@@ -128,5 +128,10 @@
     "displayName": "X-Ray Report - 1",
     "pdfFile": "20_FORM_Xray_Image.pdf",
     "coordinatesFile": "xray-report.json"
+  },
+  "medicalExamReport": {
+    "displayName": "Medical Examination Report",
+    "pdfFile": "medical_examination_report.pdf",
+    "coordinatesFile": "medical-exam-report.json"
   }
 }

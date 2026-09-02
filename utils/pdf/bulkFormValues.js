@@ -30,7 +30,8 @@ const FORM_KEY_TO_FILL_ID = {
   "25-form-for-medical-fitness-certificate-format": "25-form-for-medical-fitness-certificate-format",
   "26-form-death-certificate": "26-form-death-certificate",
   "35-form-airport-bohw-ht-front": "35-form-airport-bohw-ht-front",
-  "36-form-airport-bohw-ht-back": "36-form-airport-bohw-ht-back"
+  "36-form-airport-bohw-ht-back": "36-form-airport-bohw-ht-back",
+  medicalExamReport: "medicalExamReport"
 };
 
 function formatDateDMY(val) {
@@ -664,10 +665,47 @@ function buildBulkFormValues(formKey, patient, prefs, fieldRules) {
     case "35-form-airport-bohw-ht-front":
       values = buildAirportBohwHtFrontValues(actualForm, safePatient);
       break;
+    case "medicalExamReport":
+      values = buildMedicalExamReportValues(actualForm, safePatient);
+      break;
     default:
       values = applyCommonDefaults({ ...actualForm }, safePatient);
   }
   return applyFormFieldRules(applyExportPrefsToValues(values, prefs), fieldRules);
+}
+
+function buildMedicalExamReportValues(actualForm, patient) {
+  const preMed = patient?.forms?.preMedical?.data || {};
+  return {
+    date: formatDateDMY(actualForm.date || patient?.examinationDate || ""),
+    name: actualForm.name || patient?.name || "",
+    gender: normalizeSex(actualForm.gender || patient?.gender || ""),
+    companyName: actualForm.companyName || patient?.company || "",
+    age: String(actualForm.age || patient?.age || ""),
+    department: actualForm.department || patient?.department || "",
+    identificationMark: actualForm.identificationMark || patient?.identificationMark || preMed.identificationMark || "",
+    bloodGroup: actualForm.bloodGroup || patient?.bloodGroup || preMed.bloodGroup || "",
+    rhType: actualForm.rhType || "Ve",
+    height: actualForm.height || "",
+    weight: actualForm.weight || "",
+    temperature: actualForm.temperature || "",
+    pulse: actualForm.pulse || "",
+    bpSystolic: actualForm.bpSystolic || "",
+    bpDiastolic: actualForm.bpDiastolic || "",
+    vaccinated: actualForm.vaccinated || "Yes",
+    rs: actualForm.rs || "",
+    cvs: actualForm.cvs || "",
+    cns: actualForm.cns || "",
+    pa: actualForm.pa || "",
+    vision: actualForm.vision || "",
+    skin: actualForm.skin || "",
+    ent: actualForm.ent || "",
+    nails: actualForm.nails || "",
+    abnormalityDetails: actualForm.abnormalityDetails || "",
+    remarks: actualForm.remarks || "",
+    doctorSignature: actualForm.signaturePhysician || "",
+    doctorStamp: ""
+  };
 }
 
 function resolveFillFormId(formKey) {

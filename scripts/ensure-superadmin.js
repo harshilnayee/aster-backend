@@ -9,7 +9,7 @@ const ALL_FORMS = [
   "13-form-pft-front", "14-form-pft-back", "15-form-vaccination-front",
   "16-form-vaccination-back", "17-form-food-handler-certificate",
   "18-form-vaccine-ircs-forms-2", "19-form-ecg", "25-form-for-medical-fitness-certificate-format",
-  "26-form-death-certificate", "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back", "form23"
+  "26-form-death-certificate", "35-form-airport-bohw-ht-front", "36-form-airport-bohw-ht-back", "form23", "medicalExamReport"
 ];
 
 async function main() {
