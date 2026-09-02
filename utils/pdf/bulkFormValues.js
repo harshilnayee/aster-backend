@@ -723,8 +723,8 @@ function buildMedicalExamReportValues(actualForm, patient) {
     nails: src.nails || "",
     abnormalityDetails: src.abnormalityDetails || "",
     remarks: src.remarks || "",
-    signaturePhysician: src.signaturePhysician || "",
-    doctorSignature: src.signaturePhysician || "",
+    signaturePhysician: "",
+    doctorSignature: "",
     doctorStamp: ""
   };
 

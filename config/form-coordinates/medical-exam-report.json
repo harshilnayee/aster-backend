@@ -24,7 +24,5 @@
   "ent": { "page": 1, "x": 426, "y": 486, "width": 50, "height": 14 },
   "nails": { "page": 1, "x": 489, "y": 486, "width": 50, "height": 14 },
   "abnormalityDetails": { "page": 1, "x": 45, "y": 442, "width": 500, "height": 14 },
-  "remarks": { "page": 1, "x": 120, "y": 62, "width": 425, "height": 14 },
-  "doctorSignature": { "page": 1, "x": 390, "y": 115, "width": 160, "height": 75 },
-  "doctorStamp": { "page": 1, "x": 390, "y": 115, "width": 160, "height": 75 }
+  "remarks": { "page": 1, "x": 120, "y": 62, "width": 425, "height": 14 }
 }
