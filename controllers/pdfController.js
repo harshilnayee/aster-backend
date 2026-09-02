@@ -483,7 +483,8 @@ async function getFormTemplate(req, res, next) {
     }
     const bytes = await loadPdfTemplateBytes(formConfig.pdfFile);
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Cache-Control", "private, max-age=86400");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
     res.setHeader("Content-Disposition", `inline; filename="${formConfig.pdfFile}"`);
     return res.send(Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes));
   } catch (error) {
@@ -505,7 +506,7 @@ async function getFormLayout(req, res, next) {
       return res.status(404).json({ message: `Form not found: ${formId}` });
     }
     const coords = loadCoordinates(formConfig.coordinatesFile);
-    res.setHeader("Cache-Control", "private, max-age=3600");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     return res.status(200).json({
       formId,
       displayName: formConfig.displayName || formId,
