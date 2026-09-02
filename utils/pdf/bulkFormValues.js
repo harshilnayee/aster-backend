@@ -682,8 +682,21 @@ function buildMedicalExamReportValues(actualForm, patient) {
   const postMed = patient?.forms?.postMedical?.data || {};
   const medExam = patient?.forms?.medicalExamReport?.data || {};
   const src = { ...postMed, ...medExam, ...actualForm };
+  const pastHistoryKeys = [
+    "tb",
+    "jaundice",
+    "asthma",
+    "bronchitis",
+    "accident",
+    "operation",
+    "bloodTransfusion",
+    "cholera",
+    "allergy",
+    "skinDisease",
+    "contagiousDisease"
+  ];
 
-  return {
+  const values = {
     date: formatDateDMY(src.date || patient?.examinationDate || ""),
     name: src.name || patient?.name || "",
     gender: normalizeSex(src.gender || patient?.gender || ""),
@@ -710,9 +723,16 @@ function buildMedicalExamReportValues(actualForm, patient) {
     nails: src.nails || "",
     abnormalityDetails: src.abnormalityDetails || "",
     remarks: src.remarks || "",
+    signaturePhysician: src.signaturePhysician || "",
     doctorSignature: src.signaturePhysician || "",
     doctorStamp: ""
   };
+
+  for (const key of pastHistoryKeys) {
+    values[key] = String(src[key] || "").toUpperCase();
+  }
+
+  return values;
 }
 
 function resolveFillFormId(formKey) {

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "postinstall": "playwright install chromium"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.500.0",
@@ -22,7 +23,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.0",
     "multer": "^1.4.5-lts.1",
-    "pdf-lib": "^1.17.1"
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.62.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

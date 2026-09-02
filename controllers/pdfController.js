@@ -233,6 +233,7 @@ async function bulkExportReports(req, res, next) {
     const { PDFDocument } = require("pdf-lib");
     const { fillPdfToBytes } = require("../utils/pdf/fillService");
     const { saveCompressedPdf } = require("../utils/pdf/compressPdf");
+    const { renderMedicalExamReportPdf } = require("../utils/pdf/medicalExamReportHtml");
     const {
       buildBulkFormValues,
       resolveFillFormId,
@@ -324,7 +325,10 @@ async function bulkExportReports(req, res, next) {
         try {
           const fillId = resolveFillFormId(formKey);
           const values = buildBulkFormValues(formKey, patient, clinicPrefs, allFieldRules[formKey]);
-          const { bytes } = await fillPdfToBytes(fillId, values);
+          const bytes =
+            fillId === "medicalExamReport"
+              ? await renderMedicalExamReportPdf(values)
+              : (await fillPdfToBytes(fillId, values)).bytes;
           const srcDoc = await PDFDocument.load(bytes);
           const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
           pages.forEach((page) => mergedPdf.addPage(page));
