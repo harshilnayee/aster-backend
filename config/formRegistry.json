@@ -130,7 +130,12 @@
     "coordinatesFile": "xray-report.json"
   },
   "medicalExamReport": {
-    "displayName": "Medical Examination Report",
+    "displayName": "26 FORM Medical Examination Report",
+    "pdfFile": "medical_examination_report.pdf",
+    "coordinatesFile": "medical-exam-report.json"
+  },
+  "newfrom26": {
+    "displayName": "26 FORM Medical Examination Report",
     "pdfFile": "medical_examination_report.pdf",
     "coordinatesFile": "medical-exam-report.json"
   }

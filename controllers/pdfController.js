@@ -195,6 +195,7 @@ function buildBulkPatientProjection(formKeys) {
   projection["forms.preMedical"] = 1;
   projection["forms.postMedical"] = 1;
   projection["forms.medicalExamReport"] = 1;
+  projection["forms.newfrom26"] = 1;
 
   for (const key of keys) {
     projection[`forms.${key}`] = 1;

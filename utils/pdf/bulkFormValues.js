@@ -31,7 +31,8 @@ const FORM_KEY_TO_FILL_ID = {
   "26-form-death-certificate": "26-form-death-certificate",
   "35-form-airport-bohw-ht-front": "35-form-airport-bohw-ht-front",
   "36-form-airport-bohw-ht-back": "36-form-airport-bohw-ht-back",
-  medicalExamReport: "medicalExamReport"
+  medicalExamReport: "medicalExamReport",
+  newfrom26: "medicalExamReport"
 };
 
 function formatDateDMY(val) {
@@ -667,6 +668,7 @@ function buildBulkFormValues(formKey, patient, prefs, fieldRules) {
       break;
     case "medicalExamReport":
     case "postMedical":
+    case "newfrom26":
       values = buildMedicalExamReportValues(actualForm, safePatient);
       break;
     default:
