@@ -192,15 +192,9 @@ function buildBulkPatientProjection(formKeys) {
     clinicId: 1
   };
 
-  if (keys.some((key) => VITALS_FALLBACK_FORMS.includes(key))) {
-    projection["forms.preMedical"] = 1;
-    projection["forms.postMedical"] = 1;
-    projection["forms.1-form-personal-details"] = 1;
-    projection["forms.4-form-airport-bohw"] = 1;
-    projection["forms.5-form-height-pass"] = 1;
-    projection["forms.35-form-airport-bohw-ht-front"] = 1;
-    projection["forms.36-form-airport-bohw-ht-back"] = 1;
-  }
+  projection["forms.preMedical"] = 1;
+  projection["forms.postMedical"] = 1;
+  projection["forms.medicalExamReport"] = 1;
 
   for (const key of keys) {
     projection[`forms.${key}`] = 1;
