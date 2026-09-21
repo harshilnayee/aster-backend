@@ -125,17 +125,38 @@ const loginLimiter = rateLimit({
 
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5,
-  message: { message: "Too many clinic registrations from this IP, please try again later." },
+  max: 10, // Bumped from 5 → 10 so legitimate users retrying (typo'd password etc.) aren't blocked
+  message: { message: "Too many registration attempts from this IP, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
+const inviteLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 invite creations per hour per IP
+  message: { message: "Too many invite requests from this IP, please try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Middleware: restrict route to superadmin only
+const requireSuperAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Authentication required." });
+  }
+  if (req.user.role !== "superadmin") {
+    return res.status(403).json({ message: "Access denied. Superadmin only." });
+  }
+  next();
+};
+
 module.exports = {
   verifyToken,
   requireRole,
+  requireSuperAdmin,
   checkFormAccess,
   userHasFormAccess,
   loginLimiter,
-  registerLimiter
+  registerLimiter,
+  inviteLimiter
 };

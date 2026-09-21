@@ -136,7 +136,7 @@ async function getMe(req, res, next) {
 }
 
 /**
- * Self-service signup for clinic registration
+ * Self-service signup — requires a valid, pending invite for the email.
  * POST /api/auth/register
  */
 async function register(req, res, next) {
@@ -144,7 +144,7 @@ async function register(req, res, next) {
     const { name, email, password, clinicName, mobile, doctorRegNo, doctorQualification, cityState, monthlyVolume } = req.body;
 
     if (!name || !email || !password || !clinicName) {
-      return res.status(400).json({ message: "Name, email, password, and clinic name are required" });
+      return res.status(400).json({ message: "Name, email, password, and clinic name are required." });
     }
 
     const targetEmail = email.toLowerCase().trim();
@@ -152,12 +152,43 @@ async function register(req, res, next) {
     // Validate email format
     const emailRegex = /^\S+@\S+\.\S+$/;
     if (!emailRegex.test(targetEmail)) {
-      return res.status(400).json({ message: "Please enter a valid email address" });
+      return res.status(400).json({ message: "Please enter a valid email address." });
     }
+
+    // ── Invite Gate ────────────────────────────────────────────────────────────
+    const Invite = require("../models/Invite");
+    const invite = await Invite.findOne({ email: targetEmail });
+
+    if (!invite) {
+      return res.status(403).json({
+        message: "You are not authorized to register. Contact the platform administrator."
+      });
+    }
+
+    const inviteStatus = invite.getStatus();
+
+    if (inviteStatus === "revoked") {
+      return res.status(403).json({
+        message: "Your invite has been revoked. Contact the platform administrator."
+      });
+    }
+
+    if (inviteStatus === "expired") {
+      return res.status(403).json({
+        message: "Your invite has expired. Contact the platform administrator for a new invite."
+      });
+    }
+
+    if (inviteStatus === "used") {
+      return res.status(400).json({
+        message: "This invite has already been used. Try logging in instead."
+      });
+    }
+    // ── End Invite Gate ────────────────────────────────────────────────────────
 
     // Validate password complexity requirements
     if (password.length < 10) {
-      return res.status(400).json({ message: "Password must be at least 10 characters long" });
+      return res.status(400).json({ message: "Password must be at least 10 characters long." });
     }
     const hasUpper = /[A-Z]/.test(password);
     const hasLower = /[a-z]/.test(password);
@@ -165,13 +196,13 @@ async function register(req, res, next) {
     const hasSymbol = /[^A-Za-z0-9]/.test(password);
     if (!hasUpper || !hasLower || !hasNumber || !hasSymbol) {
       return res.status(400).json({
-        message: "Password must include an uppercase letter, lowercase letter, number, and symbol (e.g. ClinicPass@123)"
+        message: "Password must include an uppercase letter, lowercase letter, number, and symbol (e.g. ClinicPass@123)."
       });
     }
 
     const existingUser = await User.findOne({ email: targetEmail });
     if (existingUser) {
-      return res.status(400).json({ message: "An account with this email already exists" });
+      return res.status(400).json({ message: "An account with this email already exists." });
     }
 
     const Clinic = require("../models/Clinic");
@@ -182,18 +213,7 @@ async function register(req, res, next) {
     const baseSlug = clinicName.toLowerCase().replace(/[^a-z0-9]/g, "_").slice(0, 30) || "clinic";
     const slug = `${baseSlug}_${Date.now().toString(36)}`;
 
-    const selectedPlanKey = req.body.plan || "certifying";
-    let planName = "Certifying Surgeon Plan";
-    let monthlyLimit = 2500;
-    if (selectedPlanKey === "starter") {
-      planName = "Starter Plan";
-      monthlyLimit = 750;
-    } else if (selectedPlanKey === "industrial") {
-      planName = "Industrial Drive Plan";
-      monthlyLimit = 5000;
-    }
-
-    // Create Clinic
+    // Create Clinic (no plan/pricing)
     const clinic = await Clinic.create({
       slug,
       name: clinicName.trim(),
@@ -202,17 +222,10 @@ async function register(req, res, next) {
       doctorQualification: (doctorQualification || "").trim(),
       cityState: (cityState || "").trim(),
       monthlyVolume: (monthlyVolume || "").trim(),
-      address: cityState ? `${cityState.trim()}, Occupational Health Center` : "Main Occupational Health Center",
-      subscription: {
-        plan: selectedPlanKey,
-        planName,
-        monthlyLimit,
-        topUpCredits: 0
-      }
+      address: cityState ? `${cityState.trim()}, Occupational Health Center` : "Main Occupational Health Center"
     });
 
     // Pass plaintext password — UserSchema pre("save") hashes once.
-    // Manual bcrypt + save() would double-hash and break login.
     const user = await User.create({
       name: name.trim(),
       email: targetEmail,
@@ -256,6 +269,10 @@ async function register(req, res, next) {
       console.warn("Non-fatal demo patient seed warning:", seedErr);
     }
 
+    // Mark invite as used
+    invite.usedAt = new Date();
+    await invite.save();
+
     const token = jwt.sign(
       { id: user._id, role: user.role, clinicId: clinic._id },
       process.env.JWT_SECRET,
@@ -274,7 +291,7 @@ async function register(req, res, next) {
     delete userResponse.password;
 
     return res.status(201).json({
-      message: "Clinic registration successful",
+      message: "Clinic registration successful.",
       token,
       user: userResponse
     });

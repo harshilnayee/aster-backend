@@ -97,6 +97,8 @@ const pdfRoutes = require("./routes/pdf");
 const settingRoutes = require("./routes/settings");
 const developerRoutes = require("./routes/developer");
 const chatbotRoutes = require("./routes/chatbot");
+const inviteRoutes = require("./routes/invites");
+const accessRequestRoutes = require("./routes/accessRequests");
 
 const publicPatientRoutes = require("./routes/publicPatients");
 
@@ -111,6 +113,8 @@ app.use("/api/forms", pdfRoutes);
 app.use("/api/settings", settingRoutes);
 app.use("/api/developer", developerRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/invites", inviteRoutes);
+app.use("/api/access-requests", accessRequestRoutes);
 
 // 7. 404 Route Handler
 app.use((req, res, next) => {

@@ -234,6 +234,7 @@ async function getActiveSessions(req, res, next) {
         email: u.email,
         role: u.role,
         isActive: u.isActive,
+        createdAt: u.createdAt,
         clinicName: u.clinicId?.name || "Direct / Admin Workspace",
         clinicSlug: u.clinicId?.slug || "main",
         sessions,
