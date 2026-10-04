@@ -40,7 +40,7 @@ const AccessRequestSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"]
+      default: ""
     },
     status: {
       type: String,

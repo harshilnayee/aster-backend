@@ -22,8 +22,8 @@ async function submitRequest(req, res, next) {
   try {
     const { name, email, password, clinicName, mobile, doctorRegNo, doctorQualification, cityState, monthlyVolume } = req.body;
 
-    if (!name || !email || !password || !clinicName) {
-      return res.status(400).json({ message: "Name, email, password, and clinic name are required." });
+    if (!name || !email || !clinicName) {
+      return res.status(400).json({ message: "Name, email, and clinic name are required." });
     }
 
     const targetEmail = email.toLowerCase().trim();
@@ -33,8 +33,8 @@ async function submitRequest(req, res, next) {
       return res.status(400).json({ message: "Please enter a valid email address." });
     }
 
-    // Check password requirements
-    if (password.length < 10 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+    // Check password requirements (only if password was provided)
+    if (password && (password.length < 10 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password))) {
       return res.status(400).json({
         message: "Password must be at least 10 characters long and include an uppercase letter, lowercase letter, number, and symbol."
       });
@@ -135,10 +135,11 @@ async function approveRequest(req, res, next) {
     });
 
     // 2. Create User
+    const fallbackPassword = accessReq.password || "DrsvlClinic@2026!";
     const user = await User.create({
       name: accessReq.name,
       email: accessReq.email,
-      password: accessReq.password,
+      password: fallbackPassword,
       role: "admin",
       clinicId: clinic._id,
       isActive: true,
