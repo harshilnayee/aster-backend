@@ -99,6 +99,7 @@ const developerRoutes = require("./routes/developer");
 const chatbotRoutes = require("./routes/chatbot");
 const inviteRoutes = require("./routes/invites");
 const accessRequestRoutes = require("./routes/accessRequests");
+const invoiceRoutes = require("./routes/invoices");
 
 const publicPatientRoutes = require("./routes/publicPatients");
 
@@ -115,6 +116,7 @@ app.use("/api/developer", developerRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/invites", inviteRoutes);
 app.use("/api/access-requests", accessRequestRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 // 7. 404 Route Handler
 app.use((req, res, next) => {

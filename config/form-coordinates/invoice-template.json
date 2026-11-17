@@ -1,0 +1,14 @@
+{
+  "topDate": { "page": 1, "x": 458, "y": 720, "width": 73, "height": 13 },
+  "date": { "page": 1, "x": 287, "y": 624, "width": 50, "height": 10 },
+  "companyAddress": { "page": 1, "x": 40, "y": 549, "width": 306, "height": 46 },
+  "quantity": { "page": 1, "x": 276, "y": 478, "width": 33, "height": 18 },
+  "rate": { "page": 1, "x": 326, "y": 481, "width": 22, "height": 16 },
+  "amountLine": { "page": 1, "x": 450, "y": 481, "width": 26, "height": 14 },
+  "amountBeforeTax": { "page": 1, "x": 536, "y": 411, "width": 22, "height": 12 },
+  "amountTotal": { "page": 1, "x": 535, "y": 335, "width": 24, "height": 9 },
+  "project": { "page": 1, "x": 75, "y": 637.5, "width": 175, "height": 16 },
+  "invoice": { "page": 1, "x": 312, "y": 637.5, "width": 45, "height": 16 },
+  "companyNameLeft": { "page": 1, "x": 122, "y": 613, "width": 85, "height": 13 },
+  "companyNameRight": { "page": 1, "x": 347, "y": 605, "width": 85, "height": 13 }
+}
