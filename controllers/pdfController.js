@@ -77,7 +77,7 @@ async function getFormCoordinates(req, res, next) {
 async function fillPdfForm(req, res, next) {
   try {
     const { formId } = req.params;
-    const { values } = req.body;
+    const { values, patientId } = req.body;
     if (!values) {
       return res.status(400).json({ message: "Field values are required" });
     }
@@ -89,6 +89,29 @@ async function fillPdfForm(req, res, next) {
       });
     }
 
+    // Resolve patient signature from DB if missing or masked as "present"
+    const resolvedValues = { ...values };
+    const pid = patientId || values.patientId;
+    if (
+      (!resolvedValues.patientSignature ||
+        resolvedValues.patientSignature === "present" ||
+        !String(resolvedValues.patientSignature).startsWith("data:image/")) &&
+      pid
+    ) {
+      try {
+        const Patient = require("../models/Patient");
+        const found = await Patient.findOne({ patientId: pid }).select("signature").lean();
+        if (found && found.signature && found.signature.startsWith("data:image/")) {
+          resolvedValues.patientSignature = found.signature;
+        }
+      } catch (lookupErr) {
+        console.warn("Could not load patient signature from DB in fillPdfForm:", lookupErr.message);
+      }
+    }
+    if (resolvedValues.patientSignature === "present") {
+      resolvedValues.patientSignature = "";
+    }
+
     const { fillPdfToBytes } = require("../utils/pdf/fillService");
     const { applyFormFieldRules, loadAllFormFieldRules } = require("../utils/pdf/formFieldRules");
     const allFieldRules = await loadAllFormFieldRules(req.user);
@@ -98,7 +121,7 @@ async function fillPdfForm(req, res, next) {
     };
     const clientKey = fillIdToClient[formId] || formId;
     const fieldRules = { ...(allFieldRules[formId] || {}), ...(allFieldRules[clientKey] || {}) };
-    const result = await fillPdfToBytes(formId, applyFormFieldRules(values, fieldRules));
+    const result = await fillPdfToBytes(formId, applyFormFieldRules(resolvedValues, fieldRules));
     const pdfBytes = Buffer.isBuffer(result.bytes) ? result.bytes : Buffer.from(result.bytes);
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${result.filename}"`);

@@ -44,8 +44,63 @@ async function listCompanies(req, res, next) {
       a.localeCompare(b, undefined, { sensitivity: "base" })
     );
 
+    const addressDocs = await Patient.find({
+      ...scope,
+      company: { $nin: [null, ""] },
+      companyAddress: { $nin: [null, ""] }
+    })
+      .select("company companyAddress")
+      .sort({ updatedAt: -1 })
+      .limit(300)
+      .lean();
+
+    const companyAddressMap = {};
+    for (const doc of addressDocs) {
+      const cName = String(doc.company || "").trim();
+      const cAddr = String(doc.companyAddress || "").trim();
+      if (cName && cAddr && !companyAddressMap[cName]) {
+        companyAddressMap[cName] = cAddr;
+      }
+    }
+
+    // Distinct Occupations for fast pickers
+    const rawOcc = await Patient.distinct("occupation", {
+      ...scope,
+      occupation: { $nin: [null, "", "0", "N/A", "NA"] }
+    });
+    const occMap = new Map();
+    (rawOcc || []).forEach((o) => {
+      const trimmed = String(o || "").trim();
+      if (!trimmed || trimmed === "0" || trimmed.length < 2) return;
+      const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (!occMap.has(normKey)) {
+        occMap.set(normKey, trimmed);
+      }
+    });
+    const occupations = Array.from(occMap.values()).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
+    );
+
+    // Distinct Departments for fast pickers
+    const rawDept = await Patient.distinct("department", {
+      ...scope,
+      department: { $nin: [null, "", "0", "N/A", "NA"] }
+    });
+    const deptMap = new Map();
+    (rawDept || []).forEach((d) => {
+      const trimmed = String(d || "").trim();
+      if (!trimmed || trimmed === "0" || trimmed.length < 2) return;
+      const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (!deptMap.has(normKey)) {
+        deptMap.set(normKey, trimmed);
+      }
+    });
+    const departments = Array.from(deptMap.values()).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
+    );
+
     res.setHeader("Cache-Control", "private, max-age=60, stale-while-revalidate=120");
-    return res.status(200).json({ companies });
+    return res.status(200).json({ companies, companyAddressMap, occupations, departments });
   } catch (error) {
     console.error("ListCompanies error:", error);
     next(error);
@@ -387,7 +442,8 @@ async function createPatient(req, res, next) {
   try {
     const { name, age, gender, mobile, employeeCode, company, address, companyAddress, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
-      department, employmentType, contractingAgency, diet, knownHabit } = req.body;
+      department, employmentType, contractingAgency, diet, knownHabit,
+      pulse, bp, respiratoryRate } = req.body;
 
     if (!name || !age || !gender) {
       return res.status(400).json({ message: "Name, age, and gender are required fields" });
@@ -395,6 +451,10 @@ async function createPatient(req, res, next) {
 
     // Auto-generate the unique Patient ID safely
     const patientIdString = await generatePatientId();
+
+    const cleanPulse = pulse ? String(pulse).trim() : "";
+    const cleanBp = bp ? String(bp).trim() : "";
+    const cleanRR = respiratoryRate ? String(respiratoryRate).trim() : "";
 
     const patient = new Patient({
       patientId: patientIdString,
@@ -424,6 +484,20 @@ async function createPatient(req, res, next) {
       contractingAgency,
       diet,
       knownHabit,
+      pulse: cleanPulse,
+      bp: cleanBp,
+      respiratoryRate: cleanRR,
+      forms: {
+        "1-form-personal-details": {
+          savedAt: new Date(),
+          savedBy: req.user._id,
+          data: {
+            pulse: cleanPulse,
+            bp: cleanBp,
+            respiratoryRate: cleanRR
+          }
+        }
+      },
       createdBy: req.user._id,
       clinicId: req.user.clinicId ?? null  // stamp the patient with the creating user's clinic
     });
@@ -442,8 +516,7 @@ async function createPatient(req, res, next) {
 
     const out = savedPatient.toObject();
     out.govIdNumber = decrypt(out.govIdNumber);
-    // Never echo base64 signature / photo on create — list/detail can fetch when needed
-    if (out.signature) out.signature = "present";
+    // Keep real signature base64 data URL so client and PDF generators have it immediately
     delete out.photo;
 
     return res.status(201).json(out);
@@ -511,7 +584,8 @@ async function updatePatient(req, res, next) {
     const { id } = req.params;
     const { name, age, gender, mobile, employeeCode, company, address, companyAddress, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
-      department, employmentType, contractingAgency, diet, knownHabit } = req.body;
+      department, employmentType, contractingAgency, diet, knownHabit,
+      pulse, bp, respiratoryRate } = req.body;
 
     const scope = clinicScopeFilter(req);
 
@@ -551,6 +625,22 @@ async function updatePatient(req, res, next) {
     if (contractingAgency !== undefined) patient.contractingAgency = contractingAgency;
     if (diet !== undefined) patient.diet = diet;
     if (knownHabit !== undefined) patient.knownHabit = knownHabit;
+    if (pulse !== undefined) patient.pulse = String(pulse).trim();
+    if (bp !== undefined) patient.bp = String(bp).trim();
+    if (respiratoryRate !== undefined) patient.respiratoryRate = String(respiratoryRate).trim();
+    if (pulse !== undefined || bp !== undefined || respiratoryRate !== undefined) {
+      if (!patient.forms) patient.forms = {};
+      if (!patient.forms["1-form-personal-details"]) {
+        patient.forms["1-form-personal-details"] = { savedAt: new Date(), data: {} };
+      }
+      patient.forms["1-form-personal-details"].data = {
+        ...patient.forms["1-form-personal-details"].data,
+        ...(pulse !== undefined ? { pulse: String(pulse).trim() } : {}),
+        ...(bp !== undefined ? { bp: String(bp).trim() } : {}),
+        ...(respiratoryRate !== undefined ? { respiratoryRate: String(respiratoryRate).trim() } : {})
+      };
+      patient.markModified("forms");
+    }
 
     const updatedPatient = await patient.save();
 
@@ -564,11 +654,10 @@ async function updatePatient(req, res, next) {
       details: `Updated patient details: ${Object.keys(req.body).join(", ")}`
     });
 
-    // Return demographics only — avoid shipping full forms/signature payload after a simple edit
+    // Return demographics only — avoid shipping full forms payload after a simple edit
     const slim = updatedPatient.toObject();
     delete slim.forms;
     delete slim.files;
-    if (slim.signature) slim.signature = "present";
     slim.govIdNumber = decrypt(slim.govIdNumber);
     return res.status(200).json(slim);
   } catch (error) {

@@ -115,6 +115,9 @@ const PatientSchema = new mongoose.Schema(
     contractingAgency: { type: String, trim: true },
     diet: { type: String, trim: true },
     knownHabit: { type: String, trim: true },
+    pulse: { type: String, trim: true },
+    bp: { type: String, trim: true },
+    respiratoryRate: { type: String, trim: true },
     // Permanent exam date inherited across forms (YYYY-MM-DD string)
     examinationDate: { type: String, trim: true },
     // Storage for 24 forms. Dynamic Mixed storage.

@@ -230,6 +230,15 @@ export async function fillPdfFromParts(templateBytes, coords, formConfig, formId
       continue;
     }
 
+    // Never draw textual flags (such as "present") or non-image strings onto signature coordinates
+    if (
+      fieldName.toLowerCase().includes("signature") ||
+      fieldName === "patientSignature" ||
+      fieldName === "doctorSignature"
+    ) {
+      continue;
+    }
+
     let currentFontSize = Number(finalCoord.fontSize || formConfig.defaultFontSize || 11);
     let currentFont = finalCoord.bold ? helveticaBoldFont : helveticaFont;
     const preferredFont = finalCoord.font || formConfig.defaultFont;
