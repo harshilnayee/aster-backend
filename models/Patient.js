@@ -165,6 +165,8 @@ PatientSchema.index({ createdAt: -1 });
 PatientSchema.index({ clinicId: 1, updatedAt: -1 });
 PatientSchema.index({ clinicId: 1, createdAt: -1 });
 PatientSchema.index({ clinicId: 1, company: 1 });
+PatientSchema.index({ clinicId: 1, occupation: 1 });
+PatientSchema.index({ clinicId: 1, department: 1 });
 PatientSchema.index({ clinicId: 1, name: 1 });
 PatientSchema.index({ clinicId: 1, mobile: 1 });
 PatientSchema.index({ clinicId: 1, isSample: 1 });

@@ -12,6 +12,102 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/** Short-lived directory cache. Company lists and dashboard counts scan the whole clinic. */
+const directoryCache = new Map();
+const COMPANIES_TTL_MS = 60 * 1000;
+const STATS_TTL_MS = 20 * 1000;
+
+function directoryCacheKey(prefix, scope) {
+  return `${prefix}:${JSON.stringify(scope || {})}`;
+}
+
+function readDirectoryCache(key, ttl) {
+  const hit = directoryCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > ttl) {
+    directoryCache.delete(key);
+    return null;
+  }
+  return hit.value;
+}
+
+function writeDirectoryCache(key, value) {
+  directoryCache.set(key, { at: Date.now(), value });
+}
+
+function invalidatePatientDirectoryCache() {
+  directoryCache.clear();
+}
+
+function foldCompanyNames(raw) {
+  const companyMap = new Map();
+  (raw || []).forEach((c) => {
+    const trimmed = String(c || "").trim();
+    if (!trimmed) return;
+    const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!normKey) return;
+    if (!companyMap.has(normKey)) {
+      companyMap.set(normKey, trimmed);
+    } else {
+      const existing = companyMap.get(normKey);
+      if (trimmed === trimmed.toUpperCase() && existing !== existing.toUpperCase()) {
+        companyMap.set(normKey, trimmed);
+      }
+    }
+  });
+  return Array.from(companyMap.values()).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+}
+
+function foldDistinctLabels(raw) {
+  const map = new Map();
+  (raw || []).forEach((value) => {
+    const trimmed = String(value || "").trim();
+    if (!trimmed || trimmed === "0" || trimmed.length < 2) return;
+    if (/^n\/?a$/i.test(trimmed)) return;
+    const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!normKey || map.has(normKey)) return;
+    map.set(normKey, trimmed);
+  });
+  return Array.from(map.values()).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+}
+
+/** List rows need a present/missing flag, never the signature image bytes. */
+function buildPatientListProject() {
+  const project = {
+    _id: 0,
+    patientId: 1,
+    name: 1,
+    age: 1,
+    gender: 1,
+    mobile: 1,
+    employeeCode: 1,
+    company: 1,
+    whatsappRemindersSent: 1,
+    updatedAt: 1,
+    createdAt: 1,
+    fatherName: 1,
+    department: 1,
+    address: 1,
+    signature: {
+      $cond: [
+        { $eq: [{ $ifNull: ["$signature", ""] }, ""] },
+        "",
+        "present"
+      ]
+    },
+    "forms.postMedical.data.fitStatus": 1
+  };
+  ACTIVE_FORM_KEYS.forEach((f) => {
+    project[`forms.${f}.savedAt`] = 1;
+    project[`forms.${f}.isDraft`] = 1;
+  });
+  return project;
+}
+
 /**
  * Distinct company names for import / filter dropdowns
  * GET /api/patients/companies
@@ -19,40 +115,38 @@ function escapeRegex(str) {
 async function listCompanies(req, res, next) {
   try {
     const scope = clinicScopeFilter(req);
+    const cacheKey = directoryCacheKey("companies", scope);
+    const cached = readDirectoryCache(cacheKey, COMPANIES_TTL_MS);
+    if (cached) {
+      res.setHeader("Cache-Control", "private, max-age=60, stale-while-revalidate=120");
+      return res.status(200).json(cached);
+    }
 
-    const raw = await Patient.distinct("company", {
-      ...scope,
-      company: { $nin: [null, ""] }
-    });
+    const [rawCompanies, addressDocs, rawOcc, rawDept] = await Promise.all([
+      Patient.distinct("company", {
+        ...scope,
+        company: { $nin: [null, ""] }
+      }),
+      Patient.find({
+        ...scope,
+        company: { $nin: [null, ""] },
+        companyAddress: { $nin: [null, ""] }
+      })
+        .select("company companyAddress")
+        .sort({ updatedAt: -1 })
+        .limit(300)
+        .lean(),
+      Patient.distinct("occupation", {
+        ...scope,
+        occupation: { $nin: [null, "", "0", "N/A", "NA"] }
+      }),
+      Patient.distinct("department", {
+        ...scope,
+        department: { $nin: [null, "", "0", "N/A", "NA"] }
+      })
+    ]);
 
-    const companyMap = new Map();
-    (raw || []).forEach((c) => {
-      const trimmed = String(c || "").trim();
-      if (!trimmed) return;
-      const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (!companyMap.has(normKey)) {
-        companyMap.set(normKey, trimmed);
-      } else {
-        const existing = companyMap.get(normKey);
-        if (trimmed === trimmed.toUpperCase() && existing !== existing.toUpperCase()) {
-          companyMap.set(normKey, trimmed);
-        }
-      }
-    });
-
-    const companies = Array.from(companyMap.values()).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: "base" })
-    );
-
-    const addressDocs = await Patient.find({
-      ...scope,
-      company: { $nin: [null, ""] },
-      companyAddress: { $nin: [null, ""] }
-    })
-      .select("company companyAddress")
-      .sort({ updatedAt: -1 })
-      .limit(300)
-      .lean();
+    const companies = foldCompanyNames(rawCompanies);
 
     const companyAddressMap = {};
     for (const doc of addressDocs) {
@@ -63,44 +157,16 @@ async function listCompanies(req, res, next) {
       }
     }
 
-    // Distinct Occupations for fast pickers
-    const rawOcc = await Patient.distinct("occupation", {
-      ...scope,
-      occupation: { $nin: [null, "", "0", "N/A", "NA"] }
-    });
-    const occMap = new Map();
-    (rawOcc || []).forEach((o) => {
-      const trimmed = String(o || "").trim();
-      if (!trimmed || trimmed === "0" || trimmed.length < 2) return;
-      const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (!occMap.has(normKey)) {
-        occMap.set(normKey, trimmed);
-      }
-    });
-    const occupations = Array.from(occMap.values()).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: "base" })
-    );
-
-    // Distinct Departments for fast pickers
-    const rawDept = await Patient.distinct("department", {
-      ...scope,
-      department: { $nin: [null, "", "0", "N/A", "NA"] }
-    });
-    const deptMap = new Map();
-    (rawDept || []).forEach((d) => {
-      const trimmed = String(d || "").trim();
-      if (!trimmed || trimmed === "0" || trimmed.length < 2) return;
-      const normKey = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (!deptMap.has(normKey)) {
-        deptMap.set(normKey, trimmed);
-      }
-    });
-    const departments = Array.from(deptMap.values()).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: "base" })
-    );
+    const payload = {
+      companies,
+      companyAddressMap,
+      occupations: foldDistinctLabels(rawOcc),
+      departments: foldDistinctLabels(rawDept)
+    };
+    writeDirectoryCache(cacheKey, payload);
 
     res.setHeader("Cache-Control", "private, max-age=60, stale-while-revalidate=120");
-    return res.status(200).json({ companies, companyAddressMap, occupations, departments });
+    return res.status(200).json(payload);
   } catch (error) {
     console.error("ListCompanies error:", error);
     next(error);
@@ -329,34 +395,6 @@ async function getPatients(req, res, next) {
       filter.$and = [...(filter.$and || []), ...andExtra];
     }
 
-    const formProjection = {};
-    ACTIVE_FORM_KEYS.forEach((f) => {
-      formProjection[`forms.${f}.savedAt`] = 1;
-      formProjection[`forms.${f}.isDraft`] = 1;
-    });
-
-    const listProjection = {
-      patientId: 1,
-      name: 1,
-      age: 1,
-      gender: 1,
-      mobile: 1,
-      employeeCode: 1,
-      company: 1,
-      whatsappRemindersSent: 1,
-      updatedAt: 1,
-      createdAt: 1,
-      fatherName: 1,
-      department: 1,
-      address: 1,
-      signature: 1,
-      "forms.postMedical.data.fitStatus": 1,
-      ...formProjection
-    };
-
-    const todayStart = startOfToday();
-    const todayEnd = endOfToday();
-
     if (idsOnly) {
       const rows = await Patient.find(filter)
         .select({ patientId: 1, _id: 0 })
@@ -369,24 +407,39 @@ async function getPatients(req, res, next) {
       });
     }
 
-    const [patients, filteredTotal, statsTotal, statsPending, statsProcessedToday] = await Promise.all([
-      Patient.find(filter)
-        .select(listProjection)
-        .sort({ updatedAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+    const statsKey = directoryCacheKey("stats", baseScope);
+    let stats = readDirectoryCache(statsKey, STATS_TTL_MS);
+    const todayStart = startOfToday();
+    const todayEnd = endOfToday();
+
+    const [patients, filteredTotal, freshStats] = await Promise.all([
+      Patient.aggregate([
+        { $match: filter },
+        { $sort: { updatedAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        { $project: buildPatientListProject() }
+      ]),
       Patient.countDocuments(filter),
-      Patient.countDocuments(baseScope),
-      Patient.countDocuments({ ...baseScope, ...pendingPatientsClause() }),
-      Patient.countDocuments({
-        ...baseScope,
-        $or: ACTIVE_FORM_KEYS.map((key) => ({
-          [`forms.${key}.savedAt`]: { $gte: todayStart, $lte: todayEnd },
-          [`forms.${key}.isDraft`]: { $ne: true }
-        }))
-      })
+      stats
+        ? Promise.resolve(stats)
+        : Promise.all([
+            Patient.countDocuments(baseScope),
+            Patient.countDocuments({ ...baseScope, ...pendingPatientsClause() }),
+            Patient.countDocuments({
+              ...baseScope,
+              $or: ACTIVE_FORM_KEYS.map((key) => ({
+                [`forms.${key}.savedAt`]: { $gte: todayStart, $lte: todayEnd },
+                [`forms.${key}.isDraft`]: { $ne: true }
+              }))
+            })
+          ]).then(([total, pending, processedToday]) => {
+            const next = { total, pending, processedToday };
+            writeDirectoryCache(statsKey, next);
+            return next;
+          })
     ]);
+    stats = freshStats;
 
     // Compact payload: drop heavy signature blobs + ISO form timestamps
     for (const p of patients) {
@@ -422,11 +475,7 @@ async function getPatients(req, res, next) {
         total: filteredTotal,
         totalPages: Math.max(1, Math.ceil(filteredTotal / limit))
       },
-      stats: {
-        total: statsTotal,
-        pending: statsPending,
-        processedToday: statsProcessedToday
-      }
+      stats
     });
   } catch (error) {
     console.error("GetPatients error:", error);
@@ -512,6 +561,7 @@ async function createPatient(req, res, next) {
     });
 
     const savedPatient = await patient.save();
+    invalidatePatientDirectoryCache();
 
     // Log the action
     await AuditLog.create({
@@ -658,6 +708,7 @@ async function updatePatient(req, res, next) {
     }
 
     const updatedPatient = await patient.save();
+    invalidatePatientDirectoryCache();
 
     // Log the action
     await AuditLog.create({
@@ -747,6 +798,7 @@ async function bulkCreatePatients(req, res, next) {
     }
 
     const saved = await Patient.insertMany(createdPatients);
+    invalidatePatientDirectoryCache();
 
     // Create Audit Log
     await AuditLog.create({
@@ -905,6 +957,7 @@ async function bulkUpdatePatients(req, res, next) {
 
     if (ops.length > 0) {
       await Patient.bulkWrite(ops, { ordered: false });
+      invalidatePatientDirectoryCache();
     }
 
     await AuditLog.create({
@@ -970,6 +1023,7 @@ async function deletePatient(req, res, next) {
 
     await cleanupPatientR2Files(patient);
     await Patient.deleteOne({ _id: patient._id });
+    invalidatePatientDirectoryCache();
 
     await AuditLog.create({
       userId: req.user._id,
@@ -1006,6 +1060,7 @@ async function bulkDeletePatients(req, res, next) {
     }
 
     const result = await Patient.deleteMany(deleteFilter);
+    invalidatePatientDirectoryCache();
 
     await AuditLog.create({
       userId: req.user._id,
