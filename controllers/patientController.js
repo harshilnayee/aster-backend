@@ -443,7 +443,7 @@ async function createPatient(req, res, next) {
     const { name, age, gender, mobile, employeeCode, company, address, companyAddress, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit,
-      pulse, bp, respiratoryRate } = req.body;
+      pulse, bp, respiratoryRate, height, weight, temperature } = req.body;
 
     if (!name || !age || !gender) {
       return res.status(400).json({ message: "Name, age, and gender are required fields" });
@@ -455,6 +455,9 @@ async function createPatient(req, res, next) {
     const cleanPulse = pulse ? String(pulse).trim() : "";
     const cleanBp = bp ? String(bp).trim() : "";
     const cleanRR = respiratoryRate ? String(respiratoryRate).trim() : "";
+    const cleanHeight = height ? String(height).trim() : "";
+    const cleanWeight = weight ? String(weight).trim() : "";
+    const cleanTemp = temperature ? String(temperature).trim() : "";
 
     const patient = new Patient({
       patientId: patientIdString,
@@ -487,6 +490,9 @@ async function createPatient(req, res, next) {
       pulse: cleanPulse,
       bp: cleanBp,
       respiratoryRate: cleanRR,
+      height: cleanHeight,
+      weight: cleanWeight,
+      temperature: cleanTemp,
       forms: {
         "1-form-personal-details": {
           savedAt: new Date(),
@@ -494,7 +500,10 @@ async function createPatient(req, res, next) {
           data: {
             pulse: cleanPulse,
             bp: cleanBp,
-            respiratoryRate: cleanRR
+            respiratoryRate: cleanRR,
+            height: cleanHeight,
+            weight: cleanWeight,
+            temperature: cleanTemp
           }
         }
       },
@@ -585,7 +594,7 @@ async function updatePatient(req, res, next) {
     const { name, age, gender, mobile, employeeCode, company, address, companyAddress, photo, signature, fatherName, occupation,
       dob, surname, city, state, pincode, govIdType, govIdNumber, bloodGroup, email,
       department, employmentType, contractingAgency, diet, knownHabit,
-      pulse, bp, respiratoryRate } = req.body;
+      pulse, bp, respiratoryRate, height, weight, temperature } = req.body;
 
     const scope = clinicScopeFilter(req);
 
@@ -628,7 +637,10 @@ async function updatePatient(req, res, next) {
     if (pulse !== undefined) patient.pulse = String(pulse).trim();
     if (bp !== undefined) patient.bp = String(bp).trim();
     if (respiratoryRate !== undefined) patient.respiratoryRate = String(respiratoryRate).trim();
-    if (pulse !== undefined || bp !== undefined || respiratoryRate !== undefined) {
+    if (height !== undefined) patient.height = String(height).trim();
+    if (weight !== undefined) patient.weight = String(weight).trim();
+    if (temperature !== undefined) patient.temperature = String(temperature).trim();
+    if (pulse !== undefined || bp !== undefined || respiratoryRate !== undefined || height !== undefined || weight !== undefined || temperature !== undefined) {
       if (!patient.forms) patient.forms = {};
       if (!patient.forms["1-form-personal-details"]) {
         patient.forms["1-form-personal-details"] = { savedAt: new Date(), data: {} };
@@ -637,7 +649,10 @@ async function updatePatient(req, res, next) {
         ...patient.forms["1-form-personal-details"].data,
         ...(pulse !== undefined ? { pulse: String(pulse).trim() } : {}),
         ...(bp !== undefined ? { bp: String(bp).trim() } : {}),
-        ...(respiratoryRate !== undefined ? { respiratoryRate: String(respiratoryRate).trim() } : {})
+        ...(respiratoryRate !== undefined ? { respiratoryRate: String(respiratoryRate).trim() } : {}),
+        ...(height !== undefined ? { height: String(height).trim() } : {}),
+        ...(weight !== undefined ? { weight: String(weight).trim() } : {}),
+        ...(temperature !== undefined ? { temperature: String(temperature).trim() } : {})
       };
       patient.markModified("forms");
     }
